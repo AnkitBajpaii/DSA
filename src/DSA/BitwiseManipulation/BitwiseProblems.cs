@@ -1,4 +1,6 @@
-﻿namespace DSA.BitwiseManipulation
+﻿using System;
+
+namespace DSA.BitwiseManipulation
 {
     public class BitwiseProblems
     {
@@ -202,6 +204,74 @@
             return x ^ y;
 
             //Time Complexity: O(N)
+        }
+
+        /// <summary>
+        /// Given an array A of size n, all the elements in array appear even number of times, except two numbers which appearch odd number of time.
+        /// Find the two numbers which appear odd number of times.
+        /// </summary>
+        /// <param name="A"></param>
+        /// <param name="n"></param>
+        public static void FindTwoOddAppearingNumbers(int[] A, int n)
+        {
+            int xor = 0, res1 = 0, res2 = 0;
+            //find xor of all numbers
+            for (int i = 0; i < n; i++)
+            {
+                xor = xor ^ A[i];
+            }
+
+            // xor will now be xor of two odd appearing number; ex xor = x ^ y
+
+            // find the kth bit that is set xor
+            int k = xor & ~(xor - 1);
+            for (int i = 0; i < n; i++)
+            {
+                if ((A[i] & k) != 0)
+                {
+                    res1 = res1 ^ A[i];
+                }
+                else
+                {
+                    res2 = res2 ^ A[i];
+                }
+            }
+            Console.WriteLine($"Number 1: {res1}, Number 2:{res2}");
+        }
+
+        /// <summary>
+        /// Generate all subset of given string.
+        /// I/P: "abc"
+        /// O/P: "", "a", "b", "c", "ab", "ac","bc", "abc"
+        /// </summary>
+        public static void GeneratePowerSetOfString(string str)
+        {
+            int n = str.Length;
+            double p = Math.Pow(2, n);
+
+            Console.Write("[");
+            for (int i = 0; i < p; i++)
+            {
+                string temp = "";
+                for (int j = 1; j <= n; j++)
+                {
+                    if ((i & (1 << (j - 1))) != 0)
+                    {
+                        temp = temp + str[j - 1];
+                    }
+                }
+                if (i == p - 1)
+                {
+                    Console.Write(temp);
+                }
+                else
+                {
+                    Console.Write(temp + ", ");
+                }
+            }
+            Console.Write("]");
+
+            //Time Complexity: O(2^n * n) where n is length of string
         }
     }
 }
