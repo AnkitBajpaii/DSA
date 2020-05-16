@@ -125,7 +125,6 @@ namespace DSA.BitwiseManipulation
         /// <summary>
         /// Given an umber N, find if it is a power of 2
         /// </summary>
-
         public static bool IsPowerOf2_NaiveSolution(int num)
         {
             if (num == 0)
@@ -223,7 +222,7 @@ namespace DSA.BitwiseManipulation
 
             // xor will now be xor of two odd appearing number; ex xor = x ^ y
 
-            // find the kth bit that is set xor
+            // find the first kth bit that is set xor
             int k = xor & ~(xor - 1);
             for (int i = 0; i < n; i++)
             {
@@ -272,6 +271,138 @@ namespace DSA.BitwiseManipulation
             Console.Write("]");
 
             //Time Complexity: O(2^n * n) where n is length of string
+        }
+
+        /// <summary>
+        /// Given an integer an N. 
+        /// The task is to print the position of first set bit found from right side in the binary representation of the number.
+        /// </summary>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        public static int GetFirstSetBit(int n)
+        {
+            if(n == 0)
+            {
+                return 0;
+            }
+
+            int firstSetBit = n & ~(n - 1);
+            int position =  (int)Math.Log2(firstSetBit) + 1;
+
+            return position;
+            // O(1)
+        }
+
+        /// <summary>
+        /// Given two numbers M and N. 
+        /// The task is to find the position of rightmost different bit in binary representation of numbers.
+        /// </summary>        
+        public static int PosOfRightMostDiffBit(int m, int n)
+        {
+            if (m == n)
+            {
+                return -1;
+            }
+            int xor = m ^ n;
+            int pos = GetFirstSetBit(xor);
+            return pos;
+        }
+
+        /// <summary>
+        /// You are given two numbers A and B. Write a program to count number of bits needed to be flipped to convert A to B.
+        /// </summary>        
+        public static int CountBitsFlip(int a, int b)
+        {
+
+            int xor = a ^ b;
+            int countSetBits = CountSetBit_BrianKerningamAlgo(xor);
+            return countSetBits;
+
+        }
+
+        /// <summary>
+        /// Given a number N.  The task is to check whether it is sparse or not. 
+        /// A number is said to be a sparse number if no two or more consecutive bits are set  in the binary representation.
+        /// </summary>        
+        public static bool IsSparse(int n)
+        {
+            if((n & (n >> 1)) >= 1){
+                return false;
+            }
+
+            return true ;
+
+        }
+
+        /// <summary>
+        /// Given a number N. The task is to find the length of the longest consecutive 1s in its binary representation.
+        /// </summary>
+        public static int MaxConsecutiveOnes(int x)
+        {
+            int count = 0;
+            while(x != 0)
+            {
+                x = x & (x << 1);
+                count++;
+            }
+            return count;
+        }
+
+        /// <summary>
+        /// Given an unsigned integer N. The task is to swap all odd bits with even bits. 
+        /// For example, if the given number is 23 (00010111), it should be converted to 43(00101011). 
+        /// Here, every even position bit is swapped with adjacent bit on right side and every odd position bit is swapped with adjacent on left side.
+        /// </summary>
+        /// Hint: 
+        /// Right shift all even bits,
+        /// Left shift all odd bits
+        /// Combine the result
+        public static int SwapBits(int n)
+        {
+            int evenSetBits = n & 0xAAAAAA;
+            int oddSetBits = n & 0x55555555;
+
+            evenSetBits = evenSetBits >> 1;
+            oddSetBits = oddSetBits << 1;
+            int res = evenSetBits | oddSetBits;
+            return res;
+
+        }
+
+        /// <summary>
+        /// Finf Log base 2 of a number
+        /// </summary>
+        
+        public static int FindLog2(int x)
+        {
+            int res = 0;
+            while (x > 0)
+            {
+                x = x >> 1;
+                res++;
+            }
+                
+            return res;
+        }
+
+        /// <summary>
+        /// Swap without using temporary variable
+        /// </summary>        
+        public static void SwapTwoNumbers(int a, int b)
+        {
+            a ^= b;
+            b ^= a;
+            a ^= b;
+        }
+
+        /// <summary>
+        /// Given a number N, find the most significant set bit in the given number
+        /// </summary>        
+        public static int FindMostSignificantSetBit(int n)
+        {
+            int posOfMSB = (int)Math.Log2(n);
+            int res = (int)Math.Pow(2, posOfMSB);
+            return res;
         }
     }
 }
