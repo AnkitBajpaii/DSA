@@ -4,6 +4,39 @@ namespace DSA.Rescursion
 {
     public class RecursiveProblems
     {
+        public static bool RecursiveLinearSearch(int[] A, int start, int end, int key)
+        {
+            if (start > end)
+            {
+                return false;
+            }
+
+            if (A[start] == key || A[end] == key)
+            {
+                return true;
+            }
+
+            return RecursiveLinearSearch(A, start + 1, end - 1, key);
+        }
+
+        /// <summary>
+        /// Recursive program to check if given string is palindrome
+        /// </summary>        
+        public static bool IsPalindrome(string str, int s, int e)
+        {
+            if (s <= e)
+            {
+                return true;
+            }
+
+            if (str[s] != str[e])
+            {
+                return false;
+            }
+
+            return IsPalindrome(str, s++, e--);
+        }
+
         /// <summary>
         /// Sum of digit of a number using recursion
         /// </summary>        
@@ -80,6 +113,11 @@ namespace DSA.Rescursion
             TowerOfHanoi(n - 1, B, A, C);
         }
 
+        /// <summary>
+        /// There are N person standing in circle, you need to kill Kth person in every iteration. And this has to be done in circular manner
+        /// Find the position of last survivor.
+        /// Assume position starts from index 0, kth person will be (k-1)th person starting from zero.
+        /// </summary>        
         public static int Josephus(int n, int k)
         {
             if (n == 1)
@@ -105,6 +143,80 @@ namespace DSA.Rescursion
 
             return SubSetSum(arr, n - 1, sum) +
                    SubSetSum(arr, n - 1, sum - arr[n - 1]);
+        }
+
+        /// <summary>
+        /// Find All permuation of given string
+        /// </summary>        
+        public static void PermutationOfString(string curr, string str)
+        {
+            if (str.Length == 0)
+            {
+                Console.WriteLine(curr);
+            }
+            for (int i = 0; i < str.Length; i++)
+            {
+                PermutationOfString(curr + str[i], str.Substring(0, i) + str.Substring(i + 1));
+            }
+        }
+
+        /// <summary>
+        /// Find All permuation of given string
+        /// </summary>    
+        public static void PermutationOfString_Method2(string str, int l, int r)
+        {
+            if (l == r)
+            {
+                Console.WriteLine(str);
+            }
+
+            for (int i = l; i <= r; i++)
+            {
+                str = Util.Swap(str, i, l);
+
+                PermutationOfString_Method2(str, l + 1, r);
+
+                str = Util.Swap(str, i, l);
+            }
+        }
+
+        /// <summary>
+        /// Nth fibonacci number using recursion 
+        /// </summary>        
+        public static int FibonacciRecursive(int n)
+        {
+            if (n <= 1) return n;
+
+            return FibonacciRecursive(n - 1) + FibonacciRecursive(n - 2);
+        }
+
+        static void possibleWordsUtil(int[] a, int N, char[] output, int currDigit, string[] keypad)
+        {
+            if (currDigit == N)
+            {
+                Console.Write(new String(output));
+                Console.Write(" ");
+                return;
+            }
+            for (int i = 0; i < keypad[a[currDigit]].Length; i++)
+            {
+                output[currDigit] = keypad[a[currDigit]][i];
+                possibleWordsUtil(a, N, output, currDigit + 1, keypad);
+                if (a[currDigit] == 0 || a[currDigit] == 1)
+                {
+                    return;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Possible words from phone digit
+        /// </summary>        
+        static void possibleWords(int[] a, int N)
+        {
+            char[] output = new char[N];
+            string[] keypad = { "", "", "ABC", "DEF", "GHI", "JKL", "MNO", "PQRS", "TUV", "WXYZ" };
+            possibleWordsUtil(a, N, output, 0, keypad);
         }
     }
 }
