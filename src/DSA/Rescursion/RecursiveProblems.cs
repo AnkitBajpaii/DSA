@@ -46,10 +46,7 @@ namespace DSA.Rescursion
             {
                 return n;
             }
-
-            int lastDigit = n % 10;
-            int remainingNum = n / 10;
-            return lastDigit + SumOfDigits(remainingNum);
+            return n % 10 + SumOfDigits(n / 10);
         }
 
         /// <summary>
@@ -116,7 +113,7 @@ namespace DSA.Rescursion
         /// <summary>
         /// There are N person standing in circle, you need to kill Kth person in every iteration. And this has to be done in circular manner
         /// Find the position of last survivor.
-        /// Assume position starts from index 0, kth person will be (k-1)th person starting from zero.
+        /// Assume circle position starts from index 0, kth person will be (k-1)th person starting from zero.
         /// </summary>        
         public static int Josephus(int n, int k)
         {
@@ -124,10 +121,8 @@ namespace DSA.Rescursion
             {
                 return 0;
             }
-
-            int res = Josephus(n - 1, k);
-            int adjustedValue = (res + k) % n;
-            return adjustedValue;
+            
+            return (Josephus(n - 1, k) + k) % n;             
             //O(N)
         }
 
@@ -168,6 +163,7 @@ namespace DSA.Rescursion
             if (l == r)
             {
                 Console.WriteLine(str);
+                return;
             }
 
             for (int i = l; i <= r; i++)

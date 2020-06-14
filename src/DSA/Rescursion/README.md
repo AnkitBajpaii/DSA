@@ -1,5 +1,9 @@
 # Problems on Recursion
 
+- Recursive Linear Search in an array
+
+- Check if string is Palindrome.
+
 - Find sum of digit of a number using recursion.
 
 - Given a rope of length n, you need to find maximum number of pieces you can make such that length of every piece is in set {a,b,c} for given three values a, b, c.
@@ -23,3 +27,9 @@ so survive.
 
 - Subset Sum Problem
 Given an array and a sum, find count of subsets of this array, whose sum equals given sum.
+
+- Generate all Permutations of a string.
+
+- Find nth Fibonacci Number.
+
+- Possible words from phone digit.

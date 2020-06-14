@@ -9,11 +9,9 @@
     <Folder Include="LinkedList\" />
     <Folder Include="Hashing\" />
     <Folder Include="Graph\" />
-    <Folder Include="Arrays\" />
     <Folder Include="PriorityQueue\" />
     <Folder Include="Tree\" />
     <Folder Include="StringAlgo\" />
-    <Folder Include="Searching\" />
     <Folder Include="Queues\" />
     <Folder Include="Stacks\" />
   </ItemGroup>

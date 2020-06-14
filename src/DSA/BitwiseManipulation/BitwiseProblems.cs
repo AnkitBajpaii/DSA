@@ -8,8 +8,10 @@ namespace DSA.BitwiseManipulation
         /// Given a number N, check if it's Kth bit (from right side) is set or not.
         /// K <= no. of bits in binary representation of N
         /// </summary>        
-        public static bool CheckKthBitSetOrNot_1(int N, int K)
+        public static bool CheckKthBitSetOrNot_UsingLeftShift(int N, int K)
         {
+            // perform bitwise and of number n with number whose only kth bit is set.
+            // a number whose only kth bit is set => (1 << (K - 1))
             if ((N & (1 << (K - 1))) != 0)
             {
                 return true;
@@ -23,8 +25,10 @@ namespace DSA.BitwiseManipulation
         /// Given a number N, check if it's Kth bit is set or not.
         /// K <= no. of bits in binary representation of N
         /// </summary>    
-        public static bool CheckKthBitSetOrNot_2(int N, int K)
+        public static bool CheckKthBitSetOrNot_UsingRightShift(int N, int K)
         {
+            // right shift number N by K-1 bits , so taht kth bit moves to rightmost side
+            // then perform bitwise and with 1
             if (((N >> (K - 1)) & 1) == 1)
             {
                 return true;
@@ -37,30 +41,8 @@ namespace DSA.BitwiseManipulation
         /// Given a number N, count how many bits are set.
         /// Ex: I/P 5
         ///     O/P 2
-        /// </summary>        
-        public static int CountSetBits_1(int N)
-        {
-            int count = 0;
-
-            while (N > 0)
-            {
-                if ((N & 1) == 1)
-                {
-                    count++;
-                }
-
-                N = N >> 1;
-            }
-            return count;
-            // Time Complexity: O(total bits in N)
-        }
-
-        /// <summary>
-        /// Given a number N, count how many bits are set.
-        /// Ex: I/P 5
-        ///     O/P 2
         /// </summary>
-        public static int CountSetBits_2(int N)
+        public static int CountSetBits_NaiveSolution(int N)
         {
             int count = 0;
 
@@ -78,14 +60,15 @@ namespace DSA.BitwiseManipulation
         /// Ex: I/P 5
         ///     O/P 2
         /// </summary>
-        public static int CountSetBit_BrianKerningamAlgo(int N)
+        public static int CountSetBit_BrianKerninghamAlgo(int N)
         {
+            // when we substract 1 from a number, then all the bits which are zero, after the last set bit(towards left), becomes 1 and the last set bit becomes 0.
             int count = 0;
 
             while (N > 0)
             {
-                N = N & (N - 1);
-                count++;
+				count++;
+                N = N & (N - 1);                
             }
             return count;
         }
@@ -111,13 +94,13 @@ namespace DSA.BitwiseManipulation
             int count = table[N & 0xff];
 
             N = N >> 8;
-            count = table[N & 0xff];
+            count += table[N & 0xff];
 
             N = N >> 8;
-            count = table[N & 0xff];
+            count += table[N & 0xff];
 
             N = N >> 8;
-            count = table[N & 0xff];
+            count += table[N & 0xff];
 
             return count;
         }
@@ -139,12 +122,12 @@ namespace DSA.BitwiseManipulation
 
             while (num != 1)
             {
-                if (num % 2 != 0)
+                if (num % 2 != 0)// n & 1 == 1 i.e no. is odd
                 {
                     return false;
                 }
 
-                num = num / 2;
+                num = num / 2; // n = n >> 1;
             }
 
             return true;
@@ -160,6 +143,31 @@ namespace DSA.BitwiseManipulation
             return ((N & (N - 1)) == 0);
 
             //Time Complexity: O(1);
+        }
+
+        public static int RemoveRightMostSetBit(int n)
+        {
+            return n & (n - 1);
+        }
+
+        public static int FindRightMostSetBit(int n)
+        {
+            return n & ~(n - 1);
+        }
+
+        public static int SetKthBitInNumber(int n, int k)
+        {
+            return n | (1 << (k - 1));
+        }
+
+        public static int RemoveKthBitInNumber(int n, int k)
+        {
+            return n & ~(1 << (k - 1));
+        }
+
+        public static int ToggleKthBitInNumber(int n, int k)
+        {
+            return n ^ (1 << (k - 1));
         }
 
         /// <summary>
@@ -222,7 +230,7 @@ namespace DSA.BitwiseManipulation
 
             // xor will now be xor of two odd appearing number; ex xor = x ^ y
 
-            // find the first kth bit that is set xor
+            // find the first set bit(rightmost set bit)
             int k = xor & ~(xor - 1);
             for (int i = 0; i < n; i++)
             {
@@ -279,14 +287,15 @@ namespace DSA.BitwiseManipulation
         /// </summary>
         /// <param name="n"></param>
         /// <returns></returns>
-        public static int GetFirstSetBit(int n)
+        public static int GetFirstSetBitPosition(int n)
         {
             if(n == 0)
             {
                 return 0;
             }
 
-            int firstSetBit = n & ~(n - 1);
+            int firstSetBit = FindRightMostSetBit(n);
+
             int position =  (int)Math.Log2(firstSetBit) + 1;
 
             return position;
@@ -297,14 +306,14 @@ namespace DSA.BitwiseManipulation
         /// Given two numbers M and N. 
         /// The task is to find the position of rightmost different bit in binary representation of numbers.
         /// </summary>        
-        public static int PosOfRightMostDiffBit(int m, int n)
+        public static int PosOfRightMostDifferentBit(int m, int n)
         {
             if (m == n)
             {
                 return -1;
             }
             int xor = m ^ n;
-            int pos = GetFirstSetBit(xor);
+            int pos = GetFirstSetBitPosition(xor);
             return pos;
         }
 
@@ -315,7 +324,7 @@ namespace DSA.BitwiseManipulation
         {
 
             int xor = a ^ b;
-            int countSetBits = CountSetBit_BrianKerningamAlgo(xor);
+            int countSetBits = CountSetBit_BrianKerninghamAlgo(xor);
             return countSetBits;
 
         }
@@ -359,8 +368,8 @@ namespace DSA.BitwiseManipulation
         /// Combine the result
         public static int SwapBits(int n)
         {
-            int evenSetBits = n & 0xAAAAAA;
-            int oddSetBits = n & 0x55555555;
+            int evenSetBits = n & 0xAAAAAA; //get only even set bits in n
+            int oddSetBits = n & 0x55555555;//get only odd set bits in n
 
             evenSetBits = evenSetBits >> 1;
             oddSetBits = oddSetBits << 1;
@@ -388,7 +397,7 @@ namespace DSA.BitwiseManipulation
         /// <summary>
         /// Swap without using temporary variable
         /// </summary>        
-        public static void SwapTwoNumbers(int a, int b)
+        public static void SwapTwoNumbersWithoutUsingTempVariable(int a, int b)
         {
             a ^= b;
             b ^= a;
@@ -404,5 +413,24 @@ namespace DSA.BitwiseManipulation
             int res = (int)Math.Pow(2, posOfMSB);
             return res;
         }
+
+        public static int FindMostSignificantSetBit_Approach2(int n)
+        {
+            int res = 0;
+            while(n != 0)
+            {
+                res = n;
+                n = n & (n - 1);
+            }
+            return res;
+        }
+		
+		public static int BinaryToGreyCodeConverter(int n) {
+        
+			//The Most Significant Bit (MSB) of the gray code is always equal to the MSB of the given binary code.
+			//Other bits of the output gray code can be obtained by XORing binary code bit at that index and previous index.
+			return n ^ (n >> 1); 
+		
+		}
     }
 }
