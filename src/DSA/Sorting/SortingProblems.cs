@@ -6,27 +6,35 @@ namespace DSA.Sorting
 {
     public class SortingProblems
     {
-        void Swap(int[] A, int i, int j)
+        public static void BubbleSort(int[] arr, int n)
         {
-            int temp = A[i];
-            A[i] = A[j];
-            A[j] = temp;
+            for (int i = 0; i < n - 1; i++)
+            {
+                for (int j = 0; j < n - i - 1; j++)
+                {
+                    if (arr[j] > arr[j + 1])
+                    {
+                        Util.Swap(arr, j, j + 1);
+                    }
+                }
+
+            }
         }
 
-        public static void InsertionSort(int[] A, int n)
+        public static void InsertionSort(int[] arr, int n)
         {
             for (int i = 1; i < n; i++)
             {
-                int key = A[i];
+                int key = arr[i];
 
-                int j = i;
-                while (j > 0 && A[j - 1] > key)
+                int j = i - 1;
+                while (j >= 0 && arr[j] > key)
                 {
-                    A[j] = A[j - 1];
+                    arr[j + 1] = arr[j];
                     j--;
                 }
 
-                A[j] = key;
+                arr[j + 1] = key;
             }
         }
 
@@ -50,13 +58,12 @@ namespace DSA.Sorting
             int[] L = new int[n1];
             int[] R = new int[n2];
 
-            int i = 0;
+            int i;
             for (i = 0; i < n1; i++)
             {
                 L[i] = arr[l + i];
             }
 
-            i = 0;
             for (i = 0; i < n2; i++)
             {
                 R[i] = arr[m + 1 + i];
@@ -88,29 +95,102 @@ namespace DSA.Sorting
             }
         }
 
+        // Lomuto Partion
+        public static int LomutoPartition(int[] arr, int low, int high)
+        {
+            // we can also pick a random pivot and swap it with last element and can then use this algo.
+            int pivot = arr[high];
+            int i = low - 1;
+            for (int j = low; j < high; j++)
+            {
+                if (arr[j] < pivot)
+                {
+                    i++;
+                    Util.Swap(arr, i, j);
+                }
+            }
+
+            Util.Swap(arr, i + 1, high);
+            return i + 1;
+        }
+
+        // Hoare's Partion
+        public static int HoareParition(int[] arr, int l, int h)
+        {
+            int pivot = arr[l];
+            int i = l - 1, j = h + 1;
+            while (true)
+            {
+                do
+                {
+                    i++;
+                } while (arr[i] < pivot);
+
+                do
+                {
+                    j--;
+                } while (arr[j] > pivot);
+
+                if (i >= j)
+                {
+                    return j;
+                }
+
+                Util.Swap(arr, i, j);
+            }
+        }
+
+        // Quick Sort using Lomuto Partitioning
+        public static void QuickSort_UsingLomuto(int[] arr, int l, int h)
+        {
+            if (l < h)
+            {
+                int q = LomutoPartition(arr, l, h);
+                QuickSort_UsingLomuto(arr, l, q - 1);
+                QuickSort_UsingLomuto(arr, q + 1, h);
+            }
+        }
+
+        // Quick Sort using Hoare's Partitioning
+        public static void QuickSort_UsingHoare(int[] arr, int l, int h)
+        {
+            if (l < h)
+            {
+                int q = HoareParition(arr, l, h);
+                QuickSort_UsingHoare(arr, l, q); // this is where it is diffferent from Lomuto Partition
+                QuickSort_UsingHoare(arr, q + 1, h);
+            }
+        }
+
         //Intersection of two sorted arrays. Print only distinct common elements
-        public static void IntersectionOfTwoSortedArray(int[] a, int m, int[] b, int n)
+        public static void IntersectionOfTwoSortedArray(int[] arr1, int m, int[] arr2, int n)
         {
             int i = 0, j = 0;
             while (i < m && j < n)
             {
-                if (i > 0 && a[i - 1] == a[i])
+                if (i > 0 && arr1[i - 1] == arr1[i])
                 {
                     i++;
                     continue;
                 }
 
-                if (a[i] < b[j])
+                if (j > 0 && arr2[j - 1] == arr2[j])
+                {
+                    j++;
+                    continue;
+                }
+
+                if (arr1[i] < arr2[j])
                 {
                     i++;
                 }
-                else if (b[j] < a[i])
+                else if (arr2[j] < arr1[i])
                 {
                     j++;
                 }
                 else
                 {
-                    Console.WriteLine(a[i]);
+                    Console.WriteLine(arr1[i]);
                     i++;
                     j++;
                 }
@@ -118,36 +198,36 @@ namespace DSA.Sorting
         }
 
         // Union of two sorted arrays. 
-        public static void UnionOfTwoSortedArray(int[] a, int m, int[] b, int n)
+        public static void UnionOfTwoSortedArray(int[] arr1, int m, int[] arr2, int n)
         {
             int i = 0, j = 0;
             while (i < m && j < n)
             {
-                if (i > 0 || a[i] == a[i - 1])
+                if (i > 0 || arr1[i] == arr1[i - 1])
                 {
                     i++;
                     continue;
                 }
 
-                if (j > 0 || b[j] == b[j - 1])
+                if (j > 0 || arr2[j] == arr2[j - 1])
                 {
                     j++;
                     continue;
                 }
 
-                if (a[i] < b[j])
+                if (arr1[i] < arr2[j])
                 {
-                    Console.WriteLine(a[i]);
+                    Console.WriteLine(arr1[i]);
                     i++;
                 }
-                else if (b[j] < a[i])
+                else if (arr2[j] < arr1[i])
                 {
-                    Console.WriteLine(b[j]);
+                    Console.WriteLine(arr2[j]);
                     j++;
                 }
                 else
                 {
-                    Console.WriteLine(a[i]);
+                    Console.WriteLine(arr1[i]);
                     i++;
                     j++;
                 }
@@ -155,9 +235,9 @@ namespace DSA.Sorting
 
             while (i < m)
             {
-                if (i == 0 || a[i] != a[i - 1])
+                if (i == 0 || arr1[i] != arr1[i - 1])
                 {
-                    Console.WriteLine(a[i]);
+                    Console.WriteLine(arr1[i]);
                 }
 
                 i++;
@@ -165,9 +245,9 @@ namespace DSA.Sorting
 
             while (j < n)
             {
-                if (j == 0 || b[j] != b[j - 1])
+                if (j == 0 || arr2[j] != arr2[j - 1])
                 {
-                    Console.WriteLine(b[j]);
+                    Console.WriteLine(arr2[j]);
                 }
 
                 j++;
@@ -236,40 +316,46 @@ namespace DSA.Sorting
             return res;
         }
 
-        // Lomuto Partion
-        public static int LomutoPartition(int[] arr, int l, int h)
+        public static int FindKthSmallestElement(int[] arr, int n, int k)
         {
-            int pivot = arr[h];
-            int i = l - 1;
-            for (int j = l; j <= h - 1; j++)
+            int low = 0, high = n - 1;
+            while (low <= high)
             {
-                if (arr[j] < pivot)
+                int p = LomutoPartition(arr, low, high);
+
+                if (p == k - 1)
                 {
-                    i++;
-                    Util.Swap(arr, i, j);
+                    return p;
+                }
+
+                if (p > k - 1)
+                {
+                    high = p - 1;
+                }
+                else
+                {
+                    low = p + 1;
                 }
             }
 
-            Util.Swap(arr, i + 1, h);
-            return i + 1;
+            return -1;
         }
 
-        // Hoare's Partion
-        public static int HoareParition(int[] arr, int l, int h)
+        public static int SegregatePositiveAndNegatives(int[] arr, int n)
         {
-            int pivot = arr[l];
-            int i = l - 1, j = h + 1;
+            // using hoare's partition
+            int i = -1, j = n;
             while (true)
             {
                 do
                 {
                     i++;
-                } while (arr[i] < pivot);
+                } while (arr[i] < 0);
 
                 do
                 {
                     j--;
-                } while (arr[j] > pivot);
+                } while (arr[j] >= 0);
 
                 if (i >= j)
                 {
@@ -280,26 +366,165 @@ namespace DSA.Sorting
             }
         }
 
-        // Quick Sort using Lomuto Partitioning
-        public static void QuickSort_UsingLomuto(int[] arr, int l, int h)
+        public static int SegregateEvenAndOdd(int[] arr, int n)
         {
-            if (l < h)
+            // using hoare's partition
+            int i = -1, j = n;
+            while (true)
             {
-                int q = LomutoPartition(arr, l, h);
-                QuickSort_UsingLomuto(arr, l, q - 1);
-                QuickSort_UsingLomuto(arr, q + 1, h);
+                do
+                {
+                    i++;
+                } while (arr[i] % 2 != 0);
+
+                do
+                {
+                    j--;
+                } while (arr[j] % 2 == 0);
+
+                if (i >= j)
+                {
+                    return j;
+                }
+
+                Util.Swap(arr, i, j);
             }
         }
 
-        // Quick Sort using Hoare's Partitioning
-        public static void QuickSort_UsingHoare(int[] arr, int l, int h)
+        // also called binary sort
+        public static int SegregateZerosAndOnes(int[] arr, int n)
         {
-            if (l < h)
+            // using hoare's partition
+            int i = -1, j = n;
+            while (true)
             {
-                int q = HoareParition(arr, l, h);
-                QuickSort_UsingHoare(arr, l, q); // this is where it is diffferent from Lomuto Partition
-                QuickSort_UsingHoare(arr, q + 1, h);
+                do
+                {
+                    i++;
+                } while (i < n && arr[i] == 0);
+
+                do
+                {
+                    j--;
+                } while (j >= 0 && arr[j] == 1);
+
+                if (i >= j)
+                {
+                    return j;
+                }
+
+                Util.Swap(arr, i, j);
             }
+        }
+
+        //Three way partition algorithm OR Dutch national flag algorithm
+        // Sort array of 0, 1, and 2
+        // three way partition when multiple occurrences of pivot exist
+        // partition around range.
+        public static void SortArrayOfZeroOnesAndTwos(int[] arr, int n)
+        {
+            int low = 0, high = n - 1, mid = 0;
+            while (mid <= high)
+            {
+                switch (arr[mid])
+                {
+                    case 0:
+                        Util.Swap(arr, low, mid);
+                        low++;
+                        mid++;
+                        break;
+                    case 1:
+                        mid++;
+                        break;
+                    case 2:
+                        Util.Swap(arr, mid, high);
+                        high--;
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
+        public static void PartionAroundRange(int[] arr, int n, int a, int b)
+        {
+            int low = 0, high = n - 1, mid = 0;
+            while (mid <= high)
+            {
+                if (arr[mid] < a)
+                {
+                    Util.Swap(arr, low, mid);
+                    low++;
+                    mid++;
+                }
+                else if (arr[mid] <= b)
+                {
+                    mid++;
+                }
+                else
+                {
+                    Util.Swap(arr, mid, high);
+                    high--;
+                }
+            }
+        }
+
+        public static bool FindTripletWithZeroSum(int[] arr, int n)
+        {
+            Array.Sort(arr);
+
+            for (int i = 0; i < n - 2; i++)
+            {
+                int start = i + 1;
+                int end = n - 1;
+
+                while (start < end)
+                {
+                    int sum = arr[start] + arr[end];
+                    if (sum == -arr[i])
+                    {
+                        return true;
+                    }
+
+                    if (sum > -arr[i])
+                    {
+                        end--;
+                    }
+                    else
+                    {
+                        start++;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public static char[] ArrangeLettersInLexographicOrder(char[] seq)
+        {
+            int n = seq.Length;
+
+            char[] res = new char[n];
+
+            int[] c = new int[26];
+            for (int i = 0; i < n; i++)
+            {
+                c[seq[i] - 'a']++;
+            }
+
+            for (int i = 1; i < 26; i++)
+            {
+                c[i] = c[i - 1] + c[i];
+            }
+
+            for (int i = n - 1; i >= 0; i--)
+            {
+                c[seq[i] - 'a']--;
+                res[c[seq[i] - 'a']] = seq[i];
+
+            }
+
+            return res;
         }
     }
 }

@@ -2,6 +2,7 @@
 using DSA.BitwiseManipulation;
 using DSA.Rescursion;
 using DSA.Searching;
+using DSA.Sorting;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -47,8 +48,13 @@ namespace DSA
 
             //}
 
-
+            int[] arr = new int[] { 3, 5, 4, 2, 9 };
+            
+            SortingProblems.FindKthSmallestElement(arr,5,3);
+            
             Console.ReadKey();
         }
+
+        
     }
 }

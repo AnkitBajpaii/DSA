@@ -12,12 +12,7 @@ namespace DSA.BitwiseManipulation
         {
             // perform bitwise and of number n with number whose only kth bit is set.
             // a number whose only kth bit is set => (1 << (K - 1))
-            if ((N & (1 << (K - 1))) != 0)
-            {
-                return true;
-            }
-
-            return false;
+            return (N & (1 << (K - 1))) != 0;
         }
 
         /// <summary>
@@ -27,14 +22,10 @@ namespace DSA.BitwiseManipulation
         /// </summary>    
         public static bool CheckKthBitSetOrNot_UsingRightShift(int N, int K)
         {
-            // right shift number N by K-1 bits , so taht kth bit moves to rightmost side
+            // right shift number N by K-1 bits , so that kth bit moves to rightmost side
             // then perform bitwise and with 1
-            if (((N >> (K - 1)) & 1) == 1)
-            {
-                return true;
-            }
 
-            return false;
+            return ((N >> (K - 1)) & 1) == 1;
         }
 
         /// <summary>
@@ -48,7 +39,7 @@ namespace DSA.BitwiseManipulation
 
             while (N > 0)
             {
-                count = count + (N & 1);
+                count = count + (N & 1); // if N is even (N & 1) is 0 
                 N = N >> 1;
             }
             return count;
@@ -145,26 +136,32 @@ namespace DSA.BitwiseManipulation
             //Time Complexity: O(1);
         }
 
+        // ex: I/P : n = 101100 ,   O/P : 101000
         public static int RemoveRightMostSetBit(int n)
         {
             return n & (n - 1);
         }
 
+        // ex: I/P : n = 101100 ,   O/P : 000100
         public static int FindRightMostSetBit(int n)
         {
             return n & ~(n - 1);
         }
 
+        // ex: I/P : n = 100100 , k = 4   O/P : 101100
         public static int SetKthBitInNumber(int n, int k)
         {
             return n | (1 << (k - 1));
         }
 
+        // ex: I/P : n = 101100 , k = 4   O/P : 100100
         public static int RemoveKthBitInNumber(int n, int k)
         {
             return n & ~(1 << (k - 1));
         }
 
+        // ex: I/P : n = 101100 , k = 4   O/P : 100100
+        // ex: I/P : n = 100100 , k = 4   O/P : 101100
         public static int ToggleKthBitInNumber(int n, int k)
         {
             return n ^ (1 << (k - 1));
@@ -231,7 +228,7 @@ namespace DSA.BitwiseManipulation
             // xor will now be xor of two odd appearing number; ex xor = x ^ y
 
             // find the first set bit(rightmost set bit)
-            int k = xor & ~(xor - 1);
+            int k = FindRightMostSetBit(xor);
             for (int i = 0; i < n; i++)
             {
                 if ((A[i] & k) != 0)
@@ -324,14 +321,14 @@ namespace DSA.BitwiseManipulation
         {
 
             int xor = a ^ b;
-            int countSetBits = CountSetBit_BrianKerninghamAlgo(xor);
+            int countSetBits = CountSetBit_TableLookUp(xor);
             return countSetBits;
 
         }
 
         /// <summary>
         /// Given a number N.  The task is to check whether it is sparse or not. 
-        /// A number is said to be a sparse number if no two or more consecutive bits are set  in the binary representation.
+        /// A number is said to be a sparse number if no two or more consecutive bits are set in the binary representation.
         /// </summary>        
         public static bool IsSparse(int n)
         {
@@ -348,6 +345,7 @@ namespace DSA.BitwiseManipulation
         /// </summary>
         public static int MaxConsecutiveOnes(int x)
         {
+            //The idea is based on the concept that if we AND a bit sequence with a shifted version of itself, we’re effectively removing the trailing 1 from every sequence of consecutive 1s.
             int count = 0;
             while(x != 0)
             {
@@ -380,8 +378,7 @@ namespace DSA.BitwiseManipulation
 
         /// <summary>
         /// Finf Log base 2 of a number
-        /// </summary>
-        
+        /// </summary>        
         public static int FindLog2(int x)
         {
             int res = 0;

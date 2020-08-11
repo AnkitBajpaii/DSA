@@ -351,18 +351,18 @@ namespace DSA.Searching
         }
 
         // Count pair with a given sum in sorted array
-        public static int CountPairWithGivenSum(int[] arr, int start, int end, int x)
+        public static int CountPairWithGivenSum(int[] arr, int start, int end, int givenSum)
         {
             int count = 0;
-            while (start <= end)
+            while (start < end)
             {
-                int sum = arr[start] + arr[end];
-                if (sum == x)
+                int currSum = arr[start] + arr[end];
+                if (currSum == givenSum)
                 {
                     count++;
                 }
 
-                if (sum > x)
+                if (currSum > givenSum)
                 {
                     end--;
                 }
@@ -376,7 +376,7 @@ namespace DSA.Searching
         }
 
         // Count triplet with a given sum in an array
-        public static int CountTripletsWithGivenSum(int[] arr, int x)
+        public static int CountTripletsWithGivenSum(int[] arr, int sum)
         {
             Array.Sort(arr);
 
@@ -384,7 +384,7 @@ namespace DSA.Searching
             int totalCount = 0;
             for (int i = 0; i < n; i++)
             {
-                int count = CountPairWithGivenSum(arr, i + 1, n - 1, x - arr[i]);
+                int count = CountPairWithGivenSum(arr, i + 1, n - 1, sum - arr[i]);
                 totalCount += count;
 
             }

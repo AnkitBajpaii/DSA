@@ -335,6 +335,33 @@ namespace DSA.Arrays
             return candidate;
         }
 
+        //Given a binary array, we need to find the minimum of number of group flips to make all array elements same. 
+        //In a group flip, we can flip any set of consecutive 1s or 0s.
+        public static void MinimumConsecutiveFlips(int[] A)
+        {
+            int n = A.Length;
+            for (int i = 1; i < n; i++)
+            {
+                if (A[i] != A[i - 1])
+                {
+                    if (A[i] != A[0])
+                    {
+                        Console.Write($"From {i} to ");
+                    }
+                    else
+                    {
+                        Console.Write($"{i - 1}");
+                        Console.WriteLine();
+                    }
+                }
+            }
+
+            if (A[n - 1] != A[0])
+            {
+                Console.Write($"{n - 1}");
+            }
+        }
+
         public static int MaxSubArraySumSizeK(int[] A, int k)
         {
             // Use Sliding window technique
@@ -356,17 +383,50 @@ namespace DSA.Arrays
 
         }
 
-        public static bool IsSubArryWithGivenSumExist(int[] A, int sum)
+        // Given array of size n, check if there exist a sub-array of size k with given sum
+        // here window size is given and that is k.
+        public static bool IsThereSubArrayOfSizeKWithGivenSum(int[] A, int sum, int k)
         {
             // Use Sliding window technique
-            int n = A.Length, currSum = A[0], s = 0;
-
-            for (int e = 1; e <= n; e++)
+            int n = A.Length;
+            int currSum = 0;
+            for (int i = 0; i < k; i++)
             {
-                while (currSum > sum && s < e - 1)
+                currSum += A[i];
+            }
+
+            if (currSum == sum)
+            {
+                return true;
+            }
+
+            for (int i = k; i < n; i++)
+            {
+                currSum = currSum + A[i] - A[i - k];
+
+                if (currSum == sum)
                 {
-                    currSum = currSum - A[s];
-                    s++;
+                    return true;
+                }
+            }
+
+            return false;
+
+        }
+
+        // Given an array of size n, check if there exist a sub-array with given sum.
+        // Note that here the window size is Not given, unlike previous problem.
+        public static bool IsSubArrayWithGivenSumExist(int[] A, int sum)
+        {
+            // Use Sliding window technique
+            int n = A.Length, currSum = A[0], start = 0;
+
+            for (int end = 1; end <= n; end++)
+            {
+                while (currSum > sum && start < end - 1)
+                {
+                    currSum = currSum - A[start];
+                    start++;
                 }
 
                 if (currSum == sum)
@@ -374,8 +434,8 @@ namespace DSA.Arrays
                     return true;
                 }
 
-                if (e < n)
-                    currSum = currSum + A[e];
+                if (end < n)
+                    currSum = currSum + A[end];
             }
 
             return currSum == sum;
@@ -392,11 +452,12 @@ namespace DSA.Arrays
 
             arr[n - 1] = 1;
 
-            arr[n] = 1;
+            int currSum = 1;
 
-            for (int i = n + 1; i < m; i++)
+            for (int i = n; i < m; i++)
             {
-                arr[i] = 2 * arr[i - 1] - arr[i - n - 1];
+                arr[i] = currSum;
+                currSum = currSum + arr[i] - arr[i - n];
             }
 
             return arr;
@@ -438,40 +499,25 @@ namespace DSA.Arrays
             List<int> res = new List<int>();
             res.Add(getDistinctCount(map));
 
-            for (int i = 1; i <= n - k; i++)
+            for (int i = k; i < n; i++)
             {
-                int index = i + k - 1;
-
-                if (map.ContainsKey(A[index]))
+                if (map.ContainsKey(A[i]))
                 {
-                    map[A[index]] = map[A[index]] + 1;
+                    map[A[i]] = map[A[i]] + 1;
                 }
                 else
                 {
-                    map.Add(A[index], 1);
+                    map.Add(A[i], 1);
                 }
 
-                int val = map[A[i - 1]];
-                map[A[i - 1]] = val > 0 ? val - 1 : 0;
+                int val = map[A[i - k]];
+                map[A[i - k]] = val > 0 ? val - 1 : 0;
 
                 res.Add(getDistinctCount(map));
             }
 
             int[] final = res.ToArray();
             return final;
-        }
-
-        public static int GetSumUtil(int[] A, int[] prefixSum, int l, int r)
-        {
-            // prefixSum compueted using ComputePrefixSum from caller
-            if (l != 0)
-            {
-                return prefixSum[r] - prefixSum[l - 1];
-            }
-            else
-            {
-                return prefixSum[r];
-            }
         }
 
         public static int[] ComputePrefixSum(int[] A)
@@ -483,6 +529,20 @@ namespace DSA.Arrays
                 prefixSum[i] = prefixSum[i - 1] + A[i];
             }
             return prefixSum;
+        }
+
+        // Given a fixed array and multiple queries of following types on array, how to efficiently perform these queries? I/P : Array A of size n, and list of operation GetSum(l, r) where 0<=l<=r<=n, computes sum of elements from index l to index r.
+        public static int GetSumUtil(int[] A, int[] prefixSum, int l, int r)
+        {
+            // prefixSum computed using ComputePrefixSum method from caller
+            if (l != 0)
+            {
+                return prefixSum[r] - prefixSum[l - 1];
+            }
+            else
+            {
+                return prefixSum[r];
+            }
         }
 
         public static bool HasEquilibriumPoint(int[] A)
@@ -585,7 +645,6 @@ namespace DSA.Arrays
         }
 
         // You are given an array arr[] of N integers including 0. The task is to find the smallest positive number missing from the array.
-
         public static int MissingNumber(int[] arr, int size)
         {
             int shift = Segregate(arr, size);
@@ -640,6 +699,29 @@ namespace DSA.Arrays
                     return i + 1; // 1 is added becuase indexes // start from 0 
 
             return size + 1;
+        }
+
+        // Frequencies of Limited Range Array Elements
+        //Given an array A[] of N positive integers which can contain integers from 1 to N where elements can be repeated or can be absent from the array. Your task is to count the frequency of all elements from 1 to N.
+        // Input: arr[] = {2, 3, 3, 2, 5}
+        // O/P {0,2,2,0,1}
+        public static void FindCounts(int[] arr)
+        {
+            int n = arr.Length;
+            for (int i = 0; i < n; i++)
+            {
+                arr[i] = arr[i] - 1;
+            }
+
+            for (int i = 0; i < n; i++)
+            {
+                arr[arr[i] % n] = arr[arr[i] % n] + n;
+            }
+
+            for (int i = 0; i < n; i++)
+            {
+                Console.WriteLine(i + 1 + "->" + arr[i] / n);
+            }
         }
     }
 }

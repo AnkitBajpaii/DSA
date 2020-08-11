@@ -19,9 +19,9 @@ namespace DSA
 
         public static void Swap(int[] A, int low, int high)
         {
-            A[low] = A[low] ^ A[high];
-            A[high] = A[low] ^ A[high];
-            A[low] = A[low] ^ A[high];
+            int t = A[low];
+            A[low] = A[high];
+            A[high] = t;
         }
     }
 }

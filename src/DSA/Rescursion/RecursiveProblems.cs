@@ -4,6 +4,23 @@ namespace DSA.Rescursion
 {
     public class RecursiveProblems
     {
+        public static int Factorial_NonTailRecursive(int n)
+        {
+            if (n == 0 || n == 1)
+                return 1;
+            return n * Factorial_NonTailRecursive(n - 1);
+
+        }
+
+        public static int Factorial_TailRecursive(int n, int k)
+        {
+            // in modern compilers, tail recursive functions take less memomry and space as compared to their non-tail recursive counterpart
+            if (n == 0 || n == 1)
+                return k;
+
+            return Factorial_TailRecursive(n - 1, k * n);
+        }
+
         public static bool RecursiveLinearSearch(int[] A, int start, int end, int key)
         {
             if (start > end)
@@ -121,8 +138,8 @@ namespace DSA.Rescursion
             {
                 return 0;
             }
-            
-            return (Josephus(n - 1, k) + k) % n;             
+
+            return (Josephus(n - 1, k) + k) % n;
             //O(N)
         }
 
