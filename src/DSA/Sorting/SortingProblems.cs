@@ -4,6 +4,17 @@ using System.Text;
 
 namespace DSA.Sorting
 {
+    public class Pair
+    {
+        public int Start { get; set; }
+        public int End { get; set; }
+        public Pair(int x, int y)
+        {
+            this.Start = x;
+            this.End = y;
+        }
+    }
+
     public class SortingProblems
     {
         public static void BubbleSort(int[] arr, int n)
@@ -35,6 +46,26 @@ namespace DSA.Sorting
                 }
 
                 arr[j + 1] = key;
+            }
+        }
+
+        //Shell Sort is variation of insertion sort where we compare elements which are distance apart rather than adjacent
+        public static void ShellSort(int[] arr, int n)
+        {
+            for (int gap = n / 2; gap > 0; gap = gap / 2)
+            {
+                for (int i = gap; i < n; i++)
+                {
+                    int key = arr[i];
+                    int j = i - gap;
+                    while (j >= 0 && arr[j] > key)
+                    {
+                        arr[j + gap] = arr[j];
+                        j = j - gap;
+                    }
+
+                    arr[j + gap] = key;
+                }
             }
         }
 
@@ -93,6 +124,157 @@ namespace DSA.Sorting
             {
                 arr[k++] = R[j++];
             }
+        }
+
+        //O(m*n) solution
+        public static void MergeWithOutUsingExtraSpace(int[] arr1, int[] arr2)
+        {
+            int m = arr1.Length;
+            int n = arr2.Length;
+
+            for (int i = n - 1; i >= 0; i--)
+            {
+                int last = arr1[m - 1];
+                int j = m - 2;
+                while (j >= 0 && arr1[j] > arr2[i])
+                {
+                    arr1[j + 1] = arr1[j];
+                    j--;
+                }
+                arr1[j + 1] = arr2[i];
+                arr2[i] = last;
+            }
+        }
+
+        public static int[] Merge3SortedArrays(int[] arr1, int[] arr2, int[] arr3)
+        {
+            int p = arr1.Length, q = arr2.Length, r = arr3.Length;
+            int[] res = new int[p + q + r];
+            int i = 0, j = 0, k = 0, index = 0;
+            while (i < p && j < q && k < r)
+            {
+                if (arr1[i] <= arr2[j] && arr1[i] <= arr3[k])
+                {
+                    res[index] = arr1[i];
+                    i++;
+
+                }
+                else if (arr2[j] <= arr1[i] && arr2[j] <= arr3[k])
+                {
+                    res[index] = arr2[j];
+                    j++;
+                }
+                else if (arr3[k] <= arr1[i] && arr3[k] <= arr2[j])
+                {
+                    res[index] = arr3[k];
+                    k++;
+                }
+
+                index++;
+            }
+
+            if (i == p)
+            {
+                while (j < q && k < r)
+                {
+                    if (arr2[j] <= arr3[k])
+                    {
+                        res[index] = arr2[j];
+                        j++;
+                    }
+                    else
+                    {
+                        res[index] = arr3[k];
+                        k++;
+                    }
+
+                    index++;
+                }
+
+                while (j < q)
+                {
+                    res[index] = arr2[j];
+                    j++;
+                    index++;
+                }
+
+                while (k < r)
+                {
+                    res[index] = arr3[k];
+                    k++;
+                    index++;
+                }
+            }
+
+            else if (j == q)
+            {
+                while (i < p && k < r)
+                {
+                    if (arr1[i] <= arr3[k])
+                    {
+                        res[index] = arr1[i];
+                        i++;
+
+                    }
+                    else
+                    {
+                        res[index] = arr3[k];
+                        k++;
+                    }
+
+                    index++;
+                }
+
+                while (i < p)
+                {
+                    res[index] = arr1[i];
+                    i++;
+                    index++;
+                }
+
+                while (k < r)
+                {
+                    res[index] = arr3[k];
+                    k++;
+                    index++;
+                }
+            }
+
+            else
+            {
+                while (i < p && j < q)
+                {
+                    if (arr1[i] <= arr2[j])
+                    {
+                        res[index] = arr1[i];
+                        i++;
+
+                    }
+                    else
+                    {
+                        res[index] = arr2[j];
+                        j++;
+                    }
+
+                    index++;
+                }
+
+                while (i < p)
+                {
+                    res[index] = arr1[i];
+                    i++;
+                    index++;
+                }
+
+                while (j < q)
+                {
+                    res[index] = arr2[j];
+                    j++;
+                    index++;
+                }
+            }
+
+            return res;
         }
 
         // Lomuto Partion
@@ -522,6 +704,60 @@ namespace DSA.Sorting
                 c[seq[i] - 'a']--;
                 res[c[seq[i] - 'a']] = seq[i];
 
+            }
+
+            return res;
+        }
+
+        public static int MergeOverLappingInterval(Pair[] pairs, int n)
+        {
+            int res = 0;
+
+            Array.Sort<Pair>(pairs, (p1, p2) => p1.Start - p2.Start);
+
+            for (int i = 1; i < n; i++)
+            {
+                if (pairs[i].Start <= pairs[res].End)
+                {
+                    pairs[res].Start = Math.Min(pairs[i].Start, pairs[res].Start);
+                    pairs[res].End = Math.Max(pairs[i].End, pairs[res].End);
+                }
+                else
+                {
+                    res++;
+                    pairs[res] = pairs[i];
+                }
+            }
+
+            return res;
+        }
+
+        //Given arrival and departure times of all trains that reach a railway station, the task is to find the minimum number of platforms required for the railway station so that no train waits.
+        //Input: arr[] = {9:00, 9:40, 9:50, 11:00, 15:00, 18:00}
+        //dep[] = {9:10, 12:00, 11:20, 11:30, 19:00, 20:00}
+        //Output: 3
+        public static int MinimumPlatforms(int[] arr, int[] dep)
+        {
+            int n = arr.Length;
+            Array.Sort(arr);
+            Array.Sort(dep);
+
+            int i = 1, j = 0, curr = 1, res = 1;
+
+            while (i < n && j < n)
+            {
+                if (arr[i] <= dep[j])
+                {
+                    curr++;
+                    i++;
+                }
+                else
+                {
+                    curr--;
+                    j++;
+                }
+
+                res = Math.Max(res, curr);
             }
 
             return res;
