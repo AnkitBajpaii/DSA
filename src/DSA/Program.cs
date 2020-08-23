@@ -1,5 +1,6 @@
 ﻿using DSA.Arrays;
 using DSA.BitwiseManipulation;
+using DSA.Hashing;
 using DSA.Rescursion;
 using DSA.Searching;
 using DSA.Sorting;
@@ -31,34 +32,22 @@ namespace DSA
 
         static void Main(string[] args)
         {
-            //int T = Convert.ToInt32(Console.ReadLine());
+            int T = Convert.ToInt32(Console.ReadLine());
 
-            //for (int i = 1; i <= T; i++)
-            //{
-            //    string str = Console.ReadLine();
-            //    int[] sizes = Array.ConvertAll(str.Split(" "), int.Parse);
-            //    int n1 = sizes[0];
-            //    int n2 = sizes[1];
+            for (int i = 1; i <= T; i++)
+            {
+                int size = Convert.ToInt32(Console.ReadLine().Trim());
 
-            //    str = Console.ReadLine();
-            //    var arr1 = Array.ConvertAll(str.Split(" "), int.Parse);
+                string inputArr = Console.ReadLine().Trim();
+                int[] arr = Array.ConvertAll(inputArr.Split(" "), int.Parse);
+                int res = HashingProblems.FirstRepeatingElement(arr, size);
+                Console.WriteLine(res);
+            }
 
-            //    str = Console.ReadLine();
-            //    var arr2 = Array.ConvertAll(str.Split(" "), int.Parse);
+            //int[] arr = new int[] { };
+            //var res = SortingProblems.Merge3SortedArrays(arr1, arr2, arr3);
+            //Print(res);
 
-            //}
-
-            int[] arr1 = new int[] {1,2 };
-            int[] arr2 = new int[] {2,3,4 };
-
-            int[] arr3 = new int[] {4,5,6,7 };
-
-            
-            var res = SortingProblems.Merge3SortedArrays(arr1,arr2, arr3);
-            Console.WriteLine("=======================================");
-            Console.WriteLine("=======================================");
-            Print(res);
-            
             Console.ReadKey();
         }
 
