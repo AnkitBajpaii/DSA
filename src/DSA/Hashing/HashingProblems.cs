@@ -5,6 +5,12 @@ using System.Text;
 
 namespace DSA.Hashing
 {
+    class Node
+    {
+        public int FirstRepeatingIndex { get; set; }
+        public int Count { get; set; }
+    }
+
     public static class HashingProblems
     {
         //Separate chaining technique in hashing allows to us to use a linked list at each hash slot to handle the problem of collisions. That is, every slot of the hash table is a linked list, so whenever a collision occurs, the element can be appened as a node to the linked list at the slot.
@@ -111,12 +117,6 @@ namespace DSA.Hashing
             return hashTable.Where(kvp => kvp.Value == 1).LongCount();
         }
 
-        class Node
-        {
-            public int FirstRepeatingIndex { get; set; }
-            public int Count { get; set; }
-        }
-
         public static int FirstRepeatingElement(int[] arr, int n)
         {
             Dictionary<int, Node> hashTable = new Dictionary<int, Node>();
@@ -148,7 +148,6 @@ namespace DSA.Hashing
 
             return res.FirstRepeatingIndex == Int32.MaxValue ? -1 : res.FirstRepeatingIndex;
         }
-
 
         public static int NumberofElementsInIntersection(int[] a, int[] b, int n, int m)
         {
@@ -306,7 +305,162 @@ namespace DSA.Hashing
                     res.Add(key);
                 }
             }
-            
+
+            return res;
+        }
+
+        public static int LongestSubArrayWithGivenSum(int[] arr, int n, int sum)
+        {
+            Dictionary<int, int> map = new Dictionary<int, int>();
+            int res = 0, preSum = 0;
+            for (int i = 0; i < n; i++)
+            {
+                preSum = preSum + arr[i];
+                if (preSum == sum)
+                {
+                    res = i + 1;
+                }
+
+                if (map.ContainsKey(preSum - sum))
+                {
+                    res = Math.Max(res, i - map[preSum - sum]);
+                }
+
+                if (!map.ContainsKey(preSum))
+                {
+                    map.Add(preSum, i);
+                }
+            }
+
+            return res;
+        }
+
+        // Given binary array, count sub array with equal no of 0 and 1's.
+        public static int CountSubarrWithEqualZeroAndOne(int[] arr, int n)
+        {
+            Dictionary<int, int> m = new Dictionary<int, int>();
+            int preSum = 0, count = 0;
+            for (int i = 0; i < n; i++)
+            {
+                preSum = preSum + ((arr[i] == 0) ? -1 : 1);
+
+                if (preSum == 0)
+                {
+                    count++;
+                }
+
+                if (m.ContainsKey(preSum))
+                {
+                    count = count + m[preSum];
+
+                }
+
+                if (m.ContainsKey(preSum))
+                {
+                    m[preSum]++;
+                }
+                else
+                {
+                    m.Add(preSum, 1);
+                }
+            }
+            return count;
+        }
+
+        //Given two integer arrays. Sort the first array such that all the relative positions of the elements in the first array are the same as the elements in the second array.
+        //See example for better understanding.
+        //Input:
+        //N = 11, M = 4
+        //A1[] = {2,1,2,5,7,1,9,3,6,8,8}
+        //A2[] = {2,1,8,3}
+        //Output: 2 2 1 1 8 8 3 5 6 7 9
+        public static void RelativeSorting(int[] A1, int N, int[] A2, int M)
+        {
+            Dictionary<int, int> map = new Dictionary<int, int>();
+
+            for (int i = 0; i < N; i++)
+            {
+                if (map.ContainsKey(A1[i]))
+                {
+                    map[A1[i]]++;
+                }
+                else
+                {
+                    map.Add(A1[i], 1);
+                }
+            }
+
+            int index = 0;
+            for (int i = 0; i < M; i++)
+            {
+                if (map.ContainsKey(A2[i]))
+                {
+                    int count = map[A2[i]];
+                    for (int j = 1; j <= count; j++)
+                    {
+                        A1[index] = A2[i];
+                        index++;
+                    }
+
+                    map.Remove(A2[i]);
+                }
+            }
+
+            List<int> al = new List<int>();
+
+            foreach (var kvp in map)
+            {
+                int key = kvp.Key;
+                int count = kvp.Value;
+                for (int i = 1; i <= count; i++)
+                {
+                    al.Add(key);
+                }
+            }
+
+            al.Sort();
+
+            foreach (int n in al)
+            {
+                A1[index] = n;
+                index++;
+            }
+        }
+
+        //Given an array of positive integers. Find the length of the longest sub-sequence such that elements in the subsequence are consecutive integers, the consecutive numbers can be in any order.
+        //Input:
+        //N = 7
+        //a[] = {2,6,1,9,4,5,3}
+        //Output: 6
+        //Explanation: The consecutive numbers
+        //here are 1, 2, 3, 4, 5, 6. These 6 
+        //numbers form the longest consecutive
+        //subsquence.
+        public static int FindLongestConseqSubseq(int[] arr, int N)
+        {
+            HashSet<int> s = new HashSet<int>();
+
+            for (int i = 0; i < N; i++)
+            {
+                s.Add(arr[i]);
+            }
+
+            int res = 0;
+            for (int i = 0; i < N; i++)
+            {
+                if (!s.Contains(arr[i] - 1))
+                {
+                    int j = arr[i];
+                    while (s.Contains(j))
+                    {
+                        j++;
+                    }
+                    if (res < (j - arr[i]))
+                    {
+                        res = (j - arr[i]);
+                    }
+                }
+            }
             return res;
         }
     }
