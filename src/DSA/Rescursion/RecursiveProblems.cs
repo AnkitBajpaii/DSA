@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DSA.Strings;
+using System;
 
 namespace DSA.Rescursion
 {
@@ -185,11 +186,11 @@ namespace DSA.Rescursion
 
             for (int i = l; i <= r; i++)
             {
-                str = Util.Swap(str, i, l);
+                str = StringUtil.Swap(str, i, l);
 
                 PermutationOfString_Method2(str, l + 1, r);
 
-                str = Util.Swap(str, i, l);
+                str = StringUtil.Swap(str, i, l);
             }
         }
 
