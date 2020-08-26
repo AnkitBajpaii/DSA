@@ -210,5 +210,103 @@ namespace DSA.Strings
             }
         }
 
+        //Find Longest proper prefix suffix array i.e LPS array
+        //O(n*n) solution
+        public static int LongestProperPrefixWhichIsAlsoSuffix(string s, int n)
+        {
+            for (int len = n - 1; len >= 0; len--)
+            {
+                bool flag = true;
+                for (int i = 0; i < len; i++)
+                {
+                    if (s[i] != s[n - len + i])
+                    {
+                        flag = false;
+                        break;
+                    }
+                }
+
+                if (flag == true)
+                {
+                    return len;
+                }
+            }
+
+            return 0;
+        }
+
+        // Given a string, construct LPS array.
+        //O(n*n*n) solution
+        public static void FillLPSNaive(string s, int[] lps)
+        {
+            for (int i = 0; i < s.Length; i++)
+            {
+                LongestProperPrefixWhichIsAlsoSuffix(s, i + 1);
+            }
+        }
+
+        // Given a string, construct LPS array.
+        //O(n) solution
+        public static void FillLPSEfficient(string s, int[] lps)
+        {
+            int i = 0, len = 0, n = s.Length;
+            lps[0] = 0;
+            while (i < n)
+            {
+                if (s[i] == s[len])
+                {
+                    len++;
+                    lps[i] = len;
+                    i++;
+                }
+                else
+                {
+                    if (len == 0)
+                    {
+                        lps[i] = 0;
+                        i++;
+                    }
+                    else
+                    {
+                        len = lps[len - 1];
+                    }
+                }
+
+            }
+        }
+
+        // KMP Pattern Matching Algorithm
+        public static void KMPAlgorithm(string txt, string pat)
+        {
+            int n = txt.Length, m = pat.Length;
+            int[] lps = new int[m];
+            FillLPSEfficient(pat, lps);
+
+            int i = 0, j = 0;
+            while (i < n)
+            {
+                if (pat[j] == txt[i])
+                {
+                    i++;
+                    j++;
+                }
+                if (j == m)
+                {
+                    Console.WriteLine(i - j + " ");
+                    j = lps[j - 1];
+                }
+                else if (i < n && pat[j] != txt[i])
+                {
+                    if (j == 0)
+                    {
+                        i++;
+                    }
+                    else
+                    {
+                        j = lps[j - 1];
+                    }
+                }
+            }
+        }
     }
 }
