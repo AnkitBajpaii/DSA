@@ -94,7 +94,7 @@ namespace DSA.Strings
             int n = s.Length, start = 0;
             for (int end = 0; end < n; end++)
             {
-                if(s[end] == ' ')
+                if (s[end] == ' ')
                 {
                     StringUtil.Reverse(s, start, end - 1);
                     start = end + 1;
@@ -106,6 +106,109 @@ namespace DSA.Strings
             StringUtil.Reverse(s, 0, n - 1);
         }
 
+        //Given a pattern and a text, we need to print all index's occurrences of the pattern in the text
+        public static void NaivePatternSearching(string txt, string pat)
+        {
+            int n = txt.Length, m = pat.Length;
+            for (int i = 0; i <= n - m; i++)
+            {
+                int j;
+                for (j = 0; j < m; j++)
+                {
+                    if (pat[j] != txt[i + j])
+                    {
+                        break;
+                    }
+                }
+
+                if (j == m)
+                {
+                    Console.WriteLine(i + " ");
+                }
+            }
+        }
+
+        //Given a pattern with distinct characters and a text, we need to print all occurrences of the pattern in the text.
+        public static void NaivePatternSearchingWithDistinctPatternCharacters(string txt, string pat)
+        {
+            int n = txt.Length, m = pat.Length;
+            for (int i = 0; i <= n - m;)
+            {
+                int j;
+                for (j = 0; j < m; j++)
+                {
+                    if (pat[j] != txt[i + j])
+                    {
+                        break;
+                    }
+                }
+
+                if (j == m)
+                {
+                    Console.WriteLine(i + " ");
+                }
+
+                if (j == 0)
+                {
+                    i++;
+                }
+                else
+                {
+                    i = i + j;
+                }
+            }
+        }
+
+        //Rabin Karp Algorithm
+        public static void RabinKarpPatternSearchAlgo(string txt, string pat, int d, int q)
+        {
+            int n = txt.Length, m = pat.Length, h = 1;
+
+            // compute pow(d, m-1)
+            for (int i = 1; i <= m - 1; i++)
+            {
+                h = (h * d) % q;
+            }
+
+            // compute p and t0
+            int p = 0, t = 0;
+            for (int i = 0; i < m; i++)
+            {
+                p = (p * d + pat[i]) % q;
+                t = (t * d + txt[i]) % q;
+            }
+
+            //slide through txt, compare hashes, validate spurious hits and compute hash for next window
+            for (int i = 0; i <= n - m; i++)
+            {
+                if (p == t)
+                {
+                    bool flag = true;
+
+                    for (int j = 0; j < m; j++)
+                    {
+                        if (pat[j] != txt[i + j])
+                        {
+                            flag = false;
+                            break;
+                        }
+                    }
+                    if (flag == true)
+                    {
+                        Console.WriteLine(i + " ");
+                    }
+                }
+
+                if (i < n - m)
+                {
+                    t = (d * (t - txt[i] * h) + txt[i + m]) % q;
+                    if (t < 0)
+                    {
+                        t = t + q;
+                    }
+                }
+            }
+        }
 
     }
 }
