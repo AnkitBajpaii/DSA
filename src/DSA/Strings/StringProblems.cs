@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace DSA.Strings
@@ -129,7 +130,7 @@ namespace DSA.Strings
         }
 
         //Given a pattern with distinct characters and a text, we need to print all occurrences of the pattern in the text.
-        public static void NaivePatternSearchingWithDistinctPatternCharacters(string txt, string pat)
+        public static void NaivePatternSearching_PatternHasDistinctCharacters(string txt, string pat)
         {
             int n = txt.Length, m = pat.Length;
             for (int i = 0; i <= n - m;)
@@ -160,10 +161,12 @@ namespace DSA.Strings
         }
 
         //Rabin Karp Algorithm
-        public static void RabinKarpPatternSearchAlgo(string txt, string pat, int d, int q)
+        public static void RabinKarpPatternSearchAlgo(string txt, string pat)
         {
-            int n = txt.Length, m = pat.Length, h = 1;
+            int n = txt.Length, m = pat.Length;
+            int d = 5, q = 9973;
 
+            int h = 1;
             // compute pow(d, m-1)
             for (int i = 1; i <= m - 1; i++)
             {
@@ -307,6 +310,387 @@ namespace DSA.Strings
                     }
                 }
             }
+        }
+
+        //Given string s1 and a string s2, write a snippet to say whether s2 is a rotation of s1
+        public static bool AreRotations(string s1, string s2)
+        {
+            if (s1.Length != s2.Length)
+            {
+                return false;
+            }
+
+            return (s1 + s1).IndexOf(s1) >= 0;
+        }
+
+        //Given a text and a pattern, the task is to find if there is anagram of pattern present in text
+        public static bool IsPatternAnagramInText(string txt, string pat)
+        {
+            int n = txt.Length, m = pat.Length;
+            const int CHAR = 256;
+            int[] CT = new int[CHAR];
+            int[] CP = new int[CHAR];
+
+            for (int i = 0; i < m; i++)
+            {
+                CT[txt[i]]++;
+                CP[pat[i]]++;
+            }
+
+            for (int i = m; i < n; i++)
+            {
+                if (AreSame(CT, CP, CHAR))
+                {
+                    return true;
+                }
+
+                CT[txt[i]]++;
+                CT[txt[i - m]]--;
+
+            }
+            return false;
+        }
+
+        private static bool AreSame(int[] arr1, int[] arr2, int n)
+        {
+            for (int i = 0; i < n; i++)
+            {
+                if (arr1[i] != arr2[i])
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        //Given a string, we need to find lexicographic rank of a string
+        public static int LexographicRank(string s)
+        {
+            int n = s.Length;
+            const int CHAR = 256;
+            int[] count = new int[CHAR];
+            int mul = Util.Factorial_TailRecursive(n, 1);
+            int res = 1;
+            for (int i = 0; i < n; i++)
+            {
+                count[s[i]]++;
+            }
+
+            for (int i = 1; i < CHAR; i++)
+            {
+                count[i] = count[i - 1] + count[i];
+            }
+
+            for (int i = 1; i < n - 1; i++)
+            {
+                mul = mul / (n - i);
+                res = res + (count[s[i] - 1] * mul);
+                for (int j = s[i]; j < CHAR; j++)
+                {
+                    count[j]--;
+                }
+            }
+
+            return res;
+        }
+
+        //Given a string, find the longest substring with distinct characters
+        public static int LongestSubStrDistinct(string s)
+        {
+            const int CHAR = 256;
+            int[] prev = new int[CHAR];
+
+            Array.Fill(prev, -1);
+
+            int n = s.Length, res = 0;
+            int i = 0;
+            for (int j = 0; j < n; j++)
+            {
+                i = Math.Max(i, prev[s[j]] + 1);
+                int maxEnd = j - i + 1;
+                res = Math.Max(res, maxEnd);
+                prev[s[j]] = j;
+            }
+
+            return res;
+        }
+
+        //Given a binary string S. The task is to count the number of substrings that start and end with 1. 
+        //For example, if the input string is “00100101”, then there are three substrings “1001”, “100101” and “101”.
+        public static int BinarySubstring(int n, String str)
+        {
+            int m = 0;
+            for (int i = 0; i < n; i++)
+            {
+                if (str[i] == '1')
+                {
+                    m++;
+                }
+            }
+
+            return m * (m - 1) / 2;
+        }
+
+        //Given two strings 'str1' and 'str2', check if these two strings are isomorphic to each other.
+        //Two strings str1 and str2 are called isomorphic if there is a one to one mapping possible for every character of str1 to every character of str2 while preserving the order.
+        //Note: All occurrences of every character in ‘str1’ should map to the same character in ‘str2’
+        public static bool AreIsomorphic(string S1, string S2)
+        {
+            if (S1.Length != S2.Length)
+            {
+                return false;
+            }
+            bool[] marked = new bool[256];
+
+            Array.Fill(marked, false);
+
+            int[] index = new int[256];
+            Array.Fill(index, -1);
+
+            for (int i = 0; i < S1.Length; i++)
+            {
+                if (index[S1[i]] == -1)
+                {
+                    if (marked[S2[i]] == true)
+                    {
+                        return false;
+                    }
+
+                    marked[S2[i]] = true;
+                    index[S1[i]] = S2[i];
+
+                }
+                else if (index[S1[i]] != S2[i])
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        //Given a string S of lowercase alphabets, check if it is isogram or not. An Isogram is a string in which no letter occurs more than once.
+        public static bool IsIsogram(string data)
+        {
+            bool[] visited = new bool[256];
+
+            for (int i = 0; i < data.Length; i++)
+            {
+                if (visited[data[i]] == true)
+                {
+                    return false;
+                }
+
+                visited[data[i]] = true;
+            }
+            return true;
+        }
+
+        //You are given a string S of alphabet characters and the task is to find its matching decimal representation as on the shown keypad. Output the decimal representation corresponding to the string. For ex: if you are given “amazon” then its corresponding decimal representation will be 262966.
+        public static String PrintNumber(string s)
+        {
+            s = s.ToUpper();
+            int n = s.Length;
+
+            int[] map = new int[26];
+            char c = 'A';
+            for (int i = 2; i <= 6; i++)
+            {
+                int j;
+                for (j = 0; j < 3; j++)
+                {
+                    map[c + j - 'A'] = i;
+                }
+
+                c = (char)(c + j);
+            }
+
+            // c= 'P'
+            for (int i = 0; i < 4; i++)
+            {
+                map[c - 'A'] = 7;
+                c++;
+            }
+
+            // c ='T'
+            for (int i = 0; i < 3; i++)
+            {
+                map[c - 'A'] = 8;
+                c++;
+            }
+
+            // c ='W'
+            for (int i = 0; i < 4; i++)
+            {
+                map[c + i - 'A'] = 9;
+            }
+
+            StringBuilder sb = new StringBuilder();
+
+            for (int i = 0; i < n; i++)
+            {
+
+                if (s[i] >= 'A' && s[i] <= 'Z')
+                {
+                    sb.Append(map[s[i] - 'A']);
+                }
+            }
+
+            return sb.ToString();
+        }
+
+        //Given a string str. The task is to find the maximum occurring character in the string str. If more than one character occurs the maximum number of time then print the lexicographically smaller character.
+        public static char GetMaxOccuringChar(String line)
+        {
+            int n = line.Length;
+            int[] index = new int[256];
+            int max = 1;
+            char c = (char)255;
+
+            for (int i = 0; i < n; i++)
+            {
+                index[line[i]]++;
+
+                if (index[line[i]] > max)
+                {
+                    max = index[line[i]];
+                    c = line[i];
+                }
+                else if (index[line[i]] == max)
+                {
+                    if (line[i] < c)
+                    {
+                        c = line[i];
+                    }
+                }
+            }
+
+            return c == (char)255 ? ' ' : c;
+
+        }
+
+        //Given a string check if it is Pangram or not. A pangram is a sentence containing every letter in the English Alphabet.
+        public static bool CheckPangram(string s)
+        {
+            bool[] visited = new bool[26];
+
+            Array.Fill(visited, false);
+
+            for (int i = 0; i < s.Length; i++)
+            {
+                if (s[i] >= 97 && s[i] <= 122)
+                {
+                    visited[s[i] - 'a'] = true;
+                }
+                else if (s[i] >= 65 && s[i] <= 90)
+                {
+                    visited[s[i] - 'A'] = true;
+                }
+            }
+
+            for (int i = 0; i < 26; i++)
+            {
+                if (visited[i] == false)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        //Given a string str and another string patt. Find the character in patt that is present at the minimum index in str. If no character of patt is present in str then print ‘No character present’.
+        public static int MinIndexChar(string str, string pat)
+        {
+            int n = str.Length;
+            int m = pat.Length;
+
+            int[] visited = new int[256];
+            for (int i = 0; i < 256; i++)
+            {
+                visited[i] = -1;
+            }
+
+            for (int i = n - 1; i >= 0; i--)
+            {
+                visited[str[i]] = i;
+            }
+
+            int res = Int32.MaxValue;
+            for (int i = 0; i < m; i++)
+            {
+                if (visited[pat[i]] != -1)
+                {
+                    if (visited[pat[i]] < res)
+                    {
+                        res = visited[pat[i]];
+                    }
+                }
+            }
+
+            return res == Int32.MaxValue ? -1 : res;
+        }
+
+        //Given two strings. Find the smallest window in the first string consisting of all the characters of the second string.
+        public static string SmallestWindow(string S, string P)
+        {
+            int n = S.Length, m = P.Length;
+            if (n < m)
+            {
+                return "-1";
+            }
+
+            int[] hash_str = new int[256];
+            int[] hash_pat = new int[256];
+
+            for (int i = 0; i < m; i++)
+            {
+                hash_pat[P[i]]++;
+            }
+
+            int count = 0, start = 0, startIndex = -1, minLen = Int32.MaxValue;
+
+            for (int i = 0; i < n; i++)
+            {
+                if (hash_pat[S[i]] != 0)
+                {
+                    hash_str[S[i]]++;
+
+                    if (hash_str[S[i]] <= hash_pat[S[i]])
+                    {
+                        count++;
+                    }
+
+                    if (count == m)
+                    {
+                        while (hash_pat[S[start]] == 0 || hash_str[S[start]] > hash_pat[S[start]])
+                        {
+
+                            if (hash_str[S[start]] > hash_pat[S[start]])
+                            {
+                                hash_str[S[start]]--;
+                            }
+
+                            start++;
+                        }
+
+                        int len = i - start + 1;
+                        if (len < minLen)
+                        {
+                            minLen = len;
+                            startIndex = start;
+                        }
+                    }
+                }
+            }
+
+            if (startIndex == -1)
+            {
+                return "-1";
+            }
+
+            return S.Substring(startIndex, startIndex + minLen);
         }
     }
 }
