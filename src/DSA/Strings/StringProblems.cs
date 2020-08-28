@@ -282,6 +282,7 @@ namespace DSA.Strings
         public static void KMPAlgorithm(string txt, string pat)
         {
             int n = txt.Length, m = pat.Length;
+
             int[] lps = new int[m];
             FillLPSEfficient(pat, lps);
 
@@ -382,7 +383,7 @@ namespace DSA.Strings
                 count[i] = count[i - 1] + count[i];
             }
 
-            for (int i = 1; i < n - 1; i++)
+            for (int i = 0; i < n - 1; i++)
             {
                 mul = mul / (n - i);
                 res = res + (count[s[i] - 1] * mul);
@@ -691,6 +692,81 @@ namespace DSA.Strings
             }
 
             return S.Substring(startIndex, startIndex + minLen);
+        }
+
+        //Given a string str and the task is to modify the string such that no three consecutive characters are same. In a single operation, any character can be inserted at any position in the string. Find the minimum number of such operations required.
+        public static long Modified(string str)
+        {
+            int n = str.Length;
+
+            int res = 0;
+            for (int i = 0; i < n - 2;)
+            {
+                if (str[i] == str[i + 1] && str[i] == str[i + 2])
+                {
+                    res++;
+                    i = i + 2;
+                }
+                else
+                {
+                    i++;
+                }
+            }
+
+            return res;
+        }
+
+        //Given a string S consisting of uppercase and lowercase characters. The task is to sort uppercase and lowercase letters separately such that if the ith place in the original string had an Uppercase character then it should not have a lowercase character after being sorted and vice versa.
+        public static string CaseSort(string str)
+        {
+            if (String.IsNullOrEmpty(str))
+            {
+                return str;
+            }
+
+            string lower = "", upper = "";
+            int n = str.Length;
+            for (int l = 0; l < n; l++)
+            {
+                char ch = str[l];
+                if (ch >= 65 && ch <= 90)
+                {
+                    upper = upper + ch;
+                }
+                else
+                {
+                    lower = lower + ch;
+                }
+            }
+
+            char[] temp = lower.ToCharArray();
+            Array.Sort(temp);
+            lower = temp.ToString();
+
+            temp = upper.ToCharArray();
+            Array.Sort(temp);
+            upper = temp.ToString();
+
+            int i = 0, j = 0, k = 0;
+            string res = "";
+            while (k < n)
+            {
+                char ch = str[k];
+                if (ch >= 65 && ch <= 90)
+                {
+                    res = res + upper[j];
+                    j++;
+                }
+                else
+                {
+                    res = res + lower[i];
+                    i++;
+                }
+
+                k++;
+            }
+
+            return res;
         }
     }
 }
