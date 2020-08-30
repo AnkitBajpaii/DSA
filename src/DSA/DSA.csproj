@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="LinkedList\" />
     <Folder Include="Graph\" />
     <Folder Include="PriorityQueue\" />
     <Folder Include="Tree\" />
