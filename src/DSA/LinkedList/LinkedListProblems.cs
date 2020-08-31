@@ -615,7 +615,7 @@ namespace DSA.LinkedList
         // Check if linked list is Palindrome
         public static bool IsPalindrome(Node head)
         {
-            if (head == null || head.Next == null)
+            if (head == null || head.Next == null || (head.Next.Next == null && head.Data == head.Next.Data))
             {
                 return true;
             }
@@ -779,10 +779,87 @@ namespace DSA.LinkedList
 
         // Add two numbers represented by linked lists
         // Given two numbers represented by two linked lists of size N and M. The task is to return a sum list. The sum list is a linked list representation of the addition of two input numbers.
-        public static Node AddTwoLists(Node first, Node second)
+        //Input:
+        //N = 2
+        //valueN[] = {4,5}
+        //M = 3
+        //valueM[] = {3,4,5}
+        //Output: 3 9 0  
+        public static Node addLists(Node first, Node second)
         {
-            // code here
-            // return head of sum list
+            if (first == null)
+            {
+                return second;
+            }
+
+            if (second == null)
+            {
+                return first;
+            }
+
+            first = ReverseLinkedList_Iterative(first);
+            second = ReverseLinkedList_Iterative(second);
+            Node head = SumTwoLists(first, second);
+            head = ReverseLinkedList_Iterative(head);
+            return head;
         }
+
+        public static Node SumTwoLists(Node first, Node second)
+        {
+            if (first == null)
+            {
+                return second;
+            }
+
+            if (second == null)
+            {
+                return first;
+            }
+
+            Node head = new Node(0);
+            Node curr = head;
+            int carry = 0;
+            while (first != null && second != null)
+            {
+                int sum = first.Data + second.Data + carry;
+                carry = sum / 10;
+                sum = sum % 10;
+                curr.Next = new Node(sum);
+                curr = curr.Next;
+                first = first.Next;
+                second = second.Next;
+            }
+
+            if (first != null)
+            {
+                if (carry != 0)
+                {
+                    curr.Next = SumTwoLists(first, new Node(carry));
+                }
+                else
+                {
+                    curr.Next = first;
+                }
+            }
+            else if (second != null)
+            {
+                if (carry != 0)
+                {
+                    curr.Next = SumTwoLists(second, new Node(carry));
+                }
+                else
+                {
+                    curr.Next = second;
+                }
+            }
+            else if (carry != 0)
+            {
+                curr.Next = new Node(carry);
+            }
+
+            return head.Next;
+        }
+
+        // Sort the linked list using Merge Sort
     }
 }
