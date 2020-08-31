@@ -1,24 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace DSA.LinkedList
 {
-    public class Node
-    {
-        public int Data;
-        public Node Next;
-        public Node(int data) : this(data, null)
-        {
-        }
-
-        public Node(int data, Node next)
-        {
-            this.Data = data;
-            this.Next = next;
-        }
-    }
-
     public class LinkedListProblems
     {
         //Find the middle of a linked list of a given linked list
@@ -40,7 +23,7 @@ namespace DSA.LinkedList
         }
 
         //Find the n-th node from the end of a given linked list.
-        public static Node FindNtNodeFromEnd(Node head, int n)
+        public static Node FindNthNodeFromEnd(Node head, int n)
         {
             if (head == null)
             {
@@ -111,7 +94,6 @@ namespace DSA.LinkedList
             Node restHead = ReverseLinkedList_Recursive(head.Next);
             Node restTail = head.Next;
             restTail.Next = head;
-            head.Next = null;
             return restHead;
         }
 
@@ -291,6 +273,324 @@ namespace DSA.LinkedList
             }
 
             fast.Next = null;
+        }
+
+        // Delete node with only one pointer given to it
+        public static void DeleteNode(Node p)
+        {
+            if (p.Next == null)
+            {
+                return;
+            }
+
+            p.Data = p.Next.Data;
+            Node temp = p.Next;
+            p.Next = p.Next.Next;
+            temp.Next = null;
+        }
+
+        // Seggregate even and odd nodes of linked list
+        public static Node SeggregateEvenOdd(Node head)
+        {
+            Node evenStart = null, evenEnd = null, oddStart = null, oddEnd = null;
+            for (Node curr = head; curr != null; curr = curr.Next)
+            {
+                int data = curr.Data;
+
+                if (data % 2 == 0)
+                {
+                    if (evenStart == null)
+                    {
+                        evenStart = curr;
+                        evenEnd = evenStart;
+                    }
+                    else
+                    {
+                        evenEnd.Next = curr;
+                        evenEnd = evenEnd.Next;
+                    }
+                }
+                else
+                {
+
+                    if (oddStart == null)
+                    {
+                        oddStart = curr;
+                        oddEnd = oddStart;
+                    }
+                    else
+                    {
+                        oddEnd.Next = curr;
+                        oddEnd = oddEnd.Next;
+                    }
+                }
+            }
+
+            if (evenStart == null || oddStart == null)
+            {
+                return head;
+            }
+
+            evenEnd.Next = oddStart;
+            oddEnd.Next = null;
+
+            return evenStart;
+        }
+
+        public static int Length(Node head)
+        {
+            int len = 0;
+            Node curr = head;
+            while (curr != null)
+            {
+                len++;
+                curr = curr.Next;
+            }
+
+            return len;
+        }
+
+        // Find Intersection of two linked list
+        public static Node IntersectionPoint(Node head1, Node head2)
+        {
+            Node curr1 = head1, curr2 = head2;
+
+            int len1 = Length(curr1);
+            int len2 = Length(curr2);
+
+            int d;
+            if (len1 > len2)
+            {
+                d = len1 - len2;
+            }
+            else
+            {
+                d = len2 - len1;
+                Node t = curr2;
+                curr1 = curr2;
+                curr2 = t;
+            }
+
+            for (int i = 0; i < d; i++)
+            {
+                curr1 = curr1.Next;
+            }
+
+            while (curr1 != null && curr2 != null)
+            {
+                if (curr1 == curr2)
+                {
+                    return curr1;
+                }
+
+                curr1 = curr1.Next;
+                curr2 = curr2.Next;
+            }
+
+            return null;
+        }
+
+        // Pairwise swap nodes of linked list
+        // This method swaps the data, so it data is large complex object, swap might be costly
+        public static void PairWiseSwap_Method1(Node head)
+        {
+            Node curr = head;
+            while (curr != null && curr.Next != null)
+            {
+                int data = curr.Data;
+                curr.Data = curr.Next.Data;
+                curr.Next.Data = data;
+
+                curr = curr.Next.Next;
+            }
+        }
+
+        // Pairwise swap nodes of linked list
+        public static Node PairWiseSwap(Node head)
+        {
+            if (head == null || head.Next == null)
+            {
+                return head;
+            }
+
+            Node curr = head.Next.Next;
+
+            Node prev = head;
+            head = head.Next;
+            head.Next = prev;
+
+            while (curr != null && curr.Next != null)
+            {
+                prev.Next = curr.Next;
+
+                Node next = curr.Next.Next;
+                curr.Next.Next = curr;
+
+                prev = curr;
+                curr = next;
+            }
+
+            prev.Next = curr;
+            return head;
+        }
+
+        // Clone LinkedList using random pointer - method 1 using HashTable
+        public static Node CloneWithRandomPointer_Method1(Node head)
+        {
+            Dictionary<int, Node> hashMap = new Dictionary<int, Node>();
+            for (Node curr = head; curr != null; curr = curr.Next)
+            {
+                hashMap.Add(curr.Data, new Node { Data = curr.Data });
+            }
+
+            for (Node curr = head; curr != null; curr = curr.Next)
+            {
+                Node cloned = hashMap[curr.Data];
+                cloned.Next = hashMap[curr.Next.Data];
+                cloned.Random = hashMap[curr.Random.Data];
+            }
+
+            return hashMap[head.Data];
+        }
+
+        //  Clone LinkedList using random pointer - method 2 Tricky solution
+        public static Node CloneWithRandomPointer_Method2(Node head)
+        {
+            // step 1 insert new nodes in between
+            for (Node curr = head; curr != null;)
+            {
+                Node next = curr.Next;
+                curr.Next = new Node { Data = curr.Data };
+                curr.Next.Next = next;
+
+                curr = next;
+            }
+
+            // step 2 update random pointer for new nodes
+            for (Node curr = head; curr != null; curr = curr.Next.Next)
+            {
+                curr.Next.Random = curr.Random != null ? curr.Random.Next : null;
+            }
+
+            // step3 extract out new nodes
+            Node dummy = new Node { Data = -1 };
+            Node currClone = dummy;
+
+            for (Node curr = head; curr != null && curr.Next != null; curr = curr.Next.Next)
+            {
+                currClone.Next = curr.Next;
+
+                currClone = currClone.Next;
+            }
+
+            Node clonedHead = dummy.Next;
+            dummy.Next = null;
+
+            return clonedHead;
+        }
+
+        // LRU Cache Design
+        public static void LRUCacheDesign()
+        {
+            LRUCache cache = new LRUCache(4);
+
+            cache.Refer(10);
+            cache.Refer(20);
+            cache.Refer(10);
+            cache.Refer(30);
+            cache.Refer(40);
+            cache.Refer(50);
+            cache.Refer(30);
+            cache.Refer(40);
+            cache.Refer(60);
+            cache.Refer(30);
+        }
+
+        //Merge Two Sorted Linked List
+        public static Node Merge(Node a, Node b)
+        {
+            if (a == null)
+            {
+                return b;
+            }
+
+            if (b == null)
+            {
+                return a;
+            }
+
+            Node head, tail;
+            if (a.Data <= b.Data)
+            {
+                head = a;
+                tail = a;
+                a = a.Next;
+            }
+            else
+            {
+                head = b;
+                tail = b;
+                b = b.Next;
+            }
+
+            while (a != null && b != null)
+            {
+                if (a.Data <= b.Data)
+                {
+                    tail.Next = a;
+                    tail = a;
+                    a = a.Next;
+                }
+                else
+                {
+                    tail.Next = b;
+                    tail = b;
+                    b = b.Next;
+                }
+            }
+
+            if (a != null)
+            {
+                tail.Next = a;
+            }
+
+            if (b != null)
+            {
+                tail.Next = b;
+            }
+
+            return head;
+        }
+
+        // Check if linked list is Palindrome
+        public static bool IsPalindrome(Node head)
+        {
+            if (head == null || head.Next == null)
+            {
+                return true;
+            }
+
+            Node slow = head, fast = head;
+            while (fast.Next != null && fast.Next.Next != null)
+            {
+                slow = slow.Next;
+                fast = fast.Next.Next;
+            }
+
+            Node rev = ReverseLinkedList_Iterative(slow.Next);
+            Node curr = head;
+            while (rev != null)
+            {
+                if (rev.Data != curr.Data)
+                {
+                    return false;
+                }
+
+                rev = rev.Next;
+                curr = curr.Next;
+            }
+
+            return true;
         }
     }
 }
