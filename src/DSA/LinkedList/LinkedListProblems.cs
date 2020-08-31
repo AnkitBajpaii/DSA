@@ -4,7 +4,29 @@ namespace DSA.LinkedList
 {
     public class LinkedListProblems
     {
-        //Find the middle of a linked list of a given linked list
+        // Given a linked list of size N and a key. The task is to insert the key in the middle of the linked list.
+        public static Node InsertInMid(Node head, int data)
+        {
+            if (head == null)
+            {
+                head = new Node(data);
+                return head;
+            }
+
+            Node slow = head, fast = head;
+            while (fast.Next != null && fast.Next.Next != null)
+            {
+                slow = slow.Next;
+                fast = fast.Next.Next;
+            }
+
+            Node node = new Node(data);
+            node.Next = slow.Next;
+            slow.Next = node;
+            return head;
+        }
+
+        // Find the middle of a linked list of a given linked list
         public static Node FindMiddle(Node head)
         {
             if (head == null || head.Next == null)
@@ -22,7 +44,7 @@ namespace DSA.LinkedList
             return slow;
         }
 
-        //Find the n-th node from the end of a given linked list.
+        // Find the n-th node from the end of a given linked list.
         public static Node FindNthNodeFromEnd(Node head, int n)
         {
             if (head == null)
@@ -51,7 +73,7 @@ namespace DSA.LinkedList
             return second;
         }
 
-        //Reverse Linked List
+        // Reverse Linked List
         public static Node ReverseLinkedList_Iterative(Node head)
         {
             Node curr = head, prev = null;
@@ -158,7 +180,7 @@ namespace DSA.LinkedList
             return head;
         }
 
-        //Detect Loop In LinkedList - Floyd Cycle Detection
+        // Detect Loop In LinkedList - Floyd Cycle Detection
         public static bool DetectLoop(Node head)
         {
             Node slow = head, fast = head;
@@ -177,7 +199,7 @@ namespace DSA.LinkedList
             return false;
         }
 
-        //Detect Loop and Find the Length of Cycle
+        // Detect Loop and Find the Length of Cycle
         public static int DetectLoopAndFindLengthOfCycle(Node head)
         {
             Node slow = head, fast = head;
@@ -245,6 +267,23 @@ namespace DSA.LinkedList
         // Detect Loop and break the loop
         public static void DetectLoopAndBreakIt(Node head)
         {
+            if (head == null || head.Next == null)
+            {
+                return;
+            }
+
+            if (head.Next == head)
+            {
+                head.Next = null;
+                return;
+            }
+
+            if (head.Next.Next == head)
+            {
+                head.Next.Next = null;
+                return;
+            }
+
             Node slow = head, fast = head;
 
             while (fast != null && fast.Next != null)
@@ -258,8 +297,20 @@ namespace DSA.LinkedList
                 }
             }
 
-            if (slow != fast)
+            if (fast == null || fast.Next == null || slow != fast)
             {
+                return;
+            }
+
+            if (fast == head)
+            {
+                fast = fast.Next;
+                while (fast.Next != head)
+                {
+                    fast = fast.Next;
+                }
+
+                fast.Next = null;
                 return;
             }
 
@@ -453,7 +504,7 @@ namespace DSA.LinkedList
             return hashMap[head.Data];
         }
 
-        //  Clone LinkedList using random pointer - method 2 Tricky solution
+        // Clone LinkedList using random pointer - method 2 Tricky solution
         public static Node CloneWithRandomPointer_Method2(Node head)
         {
             // step 1 insert new nodes in between
@@ -506,57 +557,56 @@ namespace DSA.LinkedList
             cache.Refer(30);
         }
 
-        //Merge Two Sorted Linked List
-        public static Node Merge(Node a, Node b)
+        // Merge Two Sorted Linked List
+        public static Node MergeSorted(Node headA, Node headB)
         {
-            if (a == null)
+            if (headA == null)
             {
-                return b;
+                return headB;
             }
 
-            if (b == null)
+            if (headB == null)
             {
-                return a;
+                return headA;
             }
 
             Node head, tail;
-            if (a.Data <= b.Data)
+            if (headA.Data <= headB.Data)
             {
-                head = a;
-                tail = a;
-                a = a.Next;
+                head = headA;
+                tail = headA;
+                headA = headA.Next;
             }
             else
             {
-                head = b;
-                tail = b;
-                b = b.Next;
+                head = headB;
+                tail = headB;
+                headB = headB.Next;
             }
 
-            while (a != null && b != null)
+            while (headA != null && headB != null)
             {
-                if (a.Data <= b.Data)
+                if (headA.Data <= headB.Data)
                 {
-                    tail.Next = a;
-                    tail = a;
-                    a = a.Next;
+                    tail.Next = headA;
+                    tail = headA;
+                    headA = headA.Next;
                 }
                 else
                 {
-                    tail.Next = b;
-                    tail = b;
-                    b = b.Next;
+                    tail.Next = headB;
+                    tail = headB;
+                    headB = headB.Next;
                 }
             }
 
-            if (a != null)
+            if (headA != null)
             {
-                tail.Next = a;
+                tail.Next = headA;
             }
-
-            if (b != null)
+            else if (headB != null)
             {
-                tail.Next = b;
+                tail.Next = headB;
             }
 
             return head;
@@ -591,6 +641,148 @@ namespace DSA.LinkedList
             }
 
             return true;
+        }
+
+        // Remove duplicates from sorted linked list
+        public static Node RemoveDuplicatesFromSortedList(Node root)
+        {
+            if (root == null || root.Next == null)
+            {
+                return root;
+            }
+
+            Node curr = root;
+            while (curr != null)
+            {
+                while (curr.Next != null && curr.Data == curr.Next.Data)
+                {
+                    Node next = curr.Next;
+                    curr.Next = next.Next;
+                    next.Next = null;
+                }
+
+                curr = curr.Next;
+            }
+            return root;
+        }
+
+        // Given an unsorted linked list of N nodes. The task is to remove duplicate elements from this unsorted Linked List. When a value appears in multiple nodes, the node which appeared first should be kept, all others duplicates are to be removed.
+        public static Node RemoveDuplicatesFromUnsortedLinkedLIst(Node head)
+        {
+            if (head == null || head.Next == null)
+            {
+                return head;
+            }
+
+            HashSet<int> hashSet = new HashSet<int>();
+            Node curr = head, prev = null;
+            while (curr != null)
+            {
+                Node next = curr.Next;
+                if (hashSet.Contains(curr.Data))
+                {
+                    prev.Next = next;
+                    curr.Next = null;
+                }
+                else
+                {
+                    hashSet.Add(curr.Data);
+                    prev = curr;
+                }
+                curr = next;
+            }
+            return head;
+        }
+
+        //Given a singly linked list of size N, and an integer K. You need to swap the Kth node from beginning and Kth node from the end in the linked list.
+        //Note: You need to swap the nodes through the links and not changing the content of the nodes.
+        public static Node Swapkthnode(Node head, int N, int K)
+        {
+            if (K > N)
+                return head;
+            if (2 * K - 1 == N)
+                return head;
+
+            Node x_prev = null;
+            Node x = head;
+
+            Node y_prev = null;
+            Node y = head;
+
+            int count = K - 1;
+            while (count-- > 0)
+            {
+                x_prev = x;
+                x = x.Next;
+            }
+
+            count = N - K;
+            while (count-- > 0)
+            {
+                y_prev = y;
+                y = y.Next;
+            }
+
+            if (x_prev != null)
+                x_prev.Next = y;
+            if (y_prev != null)
+                y_prev.Next = x;
+
+            Node temp = x.Next;
+            x.Next = y.Next;
+            y.Next = temp;
+
+            if (K == 1)
+                head = y;
+            if (K == N)
+                head = x;
+            return head;
+        }
+
+        // Rotate Linked List
+        // Given a singly linked list of size N.The task is to rotate the linked list counter-clockwise by k nodes, where k is a given positive integer smaller than or equal to length of the linked list.
+        public Node RotateCounterClockwise(Node head, int k)
+        {
+            if (head == null || head.Next == null || k == 0)
+            {
+                return head;
+            }
+
+            Node tail1 = head;
+            for (int i = 0; i < k - 1; i++)
+            {
+                if (tail1 == null)
+                {
+                    return head;
+                }
+
+                tail1 = tail1.Next;
+            }
+
+            if (tail1 == null || tail1.Next == null)
+            {
+                return head;
+            }
+
+            Node first = head;
+            Node second = tail1.Next;
+            tail1.Next = null;
+            Node tail2 = second;
+            while (tail2.Next != null)
+            {
+                tail2 = tail2.Next;
+            }
+
+            tail2.Next = first;
+            return second;
+        }
+
+        // Add two numbers represented by linked lists
+        // Given two numbers represented by two linked lists of size N and M. The task is to return a sum list. The sum list is a linked list representation of the addition of two input numbers.
+        public static Node AddTwoLists(Node first, Node second)
+        {
+            // code here
+            // return head of sum list
         }
     }
 }

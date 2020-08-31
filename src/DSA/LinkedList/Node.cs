@@ -10,5 +10,13 @@ namespace DSA.LinkedList
         public Node Prev { get; set; }
         public Node Next { get; set; }
         public Node Random { get; set; }
+        public Node()
+        {
+
+        }
+        public Node(int data)
+        {
+            this.Data = data;
+        }
     }
 }
