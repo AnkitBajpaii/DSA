@@ -10,7 +10,6 @@
     <Folder Include="PriorityQueue\" />
     <Folder Include="Tree\" />
     <Folder Include="Queues\" />
-    <Folder Include="Stacks\" />
   </ItemGroup>
 
 </Project>

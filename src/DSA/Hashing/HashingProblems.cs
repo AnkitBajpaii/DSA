@@ -5,14 +5,14 @@ using System.Text;
 
 namespace DSA.Hashing
 {
-    class Node
-    {
-        public int FirstRepeatingIndex { get; set; }
-        public int Count { get; set; }
-    }
-
     public static class HashingProblems
     {
+        class Node
+        {
+            public int FirstRepeatingIndex { get; set; }
+            public int Count { get; set; }
+        }
+
         //Separate chaining technique in hashing allows to us to use a linked list at each hash slot to handle the problem of collisions. That is, every slot of the hash table is a linked list, so whenever a collision occurs, the element can be appened as a node to the linked list at the slot.
         public static List<List<int>> SeparateChaining(int[] arr, int n, int hashSize)
         {
