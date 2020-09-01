@@ -35,7 +35,7 @@ namespace DSA.LinkedList
             }
 
             Node slow = head, fast = head;
-            while (fast != null && fast.Next != null)
+            while (fast.Next != null && fast.Next.Next != null)
             {
                 slow = slow.Next;
                 fast = fast.Next.Next;
@@ -402,9 +402,9 @@ namespace DSA.LinkedList
         }
 
         // Find Intersection of two linked list
-        public static Node IntersectionPoint(Node head1, Node head2)
+        public static Node IntersectionPoint(Node headA, Node headB)
         {
-            Node curr1 = head1, curr2 = head2;
+            Node curr1 = headA, curr2 = headB;
 
             int len1 = Length(curr1);
             int len2 = Length(curr2);
@@ -417,7 +417,7 @@ namespace DSA.LinkedList
             else
             {
                 d = len2 - len1;
-                Node t = curr2;
+                Node t = curr1;
                 curr1 = curr2;
                 curr2 = t;
             }
@@ -507,37 +507,47 @@ namespace DSA.LinkedList
         // Clone LinkedList using random pointer - method 2 Tricky solution
         public static Node CloneWithRandomPointer_Method2(Node head)
         {
-            // step 1 insert new nodes in between
+            if (head == null)
+            {
+                return null;
+            }
+
+            if (head.Next == null)
+            {
+                return new Node(head.Data);
+            }
+
             for (Node curr = head; curr != null;)
             {
                 Node next = curr.Next;
-                curr.Next = new Node { Data = curr.Data };
+                curr.Next = new Node(curr.Data);
                 curr.Next.Next = next;
-
                 curr = next;
             }
 
-            // step 2 update random pointer for new nodes
-            for (Node curr = head; curr != null; curr = curr.Next.Next)
+            for (Node curr = head; curr != null;)
             {
-                curr.Next.Random = curr.Random != null ? curr.Random.Next : null;
+                if (curr.Next != null)
+                {
+                    curr.Next.Random = curr.Random != null ? curr.Random.Next : null;
+                }
+
+                curr = (curr.Next != null) ? curr.Next.Next : curr.Next;
             }
 
-            // step3 extract out new nodes
-            Node dummy = new Node { Data = -1 };
-            Node currClone = dummy;
 
-            for (Node curr = head; curr != null && curr.Next != null; curr = curr.Next.Next)
+            Node original = head, copy = head.Next;
+
+            Node temp = copy;
+            while (original != null && copy != null)
             {
-                currClone.Next = curr.Next;
+                original.Next = (original.Next != null) ? original.Next.Next : original.Next;
 
-                currClone = currClone.Next;
+                copy.Next = (copy.Next != null) ? copy.Next.Next : copy.Next;
+                original = original.Next;
+                copy = copy.Next;
             }
-
-            Node clonedHead = dummy.Next;
-            dummy.Next = null;
-
-            return clonedHead;
+            return temp;
         }
 
         // LRU Cache Design
@@ -545,20 +555,30 @@ namespace DSA.LinkedList
         {
             LRUCache cache = new LRUCache(4);
 
-            cache.Refer(10);
-            cache.Refer(20);
-            cache.Refer(10);
-            cache.Refer(30);
-            cache.Refer(40);
-            cache.Refer(50);
-            cache.Refer(30);
-            cache.Refer(40);
-            cache.Refer(60);
-            cache.Refer(30);
+            cache.Set(10, 10);
+            cache.Print();
+            cache.Set(20, 20);
+            cache.Print();
+            cache.Set(10, 10);
+            cache.Print();
+            cache.Set(30, 30);
+            cache.Print();
+            cache.Set(40, 40);
+            cache.Print();
+            cache.Set(50, 50);
+            cache.Print();
+            cache.Set(30, 30);
+            cache.Print();
+            cache.Set(40, 40);
+            cache.Print();
+            cache.Set(60, 60);
+            cache.Print();
+            cache.Set(30, 30);
+            cache.Print();
         }
 
-        // Merge Two Sorted Linked List
-        public static Node MergeSorted(Node headA, Node headB)
+        // Merge Two Sorted Single Linked List
+        public static Node MergeSortedSingleLinkedLists(Node headA, Node headB)
         {
             if (headA == null)
             {
@@ -574,42 +594,137 @@ namespace DSA.LinkedList
             if (headA.Data <= headB.Data)
             {
                 head = headA;
-                tail = headA;
                 headA = headA.Next;
             }
             else
             {
                 head = headB;
-                tail = headB;
                 headB = headB.Next;
             }
+
+            tail = head;
 
             while (headA != null && headB != null)
             {
                 if (headA.Data <= headB.Data)
                 {
                     tail.Next = headA;
-                    tail = headA;
                     headA = headA.Next;
                 }
                 else
                 {
                     tail.Next = headB;
-                    tail = headB;
                     headB = headB.Next;
                 }
+
+                tail = tail.Next;
             }
 
-            if (headA != null)
-            {
-                tail.Next = headA;
-            }
-            else if (headB != null)
+            if (headA == null)
             {
                 tail.Next = headB;
             }
+            else
+            {
+                tail.Next = headA;
+            }
 
             return head;
+        }
+
+        // Sort the single linked list using Merge Sort
+        public static Node MergeSort(Node head)
+        {
+            if (head == null || head.Next == null)
+            {
+                return head;
+            }
+
+            Node middle = FindMiddle(head);
+            Node nextofmiddle = middle.Next;
+            middle.Next = null;
+            Node left = MergeSort(head);
+            Node right = MergeSort(nextofmiddle);
+            Node sortedList = MergeSortedSingleLinkedLists(left, right);
+            return sortedList;
+        }
+
+        // Merge Two Sorted Double Linked List
+        public static Node MergeDLL(Node headA, Node headB)
+        {
+            if (headA == null)
+            {
+                return headB;
+            }
+
+            if (headB == null)
+            {
+                return headA;
+            }
+
+            Node head, tail;
+            if (headA.Data <= headB.Data)
+            {
+                head = headA;
+                headA = headA.Next;
+            }
+            else
+            {
+                head = headB;
+                headB = headB.Next;
+            }
+
+            tail = head;
+            while (headA != null && headB != null)
+            {
+                if (headA.Data <= headB.Data)
+                {
+                    tail.Next = headA;
+                    headA.Prev = tail;
+                    headA = headA.Next;
+
+                }
+                else
+                {
+                    tail.Next = headB;
+                    headB.Prev = tail;
+                    headB = headB.Next;
+                }
+
+                tail = tail.Next;
+            }
+
+            if (headA == null)
+            {
+                tail.Next = headB;
+                headB.Prev = tail;
+            }
+            else
+            {
+                tail.Next = headA;
+                headA.Prev = tail;
+            }
+
+            return head;
+        }
+
+        // Merge Sort Double Linked List
+        public static Node SortDoubly(Node head)
+        {
+            if (head == null || head.Next == null)
+            {
+                return head;
+            }
+
+            Node middle = FindMiddle(head);
+            Node nextofmiddle = middle.Next;
+            middle.Next = null;
+            nextofmiddle.Prev = null;
+
+            Node left = MergeSort(head);
+            Node right = MergeSort(nextofmiddle);
+            Node sortedList = MergeDLL(left, right);
+            return sortedList;
         }
 
         // Check if linked list is Palindrome
@@ -785,7 +900,7 @@ namespace DSA.LinkedList
         //M = 3
         //valueM[] = {3,4,5}
         //Output: 3 9 0  
-        public static Node addLists(Node first, Node second)
+        public static Node AddLists(Node first, Node second)
         {
             if (first == null)
             {
@@ -860,6 +975,79 @@ namespace DSA.LinkedList
             return head.Next;
         }
 
-        // Sort the linked list using Merge Sort
+        // Given a linked list of 0s, 1s and 2s, sort it.
+        // Given a linked list of N nodes where nodes can contain values 0s, 1s, and 2s only. The task is to segregate 0s, 1s, and 2s linked list such that all zeros segregate to head side, 2s at the end of the linked list, and 1s in the mid of 0s and 2s.
+        public static Node Segregate(Node head)
+        {
+            if (head == null || head.Next == null)
+            {
+                return head;
+            }
+
+            // dummy nodes
+            Node zeroD = new Node(0);
+            Node oneD = new Node(0);
+            Node twoD = new Node(0);
+
+            Node p0 = zeroD, p1 = oneD, p2 = twoD;
+            Node curr = head;
+            while (curr != null)
+            {
+                if (curr.Data == 0)
+                {
+
+                    p0.Next = curr;
+                    p0 = p0.Next;
+
+                }
+                else if (curr.Data == 1)
+                {
+
+                    p1.Next = curr;
+                    p1 = p1.Next;
+
+                }
+                else
+                {
+
+                    p2.Next = curr;
+                    p2 = p2.Next;
+
+                }
+
+                curr = curr.Next;
+            }
+
+            p0.Next = oneD.Next != null ? oneD.Next : twoD.Next;
+            p1.Next = twoD.Next;
+            p2.Next = null;
+            head = zeroD.Next;
+            return head;
+        }
+
+        // Merge K sorted linked lists 
+        // Given K sorted linked lists of different sizes. The task is to merge them in such a way that after merging they will be a single sorted linked list.
+        public static Node MergeKList(Node[] a, int N)
+        {
+            int last = N - 1;
+
+            while (last != 0)
+            {
+                int i = 0, j = last;
+                while (i < j)
+                {
+                    a[i] = MergeSortedSingleLinkedLists(a[i], a[j]);
+                    i++;
+                    j--;
+
+                    if (i >= j)
+                    {
+                        last = j;
+                    }
+                }
+            }
+
+            return a[0];
+        }
     }
 }

@@ -9,7 +9,7 @@ namespace DSA.LinkedList
         private static readonly int DefaultCap = 100;
         private Node tail;
         private Node head;
-        readonly Dictionary<int, Node> hashTable;
+        readonly Dictionary<int, Node> hashMap;
         private readonly int capacity;
         private int size;
 
@@ -22,9 +22,8 @@ namespace DSA.LinkedList
         {
             capacity = cap;
             size = 0;
-            tail = null;
-            head = null;
-            hashTable = new Dictionary<int, Node>();
+            head = tail = null;
+            hashMap = new Dictionary<int, Node>();
         }
 
         private void DeleteTail()
@@ -34,67 +33,104 @@ namespace DSA.LinkedList
                 return;
             }
 
+            hashMap.Remove(tail.Data);
+
             Node prev = tail.Prev;
             tail.Prev = null;
+            tail.Next = null;
             prev.Next = null;
             tail = prev;
             size--;
         }
 
-        public void Refer(int item)
+        void DeleteNode(Node node)
+        {
+            if (node == null)
+                return;
+
+            if (node.Prev != null)
+            {
+                node.Prev.Next = node.Next;
+            }
+
+            if (node.Next != null)
+            {
+                node.Next.Prev = node.Prev;
+            }
+            else
+            {
+                tail = node.Prev;
+            }
+
+            node.Prev = null;
+            node.Next = null;
+        }
+
+        void AddNodeToHead(Node node)
+        {
+            if (node == null)
+                return;
+
+            if (head == null)
+            {
+                head = tail = node;
+                return;
+            }
+
+            node.Next = head;
+            head.Prev = node;
+            head = node;
+        }
+
+        public int Get(int key)
+        {
+            if (hashMap.ContainsKey(key))
+            {
+                Node node = hashMap[key];
+
+                if (node == head)
+                {
+                    return head.Data;
+                }
+
+                DeleteNode(node);
+
+                AddNodeToHead(node);
+
+                return node.Data;
+            }
+
+            return -1;
+        }
+
+        public void Set(int key, int value)
         {
             Node node;
 
-            if (hashTable.ContainsKey(item))
+            if (hashMap.ContainsKey(key))
             {
-                node = hashTable[item];
-
+                node = hashMap[key];
+                node.Data = value;
                 if (node == head)
                 {
                     return;
                 }
 
-                Node prev = node.Prev;
-                Node next = node.Next;
+                DeleteNode(node);
 
-                node.Prev = null;
-                prev.Next = next;
-
-                if (node == tail)
-                {
-                    tail = prev;
-                }
-                else
-                {
-                    next.Prev = prev;
-                }
-
-                node.Next = head;
-                head.Prev = node;
-                head = node;
+                AddNodeToHead(node);
             }
             else
             {
-                if (size == capacity)
+                if (size >= capacity)
                 {
                     DeleteTail();
                 }
 
-                node = new Node() { Data = item };
+                node = new Node() { Data = value };
 
-                if (head == null)
-                {
-                    head = node;
-                    tail = head;
-                }
-                else
-                {
-                    node.Next = head;
-                    head.Prev = node;
-                    head = node;
-                }
-
-                hashTable.Add(item, node);
+                AddNodeToHead(node);
+                hashMap.Add(key, node);
                 size++;
             }
         }
@@ -104,7 +140,7 @@ namespace DSA.LinkedList
             head = null;
             tail = null;
             size = 0;
-            hashTable.Clear();
+            hashMap.Clear();
         }
 
         public string Print()
@@ -113,6 +149,8 @@ namespace DSA.LinkedList
             if (head == null)
             {
                 res = "Cache is Empty";
+                System.Console.WriteLine(res);
+                return res;
             }
             else
             {
@@ -127,11 +165,9 @@ namespace DSA.LinkedList
 
                     curr = curr.Next;
                 }
-
+                System.Console.WriteLine(res);
                 return res;
             }
-
-            return res;
         }
     }
 }
