@@ -58,7 +58,7 @@ namespace DSA.Stacks
                 throw new Exception("Stack Underflow");
             }
             int res = arr[top2];
-            top2--;
+            top2++;
             return res;
         }
     }

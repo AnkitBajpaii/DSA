@@ -63,13 +63,11 @@ namespace DSA.Stacks
 
     public class DynamicStack
     {
-        readonly int cap;
         int top;
         List<int> arr;
 
         public DynamicStack(int cap)
         {
-            this.cap = cap;
             this.top = -1;
             arr = new List<int>(cap);
         }
