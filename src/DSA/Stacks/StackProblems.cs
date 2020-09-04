@@ -254,5 +254,208 @@ namespace DSA.Stacks
                 }
             }
         }
+
+        // Infix to Postfix Conversion
+        private static bool IsOperator(char ch)
+        {
+            if (ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '%' || ch == '^')
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool IsOperand(char ch)
+        {
+            if ((ch >= 65 && ch <= 90) || (ch >= 97 && ch <= 122))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private static int PrecedenceValue(char ch)
+        {
+            switch (ch)
+            {
+                case '+':
+                case '-':
+                    return 1;
+                case '*':
+                case '/':
+                case '%':
+                    return 2;
+                case '^':
+                    return 3;
+                case '(':
+                    return 100;
+                default:
+                    break;
+            }
+
+            return -1;
+        }
+
+        // checks if character a has higher precedence than b
+        private static bool HasHigherOrSamePrecedence(char a, char b)
+        {
+            return PrecedenceValue(a) >= PrecedenceValue(b);
+        }
+
+        private static bool IsRightParanthesis(char ch)
+        {
+            return ch == ')' || ch == '}' || ch == ']';
+        }
+
+        private static bool IsLeftParanthesis(char ch)
+        {
+            return ch == '(' || ch == '{' || ch == '[';
+        }
+
+        // Infix expression to Postfix Expression conversion
+        public static string InfixToPostfix(string exp)
+        {
+            string res = "";
+            if (String.IsNullOrEmpty(exp))
+            {
+                return res;
+            }
+
+            Stack<char> st = new Stack<char>();
+            for (int i = 0; i < exp.Length; i++)
+            {
+                char ch = exp[i];
+                if (IsOperand(ch))
+                {
+                    res = res + ch;
+                }
+                else if (IsRightParanthesis(ch))
+                {
+                    while (st.Count > 0)
+                    {
+                        char temp = st.Pop();
+                        if (IsLeftParanthesis(temp))
+                        {
+                            break;
+                        }
+                        res = res + temp;
+                    }
+                }
+                else if (IsOperator(ch) || IsLeftParanthesis(ch))
+                {
+                    while (st.Count > 0 && !IsLeftParanthesis(st.Peek()) && HasHigherOrSamePrecedence(st.Peek(), ch))
+                    {
+                        res = res + st.Pop();
+                    }
+
+                    st.Push(ch);
+                }
+            }
+
+            while (st.Count > 0)
+            {
+                res = res + st.Pop();
+            }
+
+            return res;
+        }
+
+        // Evaluate Postfix expression
+        // Given string str representing a postfix expression, the task is to evaluate the expression and print the final value. Operators will only include the basic arithmetic operators like *,/,+ and -.
+        private static bool IsDigit(char ch)
+        {
+            return ch >= 48 && ch <= 57;
+        }
+
+        private static int Evaluate(int x, char op, int y)
+        {
+            switch (op)
+            {
+                case '+':
+                    return x + y;
+                case '-':
+                    return x - y;
+                case '*':
+                    return x * y;
+                case '/':
+                    return x / y;
+                case '%':
+                    return x % y;
+                default:
+                    break;
+            }
+
+            return -1;
+        }
+        public static int EvaluatePostFix(string exp)
+        {
+            Stack<int> st = new Stack<int>();
+            for (int i = 0; i < exp.Length; i++)
+            {
+                char ch = exp[i];
+
+                if (IsDigit(ch))
+                {
+                    st.Push(Convert.ToInt32(ch));
+                }
+                else
+                {
+                    int x = st.Pop();
+                    int y = st.Pop();
+                    int z = Evaluate(y, ch, x);
+                    st.Push(z);
+                }
+            }
+
+            int res = st.Pop();
+            return res;
+        }
+
+        // The Celebrity Problems
+        // In a party of N people, only one person is known to everyone. Such a person may be present in the party, if yes, (s)he doesn’t know anyone in the party. 
+        // We can only ask questions like “does A know B? “. Find the stranger(celebrity) in the minimum number of questions.
+        public static int FindCelebrity(int[][] matrix, int n)
+        {
+            if (n == 1)
+            {
+                return -1;
+            }
+
+            Stack<int> st = new Stack<int>();
+            for (int i = 0; i < n; i++)
+            {
+                st.Push(i);
+            }
+
+            while (st.Count > 1)
+            {
+                int x = st.Pop();
+                int y = st.Pop();
+
+                // if x knows y
+                if (matrix[x][y] == 1)
+                {
+                    st.Push(y);
+                }
+                else
+                {
+                    st.Push(x);
+                }
+            }
+
+            // potential candidate
+            int cid = st.Pop();
+
+            for (int i = 0; i < n; i++)
+            {
+                if (i != cid && (matrix[i][cid] != 1 || matrix[cid][i] == 1))
+                {
+                    return -1;
+                }
+            }
+
+            return cid;
+        }
     }
 }

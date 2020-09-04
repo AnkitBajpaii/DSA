@@ -9,7 +9,6 @@
     <Folder Include="Graph\" />
     <Folder Include="PriorityQueue\" />
     <Folder Include="Tree\" />
-    <Folder Include="Queues\" />
   </ItemGroup>
 
 </Project>
