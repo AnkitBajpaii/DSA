@@ -946,5 +946,125 @@ namespace DSA.Tree
             root.Left = root.Right;
             root.Right = t;
         }
+
+        public bool IsIdentical(Node root1, Node root2)
+        {
+            if (root1 == null && root2 == null)
+            {
+                return true;
+            }
+
+            if (root1 == null || root2 == null)
+            {
+                return false;
+            }
+
+            if (root1.Key != root2.Key)
+            {
+                return false;
+            }
+
+            return IsIdentical(root1.Left, root2.Left) && IsIdentical(root1.Right, root2.Right);
+        }
+
+        void fillSet(Node root, HashSet<int> set, int hd)
+        {
+            if (root == null) return;
+
+            fillSet(root.Left, set, hd - 1);
+            set.Add(hd);
+            fillSet(root.Right, set, hd + 1);
+        }
+
+        public int VerticalWidth(Node root)
+        {
+            HashSet<int> set = new HashSet<int>();
+            fillSet(root, set, 0);
+            return set.Count;
+        }
+
+        // Connect Nodes at Same Level
+        public void ConnectNodesAtSameLevel(Node p)
+        {
+            if (p == null)
+            {
+                return;
+            }
+
+            Queue<Node> q = new Queue<Node>();
+            q.Enqueue(p);
+            while (q.Count > 0)
+            {
+                int size = q.Count;
+                Node prev = null;
+                for (int i = 0; i < size; i++)
+                {
+                    Node curr = q.Dequeue();
+
+                    if (curr.Left != null)
+                    {
+                        q.Enqueue(curr.Left);
+                    }
+
+                    if (curr.Right != null)
+                    {
+                        q.Enqueue(curr.Right);
+                    }
+
+                    if (prev != null)
+                    {
+                        prev.NextRight = curr;
+                    }
+
+                    prev = curr;
+                }
+            }
+        }
+
+        // Construct Binary Tree from Parent Array
+        // Given an array of size N that represents a Tree in such a way that array indexes are values in tree nodes and array values give the parent node of that particular index (or node). The value of the root node index would always be -1 as there is no parent for root. Construct the standard linked representation of Binary Tree from this array representation.
+
+        void createNode(int[] arr, int i, Node[] created, ref Node root)
+        {
+            if (created[i] != null)
+            {
+                return;
+            }
+            Node node = new Node(i);
+            created[i] = node;
+            if (arr[i] == -1)
+            {
+                root = node;
+                return;
+            }
+
+            if (created[arr[i]] == null)
+            {
+                createNode(arr, arr[i], created, ref root);
+            }
+
+            Node p = created[arr[i]];
+
+            if (p.Left == null)
+            {
+                p.Left = node;
+            }
+
+            else if (p.Right == null)
+            {
+                p.Right = node;
+            }
+        }
+
+        public Node ConstructTreeFromParentArray(int[] arr, int n)
+        {
+            Node[] created = new Node[n];
+            Node root = null;
+            for (int i = 0; i < n; i++)
+            {
+                createNode(arr, i, created, ref root);
+            }
+            return root;
+        }
     }
 }

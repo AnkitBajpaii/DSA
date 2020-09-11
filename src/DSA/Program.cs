@@ -6,6 +6,7 @@ using DSA.Rescursion;
 using DSA.Searching;
 using DSA.Sorting;
 using DSA.Stacks;
+using DSA.Tree;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -50,7 +51,10 @@ namespace DSA
             //var res = SortingProblems.Merge3SortedArrays(arr1, arr2, arr3);
             //Print(res);
 
-            StackProblems.IsBalanced("({[])}");
+            TreeProblems t = new TreeProblems();
+            int[] parent = { -1, 0, 0, 1, 1, 3, 5 };
+            t.ConstructTreeFromParentArray(parent, parent.Length);
+
 
             Console.ReadKey();
         }
