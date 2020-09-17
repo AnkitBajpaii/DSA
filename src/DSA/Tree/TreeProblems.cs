@@ -1066,5 +1066,80 @@ namespace DSA.Tree
             }
             return root;
         }
+
+        //Max Path Sum in Binary Tree
+        //Given a binary tree, find the maximum path sum.The path may start and end at any node in the tree.
+        public int FindMaxSum(Node node, ref int res) // initially res will be Int.Min
+        {
+            if (node == null)
+            {
+                return 0;
+            }
+
+            int l = FindMaxSum(node.Left, ref res);
+            int r = FindMaxSum(node.Right, ref res);
+
+            int x = Math.Max(Math.Max(l, r) + node.Key, node.Key);
+
+            int y = Math.Max(x, l + r + node.Key);
+
+            res = Math.Max(res, y);
+            return x;
+        }
+
+
+        public int MaxDiffBetweenNodeAndItsAncestor(Node root, ref int res)
+        {
+            // Initialising result with minimum int value  
+            /* Returning Maximum int value if node is not  
+                there (one child case)  */
+            if (root == null)
+            {
+                return int.MaxValue;
+            }
+
+            /* If leaf node then just return node's value  */
+            if (root.Left == null && root.Right == null)
+            {
+                return root.Key;
+            }
+
+            int l = MaxDiffBetweenNodeAndItsAncestor(root.Left, ref res);
+            int r = MaxDiffBetweenNodeAndItsAncestor(root.Right, ref res);
+
+            int min = Math.Min(l, r);
+            int diff = root.Key - min;
+            res = Math.Max(res, diff);
+            return Math.Min(min, root.Key);
+        }
+
+        // Given a binary tree and an integer X. Your task is to complete the function countSubtreesWithSumX() that returns the count of the number of subtress having total node’s data sum equal to the value X.
+        public int CountSubtreesWithSumX(Node root,int x, ref int count) // initially count = 0
+        {
+            // if tree is empty  
+            if (root == null)
+            {
+                return 0;
+            }
+
+            // sum of nodes in the left subtree  
+            int ls = ((root.Left, count, x, ref count);
+
+            // sum of nodes in the right subtree  
+            int rs = ((root.Right, count, x, ref count);
+
+            // sum of nodes in the subtree  
+            // rooted with 'root.data'  
+            int sum = ls + rs + root.Key;
+
+            // if true  
+            if (sum == x)
+            {
+                count++;
+            }
+
+            // return subtree's nodes sum  
+            return sum;
+        }
     }
 }
