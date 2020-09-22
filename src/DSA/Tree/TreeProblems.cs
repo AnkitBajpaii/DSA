@@ -1123,10 +1123,10 @@ namespace DSA.Tree
             }
 
             // sum of nodes in the left subtree  
-            int ls = ((root.Left, count, x, ref count);
+            int ls = CountSubtreesWithSumX(root.Left, x, ref count);
 
             // sum of nodes in the right subtree  
-            int rs = ((root.Right, count, x, ref count);
+            int rs = CountSubtreesWithSumX(root.Right, x, ref count);
 
             // sum of nodes in the subtree  
             // rooted with 'root.data'  
