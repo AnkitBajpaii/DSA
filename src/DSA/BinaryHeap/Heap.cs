@@ -61,8 +61,8 @@ namespace DSA.BinaryHeap
                 return arr[0];
             }
 
-            int res = Peek();
-            arr[0] = arr[size - 1];
+            int res = arr[0];
+            Util.Swap(arr, 0, size - 1);
             size--;
 
             Heapify(0, size);

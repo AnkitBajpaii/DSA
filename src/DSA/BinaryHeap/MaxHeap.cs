@@ -63,7 +63,7 @@ namespace DSA.BinaryHeap
         {
             if (size == 0)
             {
-                return Int32.MinValue;
+                return Int32.MaxValue;
             }
 
             return base.Poll();
@@ -71,6 +71,8 @@ namespace DSA.BinaryHeap
 
         public void IncreaseKey(int i, int x)
         {
+            if (i >= size) return;
+
             arr[i] = x;
             while (i > 0 && arr[Parent(i)] < arr[i])
             {

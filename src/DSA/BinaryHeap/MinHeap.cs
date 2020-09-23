@@ -71,6 +71,8 @@ namespace DSA.BinaryHeap
 
         public void DecreaseKey(int i, int x)
         {
+            if (i >= size) return;
+
             arr[i] = x;
             while (i > 0 && arr[Parent(i)] > arr[i])
             {
