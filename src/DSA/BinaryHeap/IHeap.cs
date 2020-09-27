@@ -2,12 +2,12 @@
 {
     public interface IHeap
     {
-        void Add(int item);
+        void InsertKey(int item);
         int Peek();
         int Poll();
         void Delete(int i);
         bool IsEmpty();
-        void Heapify(int i, int heapSize);
-        void BuildHeap();
+        void BuildHeap(int[] arr);
+        void Heapify(int[] arr, int i, int heapSize);
     }
 }

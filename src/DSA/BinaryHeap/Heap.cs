@@ -9,29 +9,28 @@ namespace DSA.BinaryHeap
         protected int[] arr;
         protected int size, capacity;
 
-        public Heap(int[] arr) : this(arr, DEFAULT_CAP)
+        public Heap() : this(DEFAULT_CAP)
         {
 
         }
-        public Heap(int[] arr, int cap)
+        public Heap(int cap)
         {
             size = 0;
             capacity = cap;
-            this.arr = arr;
-
-            BuildHeap();
+            this.arr = new int[cap];
         }
-        public void BuildHeap()
+
+        public void BuildHeap(int[] arr)
         {
             int size = arr.Length;
             // right most bottom most non leaf node will be the parent of last element which is ((size - 1) - 1)/2
-            for (int i = Parent((size - 2) / 2); i >= 0; i--)
+            for (int i = (size - 2) / 2; i >= 0; i--)
             {
-                Heapify(i, this.size);
+                Heapify(arr, i, this.size);
             }
         }
 
-        public abstract void Heapify(int i, int heapSize);
+        public abstract void Heapify(int[] arr, int i, int heapSize);
 
         public int Peek()
         {
@@ -40,7 +39,7 @@ namespace DSA.BinaryHeap
 
         protected int Parent(int i)
         {
-            return Convert.ToInt32(Math.Floor((double)(i - 1) / 2));
+            return (i - 1) / 2;
         }
 
         protected int Left(int i)
@@ -65,7 +64,7 @@ namespace DSA.BinaryHeap
             Util.Swap(arr, 0, size - 1);
             size--;
 
-            Heapify(0, size);
+            Heapify(arr, 0, size);
             return res;
         }
 

@@ -4,27 +4,26 @@ namespace DSA.BinaryHeap
 {
     public class MinHeap : Heap, IMinHeap
     {
-        public MinHeap(int[] arr) : base(arr)
+        public MinHeap() : base()
         {
 
         }
 
-        public MinHeap(int[] arr, int cap) : base(arr, cap)
+        public MinHeap(int cap) : base(cap)
         {
 
         }
 
-        public void Add(int item)
+        public void InsertKey(int item)
         {
             if (size == capacity)
             {
                 return;
             }
 
-            int i = size;
-            arr[i] = item;
             size++;
-
+            int i = size - 1;
+            arr[i] = item;
             while (i > 0 && arr[Parent(i)] > arr[i])
             {
                 Util.Swap(arr, Parent(i), i);
@@ -33,30 +32,6 @@ namespace DSA.BinaryHeap
 
             // Time: O(size)
             // Aux Space: O(1)
-        }
-
-        // Given a binary heap, with one possible voilation of min heap property, Fix the Heap
-        public override void Heapify(int i, int heapSize)
-        {
-            int l = Left(i);
-            int r = Right(i);
-
-            int smallest = i;
-            if (l < heapSize && arr[l] < arr[smallest])
-            {
-                smallest = l;
-            }
-
-            if (r < heapSize && arr[r] < arr[smallest])
-            {
-                smallest = r;
-            }
-
-            if (smallest != i)
-            {
-                Util.Swap(arr, i, smallest);
-                Heapify(smallest, heapSize);
-            }
         }
 
         public override int Poll() // O(Log n)
@@ -87,6 +62,29 @@ namespace DSA.BinaryHeap
         {
             DecreaseKey(i, Int32.MinValue);
             base.Poll();
+        }
+
+        public override void Heapify(int[] arr, int i, int heapSize)
+        {
+            int l = Left(i);
+            int r = Right(i);
+
+            int smallest = i;
+            if (l < heapSize && arr[l] < arr[smallest])
+            {
+                smallest = l;
+            }
+
+            if (r < heapSize && arr[r] < arr[smallest])
+            {
+                smallest = r;
+            }
+
+            if (smallest != i)
+            {
+                Util.Swap(arr, i, smallest);
+                Heapify(arr, smallest, heapSize);
+            }
         }
     }
 }

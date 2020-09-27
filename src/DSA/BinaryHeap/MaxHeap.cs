@@ -4,17 +4,17 @@ namespace DSA.BinaryHeap
 {
     public class MaxHeap : Heap, IMaxHeap
     {
-        public MaxHeap(int[] arr) : base(arr)
+        public MaxHeap() : base()
         {
 
         }
 
-        public MaxHeap(int[] arr,int cap) : base(arr,cap)
+        public MaxHeap(int cap) : base(cap)
         {
 
         }
 
-        public void Add(int item)
+        public void InsertKey(int item)
         {
             if (size == capacity)
             {
@@ -33,30 +33,6 @@ namespace DSA.BinaryHeap
 
             // Time: O(size)
             // Aux Space: O(1)
-        }
-
-        // Given a binary heap, with one possible voilation of min heap property, Fix the Heap
-        public override void Heapify(int i, int heapSize)
-        {
-            int l = Left(i);
-            int r = Right(i);
-
-            int largest = i;
-            if (l < heapSize && arr[l] > arr[largest])
-            {
-                largest = l;
-            }
-
-            if (r < heapSize && arr[r] > arr[largest])
-            {
-                largest = r;
-            }
-
-            if (largest != i)
-            {
-                Util.Swap(arr, i, largest);
-                Heapify(largest, heapSize);
-            }
         }
 
         public override int Poll()// O(Log n)
@@ -87,6 +63,29 @@ namespace DSA.BinaryHeap
         {
             IncreaseKey(i, Int32.MaxValue);
             base.Poll();
+        }
+
+        public override void Heapify(int[] arr, int i, int heapSize)
+        {
+            int l = Left(i);
+            int r = Right(i);
+
+            int largest = i;
+            if (l < heapSize && arr[l] > arr[largest])
+            {
+                largest = l;
+            }
+
+            if (r < heapSize && arr[r] > arr[largest])
+            {
+                largest = r;
+            }
+
+            if (largest != i)
+            {
+                Util.Swap(arr, i, largest);
+                Heapify(arr, largest, heapSize);
+            }
         }
     }
 }
