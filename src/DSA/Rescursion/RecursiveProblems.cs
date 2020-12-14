@@ -42,17 +42,12 @@ namespace DSA.Rescursion
         /// </summary>        
         public static bool IsPalindrome(string str, int s, int e)
         {
-            if (s <= e)
+            if (s >= e)
             {
                 return true;
             }
 
-            if (str[s] != str[e])
-            {
-                return false;
-            }
-
-            return IsPalindrome(str, s++, e--);
+            return str[s] == str[e] && IsPalindrome(str, s+1, e-1);
         }
 
         /// <summary>
@@ -147,15 +142,15 @@ namespace DSA.Rescursion
         /// <summary>
         /// Given an array and a sum, find count of subsets of this array, whose sum equals given sum.
         /// </summary>        
-        public static int SubSetSum(int[] arr, int n, int sum)
+        public static int CountSubSet(int[] arr, int n, int sum)
         {
             if (n == 0)
             {
                 return (sum == 0 ? 1 : 0);
             }
 
-            return SubSetSum(arr, n - 1, sum) +
-                   SubSetSum(arr, n - 1, sum - arr[n - 1]);
+            return CountSubSet(arr, n - 1, sum) +
+                   CountSubSet(arr, n - 1, sum - arr[n - 1]);
         }
 
         /// <summary>

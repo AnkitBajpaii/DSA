@@ -79,42 +79,57 @@ namespace DSA.Arrays
                 return size;
             }
 
-            int res = 1;
+            int res = 0;
             for (int i = 1; i < size; i++)
             {
-                if (A[i] != A[res - 1])
+                if (A[i] != A[res])
                 {
-                    A[res] = A[i];
-                    res++;
+					res++;
+					
+                    A[res] = A[i];                    
                 }
             }
 
             return res;
         }
+		
+		public static void MoveZerosToEnd(int[] arr, int n){
+            int count = 0;
+			for(int i=0; i<n; i++){
+				if(arr[i]!=0){
+					Util.Swap(arr, i, count);
+					count++;
+				}
+			}				
+		}		
 
         public static void LeftRotateByOne(int[] A)
         {
+			int n = A.Length;
+			
             // Left rotate means counter clockwise direction
-            int size = A.Length;
             int temp = A[0];
-            for (int i = 1; i < size; i++)
+			
+            for (int i = 1; i < n; i++)
             {
                 A[i - 1] = A[i];
             }
 
-            A[size - 1] = temp;
+            A[n - 1] = temp;
         }
 
         public static void LeftRotateBy_K_Places(int[] A, int k)
         {
             // Left rotate means counter clockwise direction
             int size = A.Length;
-            if ((k % size) == 0)
+            
+			if ((k % size) == 0)
             {
                 return;
             }
 
             int d = (k % size);
+			
             ReverseArray(A, 0, d - 1);
             ReverseArray(A, d, size - 1);
             ReverseArray(A, 0, size - 1);
@@ -124,12 +139,15 @@ namespace DSA.Arrays
         {
             int n = A.Length;
             int currLeader = A[n - 1];
+			
             Console.WriteLine(currLeader);
-            for (int i = n - 2; i >= 0; i--)
+            
+			for (int i = n - 2; i >= 0; i--)
             {
                 if (A[i] > currLeader)
                 {
                     currLeader = A[i];
+					
                     Console.WriteLine(currLeader);
                 }
             }
@@ -414,7 +432,7 @@ namespace DSA.Arrays
 
         }
 
-        // Given an array of size n, check if there exist a sub-array with given sum.
+        // Given an array of size n with only positive integers, check if there exist a sub-array with given sum.
         // Note that here the window size is Not given, unlike previous problem.
         public static bool IsSubArrayWithGivenSumExist(int[] A, int sum)
         {
@@ -457,6 +475,7 @@ namespace DSA.Arrays
             for (int i = n; i < m; i++)
             {
                 arr[i] = currSum;
+				
                 currSum = currSum + arr[i] - arr[i - n];
             }
 
@@ -679,6 +698,8 @@ namespace DSA.Arrays
 
         static int FindMissingPositive(int[] arr, int size)
         {
+            // idea: if we treat array element as index's of array and mark those indexes then
+            // the first index which is not marked will represent index + 1 the smallest positive missing no. that is missing 
             int i;
 
             // Mark arr[i] as visited by making 
@@ -692,8 +713,7 @@ namespace DSA.Arrays
                     arr[x - 1] = -arr[x - 1];
             }
 
-            // Return the first index value at which 
-            // is positive 
+            // Return the first index value at which is positive 
             for (i = 0; i < size; i++)
                 if (arr[i] > 0)
                     return i + 1; // 1 is added becuase indexes // start from 0 

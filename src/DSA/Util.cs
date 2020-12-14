@@ -15,11 +15,11 @@ namespace DSA
             return Factorial_TailRecursive(n - 1, k * n);
         }
 
-        public static void Swap(int[] A, int low, int high)
+        public static void Swap(int[] A, int i, int j)
         {
-            int t = A[low];
-            A[low] = A[high];
-            A[high] = t;
+            int t = A[i];
+            A[i] = A[j];
+            A[j] = t;
         }
     }
 }

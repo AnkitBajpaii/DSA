@@ -105,6 +105,11 @@ namespace DSA.Searching
             int n = arr.Length;
 
             int first = FirstOccurence(arr, 0, n - 1, x);
+            if(first == -1)
+            {
+                return 0;
+            }
+
             int last = LastOccurence(arr, 0, n - 1, x);
 
             return last - first + 1;
@@ -168,7 +173,7 @@ namespace DSA.Searching
                 return i;
             }
 
-            return BinarySearchRecursive(arr, i / 2, i, x);
+            return BinarySearchRecursive(arr, i / 2 + 1, i - 1, x);
         }
 
         // Find an element in a sorted rotated array
@@ -185,26 +190,26 @@ namespace DSA.Searching
                     return mid;
                 }
 
-                if (arr[mid] <= arr[high])
+                if (arr[mid] > arr[low]) // left half is sorted
                 {
-                    if (x >= arr[mid] && x <= arr[high])
+                    if (x >= arr[low] && x < arr[mid])
                     {
-                        low = mid + 1;
+                        high = mid - 1;
                     }
                     else
                     {
-                        high = mid - 1;
+                        low = mid + 1;
                     }
                 }
-                else
+                else // right half is sorted
                 {
-                    if (x >= arr[mid] && x <= arr[high])
+                    if (x > arr[mid] && x <= arr[high])
                     {
-                        high = mid - 1;
+                        low = mid + 1;
                     }
                     else
                     {
-                        low = mid + 1;
+                        high = mid - 1;
                     }
                 }
             }
@@ -279,8 +284,8 @@ namespace DSA.Searching
 
                 if (mid * mid < x)
                 {
-                    start = mid + 1;
                     ans = mid;
+                    start = mid + 1;
                 }
                 else
                 {
@@ -339,7 +344,7 @@ namespace DSA.Searching
 
             int n = arr.Length;
 
-            for (int i = 0; i < n; i++)
+            for (int i = 0; i < n - 2; i++)
             {
                 if (IsPairWithGivenSum(arr, i + 1, n - 1, x - arr[i]))
                 {
@@ -404,7 +409,7 @@ namespace DSA.Searching
                 arr[i] = arr[i] * arr[i];
             }
 
-            for (int i = 0; i < n; i++)
+            for (int i = 0; i < n - 1; i++)
             {
                 if (IsPairWithGivenSum(arr, i + 1, n - 1, arr[i]))
                 {
@@ -502,23 +507,18 @@ namespace DSA.Searching
             String res = "";
             for (int i = 0; i < n; i++)
             {
-                int val = arr[arr[i] - 1];
+                int index = Math.Abs(arr[i]) - 1;
+                int val = arr[index];
                 if (val < 0)
-                {
                     res += " " + arr[i];
-                }
                 else
-                {
-
-                    arr[Math.Abs(arr[i]) - 1] = -arr[Math.Abs(arr[i]) - 1];
-
-                }
+                    arr[index] = -arr[index];
             }
 
             Console.WriteLine(res.Trim());
         }
 
-        // You are given an array arr[] of N integers including 0. The task is to find the smallest positive number missing from the array.
+        // You are given an array of N integers including 0. The task is to find the smallest positive number missing from the array.
         public static int MissingSmallestPositiveNum(int[] arr, int n)
         {
             // seggregate negavtives to left side and positive to right side
@@ -540,6 +540,13 @@ namespace DSA.Searching
                 k++;
             }
 
+            // idea: if we treat array element as index's of array and mark those indexes then
+            // the first index which is not marked will represent index + 1 the smallest positive missing no. that is missing
+
+            // Mark arr[i] as visited by making 
+            // arr[arr[i] - 1] negative. Note that 
+            // 1 is subtracted because index start 
+            // from 0 and positive numbers start from 1 
             for (int i = 0; i < k; i++)
             {
                 int x = Math.Abs(arr2[i]);
@@ -549,6 +556,8 @@ namespace DSA.Searching
                 }
             }
 
+            // Return the first index value at which 
+            // is positive 
             for (int i = 0; i < k; i++)
             {
                 if (arr2[i] > 0)
@@ -560,7 +569,8 @@ namespace DSA.Searching
             return k + 1;
         }
 
-        // You are given heights of consecutive buildings. You can move from the roof of a building to the roof of next adjacent building. You need to find the maximum number of consecutive steps you can put forward such that you gain an increase in altitude with each step.
+        // You are given heights of consecutive buildings. You can move from the roof of a building to the roof of next adjacent building. 
+        //You need to find the maximum number of consecutive steps you can put forward such that you gain an increase in altitude with each step.
         public static int MaxStep(int[] arr, int n)
         {
 
@@ -609,7 +619,8 @@ namespace DSA.Searching
         }
 
         //Given an array of positive integers, where elements are consecutive (sorted). 
-        //Also, there is a single element which is repeating X (any variable) number of times. Now, the task is to find the element which is repeated and number of times it is repeated.
+        //Also, there is a single element which is repeating X (any variable) number of times. 
+        //Now, the task is to find the element which is repeated and number of times it is repeated.
         public static void FindRepeatingInConsecutiveSorted(int[] arr, int n)
         {
             int l = 0, h = n - 1;
@@ -627,9 +638,14 @@ namespace DSA.Searching
                 }
             }
 
+            // if no elements were repeated then we can write
+            // n = a[n-1] - a[0] + 1
+            // but if an element is repeated say x number of times then
+            // n - x = a[n-1] - a[0]
+
             // no of time repeated
             int count = (arr[0] + n - arr[n - 1]);
-            Console.WriteLine(arr[mid] + " " + count);
+            Console.WriteLine(arr[l] + " " + count);
         }
 
         // Given an unsorted array A of size N of non-negative integers, find a continuous sub-array which adds to a given number S.

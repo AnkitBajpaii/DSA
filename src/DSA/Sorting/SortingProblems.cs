@@ -69,6 +69,38 @@ namespace DSA.Sorting
             }
         }
 
+        public static void CycleSortDistinct(int[] arr, int n)
+        {
+            for (int cs = 0; cs < n - 1; cs++)
+            {
+                int item = arr[cs], pos = cs;
+                for (int i = cs + 1; i < n; i++)
+                {
+                    if (arr[i] < item)
+                    {
+                        pos++;
+                    }
+                }
+
+                Util.Swap(arr, pos, cs);
+
+                while (cs != pos)
+                {
+                    pos = cs;
+
+                    for (int i = cs + 1; i < n; i++)
+                    {
+                        if (arr[i] < item)
+                        {
+                            pos++;
+                        }
+                    }
+
+                    Util.Swap(arr, pos, cs);
+                }
+            }
+        }
+
         public static void MergeSort(int[] arr, int l, int r)
         {
             if (l < r)
@@ -498,6 +530,7 @@ namespace DSA.Sorting
             return res;
         }
 
+        // Quick Select
         public static int FindKthSmallestElement(int[] arr, int n, int k)
         {
             int low = 0, high = n - 1;
@@ -526,6 +559,7 @@ namespace DSA.Sorting
         public static int SegregatePositiveAndNegatives(int[] arr, int n)
         {
             // using hoare's partition
+            // can also be implemented using lomuto partion approach
             int i = -1, j = n;
             while (true)
             {
@@ -548,6 +582,7 @@ namespace DSA.Sorting
             }
         }
 
+        // all odd on left and all even on right
         public static int SegregateEvenAndOdd(int[] arr, int n)
         {
             // using hoare's partition
@@ -573,6 +608,7 @@ namespace DSA.Sorting
             }
         }
 
+        // Sorting a Binary Array
         // also called binary sort
         public static int SegregateZerosAndOnes(int[] arr, int n)
         {
@@ -602,7 +638,7 @@ namespace DSA.Sorting
         //Three way partition algorithm OR Dutch national flag algorithm
         // Sort array of 0, 1, and 2
         // three way partition when multiple occurrences of pivot exist
-        // partition around range.
+        // partition around range.        
         public static void SortArrayOfZeroOnesAndTwos(int[] arr, int n)
         {
             int low = 0, high = n - 1, mid = 0;
@@ -732,7 +768,8 @@ namespace DSA.Sorting
             return res;
         }
 
-        //Given arrival and departure times of all trains that reach a railway station, the task is to find the minimum number of platforms required for the railway station so that no train waits.
+        // Meeting Maximum no of guest. you are given arrival and departure times of the guests, you need to find the time to go to the pary so that you can meet maximum people.
+        // Another form of question is, Given arrival and departure times of all trains that reach a railway station, the task is to find the minimum number of platforms required for the railway station so that no train waits.
         //Input: arr[] = {9:00, 9:40, 9:50, 11:00, 15:00, 18:00}
         //dep[] = {9:10, 12:00, 11:20, 11:30, 19:00, 20:00}
         //Output: 3
@@ -761,6 +798,120 @@ namespace DSA.Sorting
             }
 
             return res;
+        }
+
+        // When elements are in range 0 to k-1, use count sort
+        public static void CountSort(int[] arr, int n, int k)
+        {
+            int[] c = new int[k];
+            for (int i = 0; i < n; i++)
+            {
+                c[arr[i]]++;
+            }
+
+            for (int i = 0; i < k; i++)
+            {
+                c[k] += c[k - 1];
+            }
+
+            int[] output = new int[n];
+            for (int i = n - 1; i >= 0; i--)
+            {
+                c[arr[i]]--;
+                output[c[arr[i]]] = arr[i];
+            }
+
+            for (int i = 0; i < n; i++)
+            {
+                arr[i] = output[i];
+            }
+        }
+
+        public static void RadixSort(int[] arr, int n)
+        {
+            int max = arr[0];
+            for (int i = 1; i < n; i++)
+            {
+                if (arr[i] > max)
+                {
+                    max = arr[i];
+                }
+            }
+
+            for (int exp = 1; (max / exp) > 0; exp = exp * 10)
+            {
+                CountSortUtilForRadixSort(arr, n, exp);
+            }
+        }
+
+        private static void CountSortUtilForRadixSort(int[] arr, int n, int exp)
+        {
+            int[] c = new int[10];
+            int[] output = new int[n];
+
+            for (int i = 0; i < n; i++)
+            {
+                c[(arr[i] / exp) % 10]++;
+            }
+
+            for (int i = 1; i < 10; i++)
+            {
+                c[i] += c[i - 1];
+            }
+
+            for (int i = n - 1; i >= 0; i--)
+            {
+                c[(arr[i] / exp) % 10]--;
+
+                output[c[(arr[i] / exp) % 10]] = arr[i];
+            }
+
+            for (int i = 0; i < n; i++)
+            {
+                arr[i] = output[i];
+            }
+        }
+
+        // when elements are uniformly distributed across range
+        public void BucketSort(int[] arr, int n, int bucketSize)
+        {
+            int max = arr[0];
+            for (int i = 1; i < n; i++)
+            {
+                if (arr[i] > max)
+                {
+                    max = arr[i];
+                }
+            }
+
+            max++;
+
+            List<List<int>> buckets = new List<List<int>>();
+            for (int i = 0; i < bucketSize; i++)
+            {
+                buckets[i] = new List<int>();
+            }
+
+            for (int i = 0; i < n; i++)
+            {
+                int bucketIndex = bucketSize * arr[i] / max;
+                buckets[bucketIndex].Add(arr[i]);
+            }
+
+            for (int i = 0; i < bucketSize; i++)
+            {
+                buckets[i].Sort();
+            }
+
+            int index = 0;
+            for (int i = 0; i < bucketSize; i++)
+            {
+                for (int j = 0; j < buckets[i].Count; j++)
+                {
+                    arr[index] = buckets[i][j];
+                    index++;
+                }
+            }
         }
     }
 }

@@ -82,6 +82,8 @@ namespace DSA.BitwiseManipulation
                 //table[i] = (i & 1) + table[i/2];
             }
 
+			// 0xff represents number 255 i.e whose all 8 bits are set
+			// N & 0xff represents a number whose only right most bits are set
             int count = table[N & 0xff];
 
             N = N >> 8;
@@ -229,6 +231,7 @@ namespace DSA.BitwiseManipulation
 
             // find the first set bit(rightmost set bit)
             int k = FindRightMostSetBit(xor);
+			
             for (int i = 0; i < n; i++)
             {
                 if ((A[i] & k) != 0)
@@ -293,7 +296,7 @@ namespace DSA.BitwiseManipulation
 
             int firstSetBit = FindRightMostSetBit(n);
 
-            int position =  (int)Math.Log2(firstSetBit) + 1;
+            int position =  (int)Math.Log(firstSetBit) + 1;
 
             return position;
             // O(1)
@@ -332,13 +335,8 @@ namespace DSA.BitwiseManipulation
         /// </summary>        
         public static bool IsSparse(int n)
         {
-            if((n & (n >> 1)) >= 1){
-                return false;
-            }
-
-            return true ;
-
-        }
+			return ((n & (n >> 1)) >= 1) == false;
+		}
 
         /// <summary>
         /// Given a number N. The task is to find the length of the longest consecutive 1s in its binary representation.
@@ -406,7 +404,7 @@ namespace DSA.BitwiseManipulation
         /// </summary>        
         public static int FindMostSignificantSetBit(int n)
         {
-            int posOfMSB = (int)Math.Log2(n);
+            int posOfMSB = (int)Math.Log(n);
             int res = (int)Math.Pow(2, posOfMSB);
             return res;
         }

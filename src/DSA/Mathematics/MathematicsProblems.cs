@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace DSA.Mathematics
 {
-    /// <summary>
-    /// Given a number N, count the number of digits in the number N
-    /// </summary>
     public class MathematicsProblems
     {
         /// <summary>
