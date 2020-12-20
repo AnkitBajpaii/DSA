@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace DSA.Arrays
 {
@@ -135,6 +134,30 @@ namespace DSA.Arrays
             ReverseArray(A, 0, size - 1);
         }
 
+        // reverse in groups of size k
+        public static List<int> ReverseInGroups(List<int> mv, int n, int k)
+        {
+            int start = 0;
+            List<int> res = new List<int>();
+
+            while (start < n)
+            {
+                int end = start + k - 1;
+                if (end > n - 1)
+                {
+                    end = n - 1;
+                }
+                for (int i = end; i >= start; i--)
+                {
+                    res.Add(mv[i]);
+
+                }
+                start = start + k;
+            }
+
+            return res;
+        }
+
         public static void LeadersInArray(int[] A)
         {
             int n = A.Length;
@@ -153,6 +176,10 @@ namespace DSA.Arrays
             }
         }
 
+        // find out the maximum difference between any two elements such that larger element appears after the smaller number.
+        // ip arr = {2, 3, 10, 6, 4, 8, 1}
+        // Output : 8
+        // Explanation : The maximum difference is between 10 and 2.
         public static int MaxDiffProblem(int[] A)
         {
             int n = A.Length;
@@ -182,7 +209,7 @@ namespace DSA.Arrays
             {
                 if (price[i] > price[i - 1])
                 {
-                    profit = profit + (price[i] - price[i - 1]);
+                    profit += (price[i] - price[i - 1]);
                 }
             }
             return profit;
@@ -209,8 +236,7 @@ namespace DSA.Arrays
 
             for (int i = 1; i <= n - 2; i++)
             {
-                int storageAtithBar = Math.Min(lMax[i], rMax[i]) - A[i];
-                res = res + storageAtithBar;
+                res += (Math.Min(lMax[i], rMax[i]) - A[i]);
             }
 
             return res;
@@ -218,27 +244,29 @@ namespace DSA.Arrays
             // space complexity: O(N)
         }
 
+        // find count of maximum number of consecutive 1’s present in the binary array.
         public static int MaximumConsecutiveOnes(int[] A)
         {
             int n = A.Length, res = 0, counter = 0;
 
             for (int i = 0; i < n; i++)
             {
-                if (A[i] == 0)
-                {
-                    counter = 0;
-                }
-                else
+                if (A[i] == 1)
                 {
                     counter++;
                     res = Math.Max(res, counter);
+                }
+                else
+                {
+                    counter = 0;
                 }
             }
 
             return res;
         }
 
-        // kadanes algo
+        // find the sum of contiguous subarray within a one-dimensional array of numbers which has the largest sum.
+        // Kadanes algo
         public static int MaximumSumSubArray(int[] A)
         {
             int n = A.Length, res = A[0], maxEnding = A[0];
@@ -254,15 +282,16 @@ namespace DSA.Arrays
         public static int MinimumSumSubArray(int[] A)
         {
             int n = A.Length;
-            int res = A[0], minEnding = A[0];
+            int res = A[0], minEndingHere = A[0];
             for (int i = 1; i < n; i++)
             {
-                minEnding = Math.Min((minEnding + A[i]), A[i]);
-                res = Math.Min(res, minEnding);
+                minEndingHere = Math.Min(minEndingHere + A[i], A[i]);
+                res = Math.Min(res, minEndingHere);
             }
             return res;
         }
 
+        // find the length of the longest Alternating Even Odd subarray present in the array.
         public static int MaxEvenOddSubArray(int[] A)
         {
             int n = A.Length, res = 1, curr = 1;
@@ -295,7 +324,7 @@ namespace DSA.Arrays
             int arrSum = 0;
             for (int i = 0; i < n; i++)
             {
-                arrSum = arrSum + A[i];
+                arrSum += A[i];
                 A[i] = -A[i];
             }
 
@@ -357,6 +386,7 @@ namespace DSA.Arrays
         //In a group flip, we can flip any set of consecutive 1s or 0s.
         public static void MinimumConsecutiveFlips(int[] A)
         {
+            // observerse that we need to always flip the second group
             int n = A.Length;
             for (int i = 1; i < n; i++)
             {
@@ -434,6 +464,7 @@ namespace DSA.Arrays
 
         // Given an array of size n with only positive integers, check if there exist a sub-array with given sum.
         // Note that here the window size is Not given, unlike previous problem.
+        // If there are negative numbers then this solution wont work. Use Hashing technique
         public static bool IsSubArrayWithGivenSumExist(int[] A, int sum)
         {
             // Use Sliding window technique
@@ -490,24 +521,11 @@ namespace DSA.Arrays
 
             Dictionary<int, int> map = new Dictionary<int, int>();
 
-            Func<Dictionary<int, int>, int> getDistinctCount = (_map) =>
-            {
-                int count = 0;
-                foreach (var kvp in _map)
-                {
-                    if (kvp.Value > 0)
-                    {
-                        count++;
-                    }
-                }
-                return count;
-            };
-
             for (int i = 0; i < k && i < n; i++)
             {
                 if (map.ContainsKey(A[i]))
                 {
-                    map[A[i]] = map[A[i]] + 1;
+                    map[A[i]]++;
                 }
                 else
                 {
@@ -516,13 +534,13 @@ namespace DSA.Arrays
             }
 
             List<int> res = new List<int>();
-            res.Add(getDistinctCount(map));
+            res.Add(map.Count);
 
             for (int i = k; i < n; i++)
             {
                 if (map.ContainsKey(A[i]))
                 {
-                    map[A[i]] = map[A[i]] + 1;
+                    map[A[i]]++;
                 }
                 else
                 {
@@ -531,8 +549,12 @@ namespace DSA.Arrays
 
                 int val = map[A[i - k]];
                 map[A[i - k]] = val > 0 ? val - 1 : 0;
+                if(map[A[i - k]] == 0)
+                {
+                    map.Remove(A[i - k]);
+                }
 
-                res.Add(getDistinctCount(map));
+                res.Add(map.Count);
             }
 
             int[] final = res.ToArray();
@@ -564,6 +586,8 @@ namespace DSA.Arrays
             }
         }
 
+        // Given an array A of N positive numbers. The task is to find the first Equilibium Point in the array. 
+        // Equilibrium Point in an array is a position such that the sum of elements before it is equal to the sum of elements after it.
         public static bool HasEquilibriumPoint(int[] A)
         {
             // Prefix sum techniquie is used.
@@ -588,6 +612,9 @@ namespace DSA.Arrays
             return false;
         }
 
+        // Given an array arr[], find the maximum j – i such that arr[j] > arr[i].
+        // Input: {34, 8, 10, 3, 2, 80, 30, 33, 1}
+        // Output: 6  (j = 7, i = 1)
         public static int MaxIndexDiff(int[] arr)
         {
             int n = arr.Length;
@@ -625,7 +652,8 @@ namespace DSA.Arrays
         }
 
         /// <summary>
-        /// Given an array arr[] of size N where every element is in the range from 0 to n-1.   /// Rearrange the given array so that arr[i] becomes arr[arr[i]]. 
+        /// Given an array arr[] of size N where every element is in the range from 0 to n-1.   
+        /// Rearrange the given array so that arr[i] becomes arr[arr[i]]. 
         /// </summary>        
         public static void ReArrange(int[] arr, int n)
         {
@@ -638,29 +666,6 @@ namespace DSA.Arrays
             {
                 arr[i] = arr[i] / n;
             }
-        }
-
-        public static List<int> ReverseInGroups(List<int> mv, int n, int k)
-        {
-            int start = 0;
-            List<int> res = new List<int>();
-
-            while (start < n)
-            {
-                int end = start + k - 1;
-                if (end > n - 1)
-                {
-                    end = n - 1;
-                }
-                for (int i = end; i >= start; i--)
-                {
-                    res.Add(mv[i]);
-
-                }
-                start = start + k;
-            }
-
-            return res;
         }
 
         // You are given an array arr[] of N integers including 0. The task is to find the smallest positive number missing from the array.
@@ -687,16 +692,15 @@ namespace DSA.Arrays
             {
                 if (a[i] < 0)
                 {
-                    int t = a[i];
-                    a[i] = a[j];
-                    a[j] = t;
+                    Util.Swap(a, i, j);
                     j++;
                 }
             }
             return j;
         }
 
-        static int FindMissingPositive(int[] arr, int size)
+        // arr should contain positive elements
+        public static int FindMissingPositive(int[] arr, int size)
         {
             // idea: if we treat array element as index's of array and mark those indexes then
             // the first index which is not marked will represent index + 1 the smallest positive missing no. that is missing 
@@ -713,6 +717,8 @@ namespace DSA.Arrays
                     arr[x - 1] = -arr[x - 1];
             }
 
+            // after the above step, the indexes which are marked negative shows that (index + 1)th element is present in array
+
             // Return the first index value at which is positive 
             for (i = 0; i < size; i++)
                 if (arr[i] > 0)
@@ -722,7 +728,8 @@ namespace DSA.Arrays
         }
 
         // Frequencies of Limited Range Array Elements
-        //Given an array A[] of N positive integers which can contain integers from 1 to N where elements can be repeated or can be absent from the array. Your task is to count the frequency of all elements from 1 to N.
+        // Given an array A[] of N positive integers which can contain integers from 1 to N where elements can be repeated or can be absent from the array.
+        // Your task is to count the frequency of all elements from 1 to N.
         // Input: arr[] = {2, 3, 3, 2, 5}
         // O/P {0,2,2,0,1}
         public static void FindCounts(int[] arr)

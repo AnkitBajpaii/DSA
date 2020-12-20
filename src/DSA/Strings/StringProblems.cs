@@ -89,22 +89,28 @@ namespace DSA.Strings
             return res == Int32.MaxValue ? -1 : res;
         }
 
-        // Reverse Words in String. I/P: I Love India O/P: India Love I
-        public static void ReverseWordsInString(char[] s)
+        // Reverse Words in String. 
+        // I/P: I Love India 
+        // O/P: India Love I
+        public static string ReverseWordsInString(string s)
         {
+            char[] chArr = s.ToCharArray();
+
             int n = s.Length, start = 0;
             for (int end = 0; end < n; end++)
             {
                 if (s[end] == ' ')
                 {
-                    StringUtil.Reverse(s, start, end - 1);
+                    StringUtil.Reverse(chArr, start, end - 1);
                     start = end + 1;
                 }
             }
 
-            StringUtil.Reverse(s, start, n - 1);
+            StringUtil.Reverse(chArr, start, n - 1);
 
-            StringUtil.Reverse(s, 0, n - 1);
+            StringUtil.Reverse(chArr, 0, n - 1);
+
+            return new String(chArr);
         }
 
         //Given a pattern and a text, we need to print all index's occurrences of the pattern in the text
@@ -186,17 +192,16 @@ namespace DSA.Strings
             {
                 if (p == t)
                 {
-                    bool flag = true;
+                    int j = 0;
 
-                    for (int j = 0; j < m; j++)
+                    for (; j < m; j++)
                     {
                         if (pat[j] != txt[i + j])
                         {
-                            flag = false;
                             break;
                         }
                     }
-                    if (flag == true)
+                    if (j == m)
                     {
                         Console.WriteLine(i + " ");
                     }
@@ -213,10 +218,21 @@ namespace DSA.Strings
             }
         }
 
-        //Find Longest proper prefix suffix array i.e LPS array
-        //O(n*n) solution
-        public static int LongestProperPrefixWhichIsAlsoSuffix(string s, int n)
+        // Given a string, construct LPS array.
+        //O(n*n*n) solution
+        public static void FillLPSNaive(string s, int[] lps)
         {
+            for (int i = 0; i < s.Length; i++)
+            {
+                lps[i] = LongestProperPrefixWhichIsAlsoSuffix(s, i + 1);
+            }
+        }
+
+        //Find Longest proper prefix suffix array i.e LPS array
+        static int LongestProperPrefixWhichIsAlsoSuffix(string s, int n)
+        {
+            // note: longest proper prefix cannot be more than n-1, so we start from string of len n-1 to check if it is potential longest proper prefix which is also a suffix
+
             for (int len = n - 1; len >= 0; len--)
             {
                 bool flag = true;
@@ -236,16 +252,6 @@ namespace DSA.Strings
             }
 
             return 0;
-        }
-
-        // Given a string, construct LPS array.
-        //O(n*n*n) solution
-        public static void FillLPSNaive(string s, int[] lps)
-        {
-            for (int i = 0; i < s.Length; i++)
-            {
-                LongestProperPrefixWhichIsAlsoSuffix(s, i + 1);
-            }
         }
 
         // Given a string, construct LPS array.

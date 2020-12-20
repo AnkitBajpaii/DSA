@@ -189,17 +189,7 @@ namespace DSA.Rescursion
             }
         }
 
-        /// <summary>
-        /// Nth fibonacci number using recursion 
-        /// </summary>        
-        public static int FibonacciRecursive(int n)
-        {
-            if (n <= 1) return n;
-
-            return FibonacciRecursive(n - 1) + FibonacciRecursive(n - 2);
-        }
-
-        static void possibleWordsUtil(int[] a, int N, char[] output, int currDigit, string[] keypad)
+        static void PossibleWordsUtil(int[] a, int N, char[] output, int currDigit, string[] keypad)
         {
             if (currDigit == N)
             {
@@ -210,7 +200,7 @@ namespace DSA.Rescursion
             for (int i = 0; i < keypad[a[currDigit]].Length; i++)
             {
                 output[currDigit] = keypad[a[currDigit]][i];
-                possibleWordsUtil(a, N, output, currDigit + 1, keypad);
+                PossibleWordsUtil(a, N, output, currDigit + 1, keypad);
                 if (a[currDigit] == 0 || a[currDigit] == 1)
                 {
                     return;
@@ -221,11 +211,11 @@ namespace DSA.Rescursion
         /// <summary>
         /// Possible words from phone digit
         /// </summary>        
-        static void possibleWords(int[] a, int N)
+        public static void PossibleWords(int[] a, int N)
         {
             char[] output = new char[N];
             string[] keypad = { "", "", "ABC", "DEF", "GHI", "JKL", "MNO", "PQRS", "TUV", "WXYZ" };
-            possibleWordsUtil(a, N, output, 0, keypad);
+            PossibleWordsUtil(a, N, output, 0, keypad);
         }
     }
 }

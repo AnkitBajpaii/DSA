@@ -22,12 +22,14 @@ namespace DSA.Hashing
             return key % hashTblSize;
         }
 
-        public void Insert(int key)
+        public bool Insert(int key)
         {
             int probe = HashFunction(key);
+
             if (hashTable[probe] == Empty || hashTable[probe] == Deleted)
             {
                 hashTable[probe] = key;
+                return true;
             }
             else
             {
@@ -37,30 +39,39 @@ namespace DSA.Hashing
                 while (counter < hashTblSize && hashTable[probe] != Empty && hashTable[probe] != Deleted)
                 {
                     probe = (probe + 1) % hashTblSize;
+                    if (hashTable[probe] == key)
+                    {
+                        return false;
+                    }
+
                     counter++;
                 }
 
                 if (counter < hashTblSize)
                 {
                     hashTable[probe] = key;
+                    return true;
                 }
+
+                return false;
             }
         }
 
         public bool Search(int key)
         {
             int probe = HashFunction(key);
+
             int counter = 0;
             while (counter < hashTblSize)
             {
-                if (hashTable[probe] == Empty)
-                {
-                    return false;
-                }
-
                 if (hashTable[probe] == key)
                 {
                     return true;
+                }
+
+                if (hashTable[probe] == Empty)
+                {
+                    return false;
                 }
 
                 probe = (probe + 1) % hashTblSize;
@@ -82,6 +93,11 @@ namespace DSA.Hashing
                     hashTable[probe] = Deleted;
 
                     return true;
+                }
+
+                if (hashTable[probe] == Empty)
+                {
+                    return false;
                 }
 
                 probe = (probe + 1) % hashTblSize;

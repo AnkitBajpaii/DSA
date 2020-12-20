@@ -29,5 +29,14 @@ namespace DSA.Strings
                 high--;
             }
         }
+
+        public static string Reverse(string str, int low, int high)
+        {
+            var strArr = str.ToCharArray();
+
+            Reverse(strArr, low, high);
+
+            return new String(strArr);
+        }
     }
 }

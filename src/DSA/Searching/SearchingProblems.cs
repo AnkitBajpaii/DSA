@@ -180,6 +180,13 @@ namespace DSA.Searching
         public static int FindInSortedRotatedArr_approach1(int[] arr, int x)
         {
             int n = arr.Length;
+
+            // if array is not rotated
+            if(arr[0] < arr[n - 1])
+            {
+                return BinarySearchIterative(arr, x);
+            }
+
             int low = 0, high = n - 1;
             while (low <= high)
             {
@@ -234,7 +241,7 @@ namespace DSA.Searching
 
             if (mid > low && arr[mid] < arr[mid - 1])
             {
-                return (mid - 1);
+                return mid - 1;
             }
 
             if (arr[mid] <= arr[low])
@@ -249,6 +256,12 @@ namespace DSA.Searching
         public static int PivotedBinarySearch(int[] arr, int x)
         {
             int n = arr.Length;
+            // if array is not rotated
+            if (arr[0] < arr[n - 1])
+            {
+                return BinarySearchIterative(arr, x);
+            }
+
             int pivot = FindPivot(arr, 0, n - 1);
 
             if (pivot == -1)
@@ -270,7 +283,7 @@ namespace DSA.Searching
         }
 
         // Given an integer x. The task is to find the square root of x. If x is not a perfect square, then return floor(√x).
-        public static long FindSquaroot(long x)
+        public static long FindSquareRoot(long x)
         {
             if (x == 0 || x == 1) return x;
             long start = 1, end = x, ans = 1;
@@ -287,7 +300,7 @@ namespace DSA.Searching
                     ans = mid;
                     start = mid + 1;
                 }
-                else
+                else // if mid * mid > x then mid cannot be a squared root and any number greater than mid cannot be a square root either. so go to the left of mid
                 {
                     end = mid - 1;
                 }
@@ -465,7 +478,8 @@ namespace DSA.Searching
             return res;
         }
 
-        //Given a sorted array arr[] of size N without duplicates, and given a value x. Find the floor of x in given array. Floor of x is defined as the largest element K in arr[] such that K is smaller than or equal to x.
+        //Given a sorted array arr[] of size N without duplicates, and given a value x. 
+        // Find the floor of x in given array. Floor of x is defined as the largest element K in arr[] such that K is smaller than or equal to x.
         public static int FindFloor(long[] arr, int left, int right, long x)
         {
             int res = -1;
@@ -500,7 +514,8 @@ namespace DSA.Searching
             return arr[(pivot + 1) % n];
         }
 
-        //You are given an array of N+2 integer elements. All elements of the array are in range 1 to N. Also, all elements occur once except two numbers which occur twice. Find the two repeating numbers.
+        //You are given an array of N+2 integer elements. 
+        // All elements of the array are in range 1 to N. Also, all elements occur once except two numbers which occur twice. Find the two repeating numbers.
         public static void TwoRepeated(int[] arr, int n)
         {
 
@@ -521,7 +536,7 @@ namespace DSA.Searching
         // You are given an array of N integers including 0. The task is to find the smallest positive number missing from the array.
         public static int MissingSmallestPositiveNum(int[] arr, int n)
         {
-            // seggregate negavtives to left side and positive to right side
+            // seggregate negavtives or 0 to left side and positive to right side
             int j = 0;
             for (int i = 0; i < n; i++)
             {
@@ -531,7 +546,8 @@ namespace DSA.Searching
                     j++;
                 }
             }
-
+            
+            // copy all positive elements to new array
             int[] arr2 = new int[n - j];
             int k = 0;
             for (int i = j; i < n; i++)
@@ -569,7 +585,8 @@ namespace DSA.Searching
             return k + 1;
         }
 
-        // You are given heights of consecutive buildings. You can move from the roof of a building to the roof of next adjacent building. 
+        // You are given heights of consecutive buildings.
+        // You can move from the roof of a building to the roof of next adjacent building. 
         //You need to find the maximum number of consecutive steps you can put forward such that you gain an increase in altitude with each step.
         public static int MaxStep(int[] arr, int n)
         {
@@ -624,10 +641,10 @@ namespace DSA.Searching
         public static void FindRepeatingInConsecutiveSorted(int[] arr, int n)
         {
             int l = 0, h = n - 1;
-            int mid = 0;
+            
             while (l < h)
             {
-                mid = l + (h - l) / 2;
+                int mid = l + (h - l) / 2;
                 if (arr[mid] < (arr[0] + mid))
                 {
                     h = mid;
@@ -639,42 +656,14 @@ namespace DSA.Searching
             }
 
             // if no elements were repeated then we can write
-            // n = a[n-1] - a[0] + 1
+            // arr[n-1] = arr[0] + n-1;
             // but if an element is repeated say x number of times then
-            // n - x = a[n-1] - a[0]
+            // arr[n-1] = arr[0] + n-1 - (x-1)
+            // => x = arr[0] + n - arr[n-1]
 
             // no of time repeated
             int count = (arr[0] + n - arr[n - 1]);
             Console.WriteLine(arr[l] + " " + count);
-        }
-
-        // Given an unsorted array A of size N of non-negative integers, find a continuous sub-array which adds to a given number S.
-        public static void SubArraySum(int[] arr, int n, int sum)
-        {
-            int currSum = arr[0], s = 0, e;
-            
-            for (e = 1;  e <= n; e++)
-            {
-                while (currSum > sum && s < e - 1)
-                {
-                    currSum = currSum - arr[s];
-                    s++;
-                }
-                if(currSum == sum)
-                {
-                    break;
-                }
-
-                if(e<n)
-                    currSum = currSum + arr[e];
-            }
-
-            if (currSum == sum)
-            {
-                Console.WriteLine((s + 1) + " " + e);                
-            } else {
-                Console.WriteLine(-1);
-            }
         }
     }
 }

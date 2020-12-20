@@ -82,7 +82,7 @@ namespace DSA.Sorting
                     }
                 }
 
-                Util.Swap(arr, pos, cs);
+                SwapIntegers(ref item, ref arr[pos]);
 
                 while (cs != pos)
                 {
@@ -96,7 +96,7 @@ namespace DSA.Sorting
                         }
                     }
 
-                    Util.Swap(arr, pos, cs);
+                    SwapIntegers(ref item, ref arr[pos]);
                 }
             }
         }
@@ -181,28 +181,25 @@ namespace DSA.Sorting
         public static int[] Merge3SortedArrays(int[] arr1, int[] arr2, int[] arr3)
         {
             int p = arr1.Length, q = arr2.Length, r = arr3.Length;
+            
             int[] res = new int[p + q + r];
+            
             int i = 0, j = 0, k = 0, index = 0;
+
             while (i < p && j < q && k < r)
             {
                 if (arr1[i] <= arr2[j] && arr1[i] <= arr3[k])
                 {
-                    res[index] = arr1[i];
-                    i++;
-
+                    res[index++] = arr1[i++];
                 }
                 else if (arr2[j] <= arr1[i] && arr2[j] <= arr3[k])
                 {
-                    res[index] = arr2[j];
-                    j++;
+                    res[index++] = arr2[j++];
                 }
                 else if (arr3[k] <= arr1[i] && arr3[k] <= arr2[j])
                 {
-                    res[index] = arr3[k];
-                    k++;
+                    res[index++] = arr3[k++];
                 }
-
-                index++;
             }
 
             if (i == p)
@@ -211,30 +208,22 @@ namespace DSA.Sorting
                 {
                     if (arr2[j] <= arr3[k])
                     {
-                        res[index] = arr2[j];
-                        j++;
+                        res[index++] = arr2[j++];
                     }
                     else
                     {
-                        res[index] = arr3[k];
-                        k++;
+                        res[index++] = arr3[k++];
                     }
-
-                    index++;
                 }
 
                 while (j < q)
                 {
-                    res[index] = arr2[j];
-                    j++;
-                    index++;
+                    res[index++] = arr2[j++];
                 }
 
                 while (k < r)
                 {
-                    res[index] = arr3[k];
-                    k++;
-                    index++;
+                    res[index++] = arr3[k++];
                 }
             }
 
@@ -244,31 +233,22 @@ namespace DSA.Sorting
                 {
                     if (arr1[i] <= arr3[k])
                     {
-                        res[index] = arr1[i];
-                        i++;
-
+                        res[index++] = arr1[i++];
                     }
                     else
                     {
-                        res[index] = arr3[k];
-                        k++;
+                        res[index++] = arr3[k++];
                     }
-
-                    index++;
                 }
 
                 while (i < p)
                 {
-                    res[index] = arr1[i];
-                    i++;
-                    index++;
+                    res[index++] = arr1[i++];
                 }
 
                 while (k < r)
                 {
-                    res[index] = arr3[k];
-                    k++;
-                    index++;
+                    res[index++] = arr3[k++];
                 }
             }
 
@@ -278,31 +258,22 @@ namespace DSA.Sorting
                 {
                     if (arr1[i] <= arr2[j])
                     {
-                        res[index] = arr1[i];
-                        i++;
-
+                        res[index++] = arr1[i++];
                     }
                     else
                     {
-                        res[index] = arr2[j];
-                        j++;
+                        res[index++] = arr2[j++];
                     }
-
-                    index++;
                 }
 
                 while (i < p)
                 {
-                    res[index] = arr1[i];
-                    i++;
-                    index++;
+                    res[index++] = arr1[i++];
                 }
 
                 while (j < q)
                 {
-                    res[index] = arr2[j];
-                    j++;
-                    index++;
+                    res[index++] = arr2[j++];
                 }
             }
 
@@ -699,12 +670,12 @@ namespace DSA.Sorting
                 while (start < end)
                 {
                     int sum = arr[start] + arr[end];
-                    if (sum == -arr[i])
+                    if (arr[i] + sum == 0)
                     {
                         return true;
                     }
 
-                    if (sum > -arr[i])
+                    if (arr[i] + sum > 0)
                     {
                         end--;
                     }
@@ -912,6 +883,13 @@ namespace DSA.Sorting
                     index++;
                 }
             }
+        }
+
+        static void SwapIntegers(ref int x, ref int y)
+        {
+            int t = x;
+            x = y;
+            y = x;
         }
     }
 }

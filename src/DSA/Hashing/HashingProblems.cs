@@ -69,7 +69,7 @@ namespace DSA.Hashing
             return hash_table;
         }
 
-        public static int[] quadraticProbing(int hash_size, int[] arr, int N)
+        public static int[] QuadraticProbing(int hash_size, int[] arr, int N)
         {
             int[] hash_table = new int[hash_size];
 
@@ -179,7 +179,6 @@ namespace DSA.Hashing
                 s.Add(a[i]);
             }
 
-
             for (int i = 0; i < m; i++)
             {
                 s.Add(b[i]);
@@ -236,6 +235,7 @@ namespace DSA.Hashing
         public static int CountSubArrayWithGivenSum(int[] arr, int n, int sum)
         {
             Dictionary<int, int> m = new Dictionary<int, int>();
+
             int preSum = 0, count = 0;
 
             for (int i = 0; i < n; i++)
@@ -264,55 +264,12 @@ namespace DSA.Hashing
             return count;
         }
 
-        //Given an array of distinct integers, find all the pairs having negative and positive value of a number that exists in the array.
-        //Input:
-        //N = 8
-        //arr[] = {1,3,6,-2,-1,-3,2,7}
-        //Output: -1 1 -3 3 -2 2
-        //Explanation: 1, 3 and 2 are present
-        //pairwirse postive and negative. 6 and
-        //7 have no pair.
-        public static List<int> FindPairs(int[] arr, int n)
-        {
-            List<int> res = new List<int>();
-
-            Dictionary<int, bool> m = new Dictionary<int, bool>();
-            for (int i = 0; i < n; i++)
-            {
-                if (!m.ContainsKey(-arr[i]))
-                {
-                    m.Add(arr[i], false);
-                }
-                else
-                {
-                    m.Add(arr[i], true);
-                }
-            }
-
-            foreach (var kvp in m)
-            {
-                int key = kvp.Key;
-                bool value = kvp.Value;
-
-                if (value)
-                {
-                    if (key < 0)
-                    {
-                        key = key * -1;
-                    }
-
-                    res.Add(-key);
-                    res.Add(key);
-                }
-            }
-
-            return res;
-        }
-
         public static int LongestSubArrayWithGivenSum(int[] arr, int n, int sum)
         {
             Dictionary<int, int> map = new Dictionary<int, int>();
+
             int res = 0, preSum = 0;
+
             for (int i = 0; i < n; i++)
             {
                 preSum = preSum + arr[i];
@@ -336,23 +293,26 @@ namespace DSA.Hashing
         }
 
         // Given binary array, count sub array with equal no of 0 and 1's.
-        public static int CountSubarrWithEqualZeroAndOne(int[] arr, int n)
+        // Other variation: Given two binary arrays of equal length, 
+        // find Longest common span(sub array) with same sum in binary array. create a new array and store arr1 - arr2. now find longest subsrray with 0 sum
+        public static int CountSubArrWithEqualZeroAndOne(int[] arr, int n)
         {
             Dictionary<int, int> m = new Dictionary<int, int>();
-            int preSum = 0, count = 0;
+
+            int preSum = 0, res = 0;
+
             for (int i = 0; i < n; i++)
             {
-                preSum = preSum + ((arr[i] == 0) ? -1 : 1);
+                preSum = preSum + ((arr[i] == 0) ? -1 : 1); // treat 0 as -1 and this problem reduces to finding largest sub array with given sum 0
 
                 if (preSum == 0)
                 {
-                    count++;
+                    res++;
                 }
 
                 if (m.ContainsKey(preSum))
                 {
-                    count = count + m[preSum];
-
+                    res = res + m[preSum];
                 }
 
                 if (m.ContainsKey(preSum))
@@ -364,7 +324,44 @@ namespace DSA.Hashing
                     m.Add(preSum, 1);
                 }
             }
-            return count;
+
+            return res;
+        }
+
+        //Given an array of positive integers. Find the length of the longest sub-sequence such that elements in the subsequence are consecutive integers, the consecutive numbers can be in any order.
+        //Input:
+        //N = 7
+        //a[] = {2,6,1,9,4,5,3}
+        //Output: 6
+        //Explanation: The consecutive numbers
+        //here are 1, 2, 3, 4, 5, 6. These 6 
+        //numbers form the longest consecutive
+        //subsquence.
+        public static int FindLongestConseqSubSequence(int[] arr, int N)
+        {
+            HashSet<int> s = new HashSet<int>();
+
+            for (int i = 0; i < N; i++)
+            {
+                s.Add(arr[i]);
+            }
+
+            int res = 0;
+            for (int i = 0; i < N; i++)
+            {
+                if (!s.Contains(arr[i] - 1))
+                {
+                    int j = arr[i];
+                    while (s.Contains(j))
+                    {
+                        j++;
+                    }
+
+                    res = Math.Max(res, j - arr[i]);
+                }
+            }
+
+            return res;
         }
 
         //Given two integer arrays. Sort the first array such that all the relative positions of the elements in the first array are the same as the elements in the second array.
@@ -427,41 +424,91 @@ namespace DSA.Hashing
             }
         }
 
-        //Given an array of positive integers. Find the length of the longest sub-sequence such that elements in the subsequence are consecutive integers, the consecutive numbers can be in any order.
+        //Given an array of distinct integers, find all the pairs having negative and positive value of a number that exists in the array.
         //Input:
-        //N = 7
-        //a[] = {2,6,1,9,4,5,3}
-        //Output: 6
-        //Explanation: The consecutive numbers
-        //here are 1, 2, 3, 4, 5, 6. These 6 
-        //numbers form the longest consecutive
-        //subsquence.
-        public static int FindLongestConseqSubseq(int[] arr, int N)
+        //N = 8
+        //arr[] = {1,3,6,-2,-1,-3,2,7}
+        //Output: -1 1 -3 3 -2 2
+        //Explanation: 1, 3 and 2 are present
+        //pairwirse postive and negative. 6 and
+        //7 have no pair.
+        public static List<int> FindPairs(int[] arr, int n)
         {
-            HashSet<int> s = new HashSet<int>();
+            List<int> res = new List<int>();
 
-            for (int i = 0; i < N; i++)
+            Dictionary<int, bool> m = new Dictionary<int, bool>();
+            for (int i = 0; i < n; i++)
             {
-                s.Add(arr[i]);
+                if (!m.ContainsKey(-arr[i]))
+                {
+                    m.Add(arr[i], false);
+                }
+                else
+                {
+                    m.Add(arr[i], true);
+                }
             }
 
-            int res = 0;
-            for (int i = 0; i < N; i++)
+            foreach (var kvp in m)
             {
-                if (!s.Contains(arr[i] - 1))
+                int key = kvp.Key;
+                bool value = kvp.Value;
+
+                if (value)
                 {
-                    int j = arr[i];
-                    while (s.Contains(j))
+                    if (key < 0)
                     {
-                        j++;
+                        key = key * -1;
                     }
-                    if (res < (j - arr[i]))
+
+                    res.Add(-key);
+                    res.Add(key);
+                }
+            }
+
+            return res;
+        }
+
+        public static void PrintMoreThanNByKOccurrences(int[] arr, int n, int k)
+        {
+            // let count be no of element in result Then count has to be <= k - 1
+            // proof with counter example: let count be k, then k*(n/k+1) should be <= n. Which cannot be true as n+k <= n is not possible.
+
+            //generalized version of Moore's voting algorithm
+            //phase 1 - find the candidate element
+            Dictionary<int, int> map = new Dictionary<int, int>(); // count of map cannot be more than k-1
+            for (int i = 0; i < n; i++)
+            {
+                if (map.ContainsKey(arr[i]))
+                {
+                    map[arr[i]]++;
+                }
+                else if (map.Count < k - 1)
+                {
+                    map.Add(arr[i], 1);
+                }
+                else
+                {
+                    foreach (var kvp in map)
                     {
-                        res = (j - arr[i]);
+                        map[kvp.Key]--;
+
+                        if (map[kvp.Key] == 0)
+                        {
+                            map.Remove(kvp.Key);
+                        }
                     }
                 }
             }
-            return res;
+
+            //phase 2 - check if candidate appear more than n/k times
+            foreach (var kvp in map)
+            {
+                if (kvp.Value > n / k)
+                {
+                    Console.WriteLine(kvp.Key + " ");
+                }
+            }
         }
     }
 }

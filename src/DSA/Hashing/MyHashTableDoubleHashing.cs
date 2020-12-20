@@ -10,6 +10,7 @@ namespace DSA.Hashing
         const int Empty = -1;
         const int Deleted = -2;
         readonly int[] hashTable;
+        const int PRIME = 11;
 
         public MyHashTableDoubleHashing(int _hashTblSize)
         {
@@ -24,16 +25,17 @@ namespace DSA.Hashing
 
         private int HashFunction2(int key)
         {
-            return 6 - key % 6;
+            return PRIME - key % PRIME;
         }
 
-        public void Insert(int key)
+        public bool Insert(int key)
         {
             int probe = HashFunction1(key);
 
             if (hashTable[probe] == Empty || hashTable[probe] == Deleted)
             {
                 hashTable[probe] = key;
+                return true;
             }
             else
             {
@@ -42,16 +44,21 @@ namespace DSA.Hashing
                 int counter = 0;
                 probe = (probe + offset) % hashTblSize;
 
-                while (counter < hashTblSize && hashTable[probe] != Empty && hashTable[probe] != Deleted)
+                while (hashTable[probe] != Empty && hashTable[probe] != Deleted)
                 {
                     probe = (probe + offset) % hashTblSize;
+
+                    if (hashTable[probe] == key)
+                    {
+                        return false;
+                    }
+
                     counter++;
                 }
 
-                if (counter < hashTblSize)
-                {
-                    hashTable[probe] = key;
-                }
+                hashTable[probe] = key;
+
+                return true;
             }
         }
 

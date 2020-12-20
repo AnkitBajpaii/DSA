@@ -39,7 +39,7 @@ namespace DSA.BitwiseManipulation
 
             while (N > 0)
             {
-                count = count + (N & 1); // if N is even (N & 1) is 0 
+                count = count + (N & 1); // if N is even (N & 1) is 0 , if N is odd (N & 1) is 1
                 N = N >> 1;
             }
             return count;
@@ -130,6 +130,7 @@ namespace DSA.BitwiseManipulation
 
         public static bool IsPowerOf2_InConstantTime(int N)
         {
+            // powers of 2 have special property, i.e only one bit is set
             if (N == 0)
                 return false;
 
@@ -387,16 +388,6 @@ namespace DSA.BitwiseManipulation
             }
                 
             return res;
-        }
-
-        /// <summary>
-        /// Swap without using temporary variable
-        /// </summary>        
-        public static void SwapTwoNumbersWithoutUsingTempVariable(int a, int b)
-        {
-            a ^= b;
-            b ^= a;
-            a ^= b;
         }
 
         /// <summary>

@@ -277,7 +277,8 @@ namespace DSA.Matrix
             Console.WriteLine("Not found");
         }
 
-        //Given a boolean matrix of size RxC where each cell contains either 0 or 1, modify it such that if a matrix cell matrix[i][j] is 1 then all the cells in its ith row and jth column will become 1.
+        //Given a boolean matrix of size RxC where each cell contains either 0 or 1, 
+        // modify it such that if a matrix cell matrix[i][j] is 1 then all the cells in its ith row and jth column will become 1.
         public static void BooleanMatrix(int[][] matrix)
         {
             int r = matrix.GetLength(0);
