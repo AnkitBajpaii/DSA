@@ -477,7 +477,8 @@ namespace DSA.Strings
             return true;
         }
 
-        //Given a string S of lowercase alphabets, check if it is isogram or not. An Isogram is a string in which no letter occurs more than once.
+        //Given a string S of lowercase alphabets, check if it is isogram or not. 
+		// An Isogram is a string in which no letter occurs more than once.
         public static bool IsIsogram(string data)
         {
             bool[] visited = new bool[256];
@@ -494,57 +495,52 @@ namespace DSA.Strings
             return true;
         }
 
-        //You are given a string S of alphabet characters and the task is to find its matching decimal representation as on the shown keypad. Output the decimal representation corresponding to the string. For ex: if you are given “amazon” then its corresponding decimal representation will be 262966.
+        //KeyPad Typing
+		//You are given a string S of alphabet characters and the task is to find its matching decimal representation as on the shown keypad. Output the decimal representation corresponding to the string. For ex: if you are given “amazon” then its corresponding decimal representation will be 262966.
         public static String PrintNumber(string s)
         {
-            s = s.ToUpper();
-            int n = s.Length;
+            StringBuilder res = new StringBuilder();
 
-            int[] map = new int[26];
-            char c = 'A';
-            for (int i = 2; i <= 6; i++)
+            foreach (char ch in s)
             {
-                int j;
-                for (j = 0; j < 3; j++)
+                if((ch >= 'a' && ch <= 'c') || ch >= 'A' && ch <= 'C')
                 {
-                    map[c + j - 'A'] = i;
+                    res.Append(2);
+                } else if ((ch >= 'd' && ch <= 'f') || ch >= 'D' && ch <= 'F')
+                {
+                    res.Append(3);
                 }
-
-                c = (char)(c + j);
-            }
-
-            // c= 'P'
-            for (int i = 0; i < 4; i++)
-            {
-                map[c - 'A'] = 7;
-                c++;
-            }
-
-            // c ='T'
-            for (int i = 0; i < 3; i++)
-            {
-                map[c - 'A'] = 8;
-                c++;
-            }
-
-            // c ='W'
-            for (int i = 0; i < 4; i++)
-            {
-                map[c + i - 'A'] = 9;
-            }
-
-            StringBuilder sb = new StringBuilder();
-
-            for (int i = 0; i < n; i++)
-            {
-
-                if (s[i] >= 'A' && s[i] <= 'Z')
+                else if ((ch >= 'g' && ch <= 'i') || ch >= 'G' && ch <= 'I')
                 {
-                    sb.Append(map[s[i] - 'A']);
+                    res.Append(4);
+                }
+                else if ((ch >= 'j' && ch <= 'l') || ch >= 'J' && ch <= 'L')
+                {
+                    res.Append(5);
+                }
+                else if ((ch >= 'm' && ch <= 'o') || ch >= 'M' && ch <= 'O')
+                {
+                    res.Append(6);
+                }
+                else if ((ch >= 'p' && ch <= 's') || ch >= 'P' && ch <= 'S')
+                {
+                    res.Append(7);
+                }
+                else if ((ch >= 't' && ch <= 'v') || ch >= 'T' && ch <= 'V')
+                {
+                    res.Append(8);
+                }
+                else if ((ch >= 'w' && ch <= 'z') || ch >= 'W' && ch <= 'Z')
+                {
+                    res.Append(9);
+                }
+                else
+                {
+                    continue;
                 }
             }
 
-            return sb.ToString();
+            return res.ToString();
         }
 
         //Given a string str. The task is to find the maximum occurring character in the string str. If more than one character occurs the maximum number of time then print the lexicographically smaller character.

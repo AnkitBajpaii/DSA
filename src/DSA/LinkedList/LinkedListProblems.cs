@@ -1049,5 +1049,25 @@ namespace DSA.LinkedList
 
             return a[0];
         }
+
+        public static Node ReverseDoubleLinkedList(Node head)
+        {
+            if(head == null || head.Next == null)
+            {
+                return head;
+            }
+
+            Node curr = head, temp = null;
+            while(curr != null)
+            {
+                temp = curr.Prev;
+                curr.Prev = curr.Next;
+                curr.Next = temp;
+
+                curr = curr.Prev;
+            }
+
+            return temp.Next;// new head
+        }
     }
 }
