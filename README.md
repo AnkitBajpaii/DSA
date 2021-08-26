@@ -1,2 +1,2 @@
-# DSA Refresher
-Implementation of some well known data structures and algorithms and contains the problems frequently asked in interviews
+# DSA
+Repo contains the pratice problems and solution for questions frequently asked in interviews
