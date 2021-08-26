@@ -344,7 +344,8 @@ namespace DSA.BitwiseManipulation
         /// </summary>
         public static int MaxConsecutiveOnes(int x)
         {
-            //The idea is based on the concept that if we AND a bit sequence with a shifted version of itself, we’re effectively removing the trailing 1 from every sequence of consecutive 1s.
+            //The idea is based on the concept that if we AND a bit sequence with a shifted version of itself, we’re effectively removing the trailing 1 
+			// from every sequence of consecutive 1s.
             int count = 0;
             while(x != 0)
             {

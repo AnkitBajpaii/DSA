@@ -26,6 +26,9 @@ namespace DSA.Hashing
 
         public void Insert(int key)
         {
+			// if key is already present then do not insert
+			if(Search(key)) return;
+			
             int slotIdx = HashFunction(key);
 
             hashTable[slotIdx].Add(key);

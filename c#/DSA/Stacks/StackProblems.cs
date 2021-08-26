@@ -297,12 +297,6 @@ namespace DSA.Stacks
             return -1;
         }
 
-        // checks if character a has higher precedence than b
-        private static bool HasHigherOrSamePrecedence(char a, char b)
-        {
-            return PrecedenceValue(a) >= PrecedenceValue(b);
-        }
-
         private static bool IsRightParanthesis(char ch)
         {
             return ch == ')' || ch == '}' || ch == ']';
@@ -330,26 +324,33 @@ namespace DSA.Stacks
                 {
                     res = res + ch;
                 }
+                else if (IsLeftParanthesis(ch))
+                {
+                    st.Push(ch);
+                }
                 else if (IsRightParanthesis(ch))
                 {
-                    while (st.Count > 0)
-                    {
-                        char temp = st.Pop();
-                        if (IsLeftParanthesis(temp))
-                        {
-                            break;
-                        }
-                        res = res + temp;
-                    }
-                }
-                else if (IsOperator(ch) || IsLeftParanthesis(ch))
-                {
-                    while (st.Count > 0 && !IsLeftParanthesis(st.Peek()) && HasHigherOrSamePrecedence(st.Peek(), ch))
+                    while (st.Count > 0 && st.Peek() != '(')
                     {
                         res = res + st.Pop();
                     }
 
-                    st.Push(ch);
+                    if (st.Count > 0 && st.Peek() == '(')
+                    {
+                        st.Pop();
+                    }
+                }
+                else
+                {
+                    if (IsOperator(ch)){
+                        while (st.Count > 0 && PrecedenceValue(ch) <= PrecedenceValue(st.Peek()))
+                        {
+                            res = res + st.Pop();
+                        }
+
+                        st.Push(ch);
+                    }
+
                 }
             }
 

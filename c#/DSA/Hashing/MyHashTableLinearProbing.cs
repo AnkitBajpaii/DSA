@@ -15,6 +15,9 @@ namespace DSA.Hashing
         {
             hashTblSize = _hashTblSize;
             hashTable = new int[hashTblSize];
+			for(int i=0;i<hashTblSize;i++){
+				hashTable[i] = Empty;
+			}
         }
 
         private int HashFunction(int key)
