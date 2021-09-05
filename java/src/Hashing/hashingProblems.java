@@ -1,6 +1,7 @@
 package Hashing;
 
 import java.util.*;
+import java.util.Map.Entry;
 
 public class hashingProblems {
     // Q. Valid Sudoku. Determine if a Sudoku is valid, according to:
@@ -156,6 +157,115 @@ public class hashingProblems {
             }
         }
         return ans;
+    }
+
+    // Find Pairs with difference k
+    public int FindPairsWithDifference(int[] A, int k) {
+        HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+
+        for (int x : A) {
+            map.put(x, map.getOrDefault(x, 0) + 1);
+        }
+
+        int count = 0;
+        if (k == 0) {
+
+            for (Entry<Integer, Integer> entry : map.entrySet()) {
+                int n = entry.getValue();
+                count += n * (n - 1) / 2;
+            }
+
+        } else {
+            for (int i = 0; i < A.length; i++) {
+                // a-b=k => for given a, search b = a-k in map
+                if (map.containsKey(A[i] - k)) {
+                    count += map.get(A[i] - k);
+                }
+            }
+        }
+
+        return count;
+    }
+
+    // Given N array elements, and Q queries, for each query (i,j), find sum of all
+    // elements in range i to j, where i<=j
+    public void SumOfElementsInGivenRange(int[] A, int[] start, int[] end) {
+        int[] pf = new int[A.length];
+
+        pf[0] = A[0];
+
+        for (int i = 1; i < A.length; i++) {
+            pf[i] = pf[i - 1] + A[i];
+        }
+
+        for (int i = 0; i < start.length; i++) {
+            System.out.println("Sum of all elements from " + start[i] + " to " + end[i] + " is ");
+
+            System.out.print(pf[end[i]] - pf[start[i]] + A[i]);
+        }
+    }
+
+    // Given n array elements, check if there exist a sub array with zero sum
+    public int CheckIfExistSubArrayWithZeroSum(int[] A) {
+
+        HashSet<Integer> s = new HashSet<Integer>();
+
+        int prefixSum = 0;
+        for (int i = 0; i < A.length; i++) {
+            prefixSum = prefixSum + A[i];
+
+            if (prefixSum == 0 || s.contains(prefixSum)) {
+                return 1;
+            }
+
+            s.add(prefixSum);
+        }
+
+        return 0;
+    }
+
+    // Subarray with given sum
+    // Given an array of positive integers A and an integer B, find and return first
+    // continuous subarray which adds to B.
+
+    // If the answer does not exist return an array with a single element "-1".
+
+    // First sub-array means the sub-array for which starting index in minimum.
+    // Return the first continuous sub-array which adds to B and if the answer does
+    // not exist return an array with a single element "-1".
+    public ArrayList<Integer> SubArrayWithGivenSum(ArrayList<Integer> A, int B) {
+        Long prefixSum = 0L;
+        HashMap<Long, Integer> map = new HashMap<Long, Integer>();
+
+        for (int i = 0; i < A.size(); i++) {
+            prefixSum = prefixSum + A.get(i);
+
+            if (prefixSum == B) {
+
+                ArrayList<Integer> res = new ArrayList<Integer>();
+                for (int j = 0; j <= i; j++) {
+                    res.add(A.get(j));
+                }
+                return res;
+            }
+
+            if (map.containsKey(prefixSum - B)) {
+
+                ArrayList<Integer> res = new ArrayList<Integer>();
+                for (int j = map.get(prefixSum - B) + 1; j <= i; j++) {
+                    res.add(A.get(j));
+                }
+                return res;
+            }
+
+            if (!map.containsKey(prefixSum)) {
+                map.put(prefixSum, i);
+            }
+        }
+
+        ArrayList<Integer> res = new ArrayList<Integer>();
+        res.add(-1);
+        return res;
     }
 
 }
