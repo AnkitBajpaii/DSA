@@ -211,10 +211,14 @@ public class hashingProblems {
         HashSet<Integer> s = new HashSet<Integer>();
 
         int prefixSum = 0;
+
         for (int i = 0; i < A.length; i++) {
             prefixSum = prefixSum + A[i];
 
-            if (prefixSum == 0 || s.contains(prefixSum)) {
+            if (prefixSum == 0)
+                return 1;
+
+            if (s.contains(prefixSum)) {
                 return 1;
             }
 
@@ -224,7 +228,7 @@ public class hashingProblems {
         return 0;
     }
 
-    // Subarray with given sum
+    // Get Subarray with given sum
     // Given an array of positive integers A and an integer B, find and return first
     // continuous subarray which adds to B.
 
@@ -266,6 +270,111 @@ public class hashingProblems {
         ArrayList<Integer> res = new ArrayList<Integer>();
         res.add(-1);
         return res;
+    }
+
+    // Given an array, find length of longest subarray with zero sum
+    public int LengthOfLongestSubArrayWithZeroSum(int[] A) {
+        int prefixSum = 0;
+
+        HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+        int res = 0;
+
+        for (int i = 0; i < A.length; i++) {
+            prefixSum = prefixSum + A[i];
+
+            if (prefixSum == 0) {
+
+                res = Math.max(res, i + 1);
+            } else {
+                if (map.containsKey(prefixSum)) {
+                    res = Math.max(res, i - map.get(prefixSum));
+                } else {
+                    map.put(prefixSum, i);
+                }
+            }
+        }
+
+        return res;
+    }
+
+    // Given an array, find length of longest subarray with given sum
+    public int LengthOfLongestSubArrayWithGivenSum(int[] A, int sum) {
+        int prefixSum = 0;
+
+        HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+        int res = 0;
+
+        for (int i = 0; i < A.length; i++) {
+            prefixSum = prefixSum + A[i];
+
+            if (prefixSum == sum) {
+                res = Math.max(res, i + 1);
+            } else {
+                if (map.containsKey(prefixSum - sum)) {
+                    res = Math.max(res, i - map.get(prefixSum - sum));
+                } else if (!map.containsKey(prefixSum)) {
+                    map.put(prefixSum, i);
+                }
+            }
+        }
+
+        return res;
+    }
+
+    // Given a binary array, find length of longest subarray with equal zero and one
+    public int LengthOfLongestSubArrayWithEqualZeroAndOne(int[] A) {
+        int prefixSum = 0;
+        HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+        int res = 0;
+        for (int i = 0; i < A.length; i++) {
+            prefixSum = prefixSum + (A[i] == 0 ? -1 : A[i]);
+
+            if (prefixSum == 0) {
+
+                res = Math.max(res, i + 1);
+            }
+
+            if (map.containsKey(prefixSum)) {
+                res = Math.max(res, i - map.get(prefixSum));
+            } else {
+                map.put(prefixSum, i);
+            }
+        }
+
+        return res;
+    }
+
+    // Longest common span with same sum in binary array
+    public int LengthOfLongestCommonSpanWithSameSum(int[] A, int[] B) {
+        int[] temp = new int[A.length];
+        for (int i = 0; i < A.length; i++) {
+            temp[i] = A[i] - B[i];
+        }
+
+        int res = LengthOfLongestSubArrayWithZeroSum(temp);
+
+        return res;
+    }
+
+    public void CountDistinctElementsInWindowOfSizeK(int[] A, int k) {
+        HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+
+        for (int i = 0; i < k; i++) {
+            map.put(A[i], map.getOrDefault(A[i], 0) + 1);
+        }
+
+        System.out.print(map.size() + " ");
+
+        for (int i = k; i < A.length; i++) {
+            map.put(A[i - k], map.get(A[i - k]) - 1);
+
+            if (map.get(A[i - k]) <= 0) {
+                map.remove(A[i - k]);
+            }
+
+            map.put(A[i], map.getOrDefault(A[i], 0) + 1);
+            System.out.print(map.size() + " ");
+        }
     }
 
 }
