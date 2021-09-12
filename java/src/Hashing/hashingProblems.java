@@ -1,7 +1,6 @@
 package Hashing;
 
 import java.util.*;
-import java.util.Map.Entry;
 
 public class hashingProblems {
     // Q. Valid Sudoku. Determine if a Sudoku is valid, according to:
@@ -160,7 +159,7 @@ public class hashingProblems {
     }
 
     // Find Pairs with difference k
-    public int FindPairsWithDifference(int[] A, int k) {
+    public int FindPairsWithDifferenceEqualToK(int[] A, int k) {
         HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
 
         for (int x : A) {
@@ -169,8 +168,9 @@ public class hashingProblems {
 
         int count = 0;
         if (k == 0) {
-
-            for (Entry<Integer, Integer> entry : map.entrySet()) {
+            // idea : if a number repeats n times, there will be n-1 + n-2 + ..2 + 1 ->
+            // n*(n-1)/2 pairs with difference 0
+            for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
                 int n = entry.getValue();
                 count += n * (n - 1) / 2;
             }
@@ -206,7 +206,7 @@ public class hashingProblems {
     }
 
     // Given n array elements, check if there exist a sub array with zero sum
-    public int CheckIfExistSubArrayWithZeroSum(int[] A) {
+    public int CheckIfThereExistSubArrayWithZeroSum(int[] A) {
 
         HashSet<Integer> s = new HashSet<Integer>();
 
@@ -284,21 +284,21 @@ public class hashingProblems {
 
             if (prefixSum == 0) {
 
-                res = Math.max(res, i + 1);
+                res = i + 1;
+            }
+
+            if (map.containsKey(prefixSum)) {
+                res = Math.max(res, i - map.get(prefixSum));
             } else {
-                if (map.containsKey(prefixSum)) {
-                    res = Math.max(res, i - map.get(prefixSum));
-                } else {
-                    map.put(prefixSum, i);
-                }
+                map.put(prefixSum, i);
             }
         }
 
         return res;
     }
 
-    // Given an array, find length of longest subarray with given sum
-    public int LengthOfLongestSubArrayWithGivenSum(int[] A, int sum) {
+    // Given an array, Count the number of subarrays with given sum
+    public int CountSubArrayWithGivenSum(int[] A, int sum) {
         int prefixSum = 0;
 
         HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
@@ -308,13 +308,39 @@ public class hashingProblems {
             prefixSum = prefixSum + A[i];
 
             if (prefixSum == sum) {
-                res = Math.max(res, i + 1);
-            } else {
-                if (map.containsKey(prefixSum - sum)) {
-                    res = Math.max(res, i - map.get(prefixSum - sum));
-                } else if (!map.containsKey(prefixSum)) {
-                    map.put(prefixSum, i);
-                }
+                res++;
+            }
+
+            if (map.containsKey(prefixSum - sum)) {
+                res = res + map.get(prefixSum - sum);
+            }
+
+            map.put(prefixSum, map.getOrDefault(prefixSum, 0) + 1);
+        }
+
+        return res;
+    }
+
+    // Given an array, find length of longest subarray with sum K
+    public int LengthOfLongestSubArrayWithGivenSum(int[] A, int K) {
+        int prefixSum = 0;
+
+        HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+        int res = 0;
+
+        for (int i = 0; i < A.length; i++) {
+            prefixSum = prefixSum + A[i];
+
+            if (prefixSum == K) {
+                res = i + 1;
+            }
+
+            if (!map.containsKey(prefixSum)) {
+                map.put(prefixSum, i);
+            }
+
+            if (map.containsKey(prefixSum - K)) {
+                res = Math.max(res, i - map.get(prefixSum - K));
             }
         }
 
@@ -375,6 +401,33 @@ public class hashingProblems {
             map.put(A[i], map.getOrDefault(A[i], 0) + 1);
             System.out.print(map.size() + " ");
         }
+    }
+
+    // Longest Consecutive Subsequence
+    // Given an array, we need to find the longest subsequence that has consecutive
+    // elements. These consecutive elements may appear in any order in the
+    // subsequence.
+    public int LongestConsecutiveSubsequence(int[] A) {
+
+        HashSet<Integer> s = new HashSet<Integer>();
+
+        for (int i = 0; i < A.length; i++) {
+            s.add(A[i]);
+        }
+
+        int res = 0;
+
+        for (int i = 0; i < A.length; i++) {
+            if (!s.contains(A[i] - 1)) {
+                int count = 1;
+                while (s.contains(A[i] + count)) {
+                    count++;
+                }
+                res = Math.max(res, count);
+            }
+        }
+
+        return res;
     }
 
 }
