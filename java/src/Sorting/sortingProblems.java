@@ -226,4 +226,84 @@ public class sortingProblems {
         return res.toString();
     }
 
+    /* Unique Elements
+    You are given an array A of N elements. You have to make all elements unique, to do so in one step you can increase any number by one.
+    Find the minimum number of steps.
+    */
+    public int MinStepsToMakeElementsUnique(int[] A) {
+        Arrays.sort(A);
+
+        int count = 0;
+
+        for (int i = 1; i < A.length; i++) {
+            if (A[i] == A[i - 1]) {
+                A[i] = A[i] + 1;
+                count = count + 1;
+
+            } else if (A[i] < A[i - 1]) {
+                int steps = A[i - 1] - A[i] + 1;
+                A[i] = A[i] + steps;
+                count = count + steps;
+            }
+        }
+
+        return count;
+    }
+
+    /* Minimize Difference
+    Given an array of integers A of size, N. Minimize the absolute difference between the maximum and minimum element of the array.
+
+    You can perform two types of operations at most B times in total to change the values in the array.
+    Multiple operations can be performed on the same element.
+    Increment : A[i] -> A[i] + 1.
+
+    Decrement : A[i] -> A[i] - 1.
+
+    Return the minimum difference possible.
+    */
+    public int MinDiffPossible(int[] A, int B) {
+        int min = A[0], max = A[0];
+        HashMap<Integer, Integer> freq = new HashMap<Integer, Integer>();
+        freq.put(A[0], 1);
+
+        for (int i = 1; i < A.length; i++) {
+            min = Math.min(min, A[i]);
+            max = Math.max(max, A[i]);
+            freq.put(A[i], freq.getOrDefault(A[i], 0) + 1);
+        }
+
+        while (B > 0 && min < max) {
+            if (freq.get(min) < freq.get(max)) {
+                if (B < freq.get(min))
+                    break;
+
+                freq.put(min + 1, freq.getOrDefault(min + 1, 0) + freq.get(min));
+                B = B - freq.get(min);
+                min++;
+            } else {
+                if (B < freq.get(max))
+                    break;
+
+                freq.put(max - 1, freq.getOrDefault(max - 1, 0) + freq.get(max));
+                B = B - freq.get(max);
+                max--;
+            }
+        }
+
+        return max - min;
+    }
+
+    public char[] to_lower(char[] A) {
+        char[] res = new char[A.length];
+        for(int i=0; i<A.length; i++){
+            if(A[i] >=65 && A[i]<=90){
+                res[i]=(char)(A[i]+32);
+            } else{
+                res[i]=A[i];
+            }
+        }
+        
+        return res;
+    }
+
 }
