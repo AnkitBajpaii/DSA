@@ -185,23 +185,11 @@ public class sortingProblems {
     /* Largest Number
     Given a array A of non negative integers, arrange them such that they form the largest number.
     Note: The result may be very large, so you need to return a string instead of an integer.
+    i/p: [3,30,34,5,9]
+    o/p: "9534330"
     */
     public String largestNumber(final int[] A) {
-
-        // Check if All 0, then return "0"
-        boolean flag = true;
-
-        for (int i = 0; i < A.length; i++) {
-            if (A[i] != 0) {
-                flag = false;
-                break;
-            }
-        }
-
-        if (flag)
-            return "0";
-
-        // Else Copy A into B, and custom sort B
+        
         ArrayList<Integer> B = new ArrayList<Integer>();
 
         for (int i = 0; i < A.length; i++) {
@@ -223,7 +211,12 @@ public class sortingProblems {
             res.append(B.get(i));
         }
 
-        return res.toString();
+        String str = res.toString();
+        int pos=0;
+        while(pos + 1 < str.length() && str.charAt(pos) == '0'){
+            pos++;
+        }
+        return str.substring(pos);
     }
 
     /* Unique Elements
@@ -262,13 +255,14 @@ public class sortingProblems {
     Return the minimum difference possible.
     */
     public int MinDiffPossible(int[] A, int B) {
-        int min = A[0], max = A[0];
+        int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;
+        
         HashMap<Integer, Integer> freq = new HashMap<Integer, Integer>();
-        freq.put(A[0], 1);
 
-        for (int i = 1; i < A.length; i++) {
+        for (int i = 0; i < A.length; i++) {
             min = Math.min(min, A[i]);
             max = Math.max(max, A[i]);
+            
             freq.put(A[i], freq.getOrDefault(A[i], 0) + 1);
         }
 

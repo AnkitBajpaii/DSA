@@ -1,11 +1,37 @@
 package Arrays;
 
+import java.util.*;
+
 public class arrayProblems {
 
     public static void Swap(int[] A, int i, int j) {
         int t = A[i];
         A[i] = A[j];
         A[j] = t;
+    }
+
+    /* Pattern Printing -1
+    Print a Pattern According to The Given Value of A.
+
+    Example: For A = 3 pattern looks like:
+
+    1 0 0
+    1 2 0
+    1 2 3
+    */
+    public int[][] printPattern(int A) {
+        int[][] res = new int[A][A];
+        for (int i = 0; i < A; i++) {
+            res[i][i] = i + 1;
+        }
+
+        for (int j = 0; j < A; j++) {
+            for (int i = j + 1; i < A; i++) {
+                res[i][j] = j + 1;
+            }
+        }
+
+        return res;
     }
 
     public static void Reverse(int[] A, int start, int end) {
@@ -577,4 +603,55 @@ public class arrayProblems {
 
         return ans;
     }
+
+    /* Rearrange Array
+    Rearrange a given array so that Arr[i] becomes Arr[Arr[i]] with O(1) extra space.
+    ets say N = size of the array. Then, following holds true :
+    All elements in the array are in the range [0, N-1]
+    N * N does not overflow for a signed integer
+    */
+    public void ReArrange(ArrayList<Integer> A) {
+        int n = A.size();
+        for (int i = 0; i < n; i++) {
+            A.set(i, A.get(i) * n);
+        }
+
+        for (int i = 0; i < n; i++) {
+            int idx = A.get(i) / n;
+            A.set(i, (A.get(i) + A.get(idx) / n));
+        }
+
+        for (int i = 0; i < n; i++) {
+            A.set(i, A.get(i) % n);
+        }
+    }
+
+    /* Pascal Triangle
+    Write a program to input an integer N from user and print pascal triangle up to N rows.
+    */
+    public int[][] pascalTriangle(int A) {
+        int[][] B = new int[A][A];
+        if(A==0) return B;
+        
+        B[0][0]=1;
+        
+        for(int i=1; i<A; i++){
+            for(int j=0; j<A; j++)
+            {
+                int sum = B[i-1][j];
+                if(j-1 >= 0)
+                {
+                    sum = sum + B[i-1][j-1];
+                }
+                
+                B[i][j] = sum;
+                
+                if(B[i][j] == 0) break;
+            }
+        }
+        
+        return B;
+    }
+    
 }
+

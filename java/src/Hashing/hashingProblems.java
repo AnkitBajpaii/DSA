@@ -430,4 +430,132 @@ public class hashingProblems {
         return res;
     }
 
+    /* Perfect Cards
+    Problem Description
+
+    Tom and Harry are given N numbers, with which they play a game as a team.
+
+    Initially, Tom chooses a particular number P from the N numbers, and he takes away all the numbers that are equal to P.
+
+    Next, Harry chooses a different number Q, different from what Tom chose, and takes away all the numbers equal to Q from the remaining N numbers.
+
+    They win the game if they can take all the numbers by doing the above operation once and if each of them has the same amount of numbers towards the end.
+
+    If they win, return the string "WIN", else return "LOSE".
+    */
+    public String perfectCards(int[] A) {
+        HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+
+        for (int x : A) {
+            map.put(x, map.getOrDefault(x, 0) + 1);
+
+            if (map.size() > 2) {
+                return "LOSE";
+            }
+        }
+
+        int freq1 = -1, freq2 = -1;
+        for (Map.Entry<Integer, Integer> entry : map.entrySet()) {
+            if (freq1 == -1) {
+                freq1 = entry.getValue();
+            }
+
+            else if (freq2 == -1) {
+                freq2 = entry.getValue();
+            }
+        }
+
+        if (freq1 == freq2)
+            return "WIN";
+
+        return "LOSE";
+
+    }
+
+    /* Is Dictionary?
+    Problem Description
+
+    In an alien language, surprisingly they also use english lowercase letters, but possibly in a different order. The order of the alphabet is some permutation of lowercase letters.
+
+    Given an array of words A of size N written in the alien language, and the order of the alphabet denoted by string B of size 26, return 1 if and only if the given words are sorted lexicographicaly in this alien language else return 0.
+    */
+    public boolean isLexographical(String A, String B, HashMap<Character,Integer> map)
+    {
+        int i=0,j=0;
+        
+        while(i<A.length() && j<B.length())
+        {
+            if(map.get(A.charAt(i)) < map.get(B.charAt(j))) return true;
+            
+            if(map.get(A.charAt(i)) > map.get(B.charAt(j))) return false;
+            
+            i++;
+            j++;
+        }
+        
+        if(i==A.length() && j==B.length()) return true;
+        
+        if(i==A.length()) return true;
+        
+        return false;
+    }
+    
+    public int solve(String[] A, String B) {
+        HashMap<Character,Integer> map = new HashMap<Character,Integer>();
+        
+        for(int i=0; i<B.length(); i++){
+            map.put(B.charAt(i), i);
+        }
+        
+        int i=0,j=1;
+        while(i<A.length-1 && j<A.length){
+            if(!isLexographical(A[i], A[j], map)) return 0;
+            
+            i++;
+            j++;
+        }
+        
+        return 1;
+    }
+
+    /* Colorful Number
+    Problem Description
+
+    For Given Number A find if its COLORFUL number or not.
+
+    If number A is a COLORFUL number return 1 else return 0.
+
+    What is a COLORFUL Number:
+
+    A number can be broken into different contiguous sub-subsequence parts. 
+    Suppose, a number 3245 can be broken into parts like 3 2 4 5 32 24 45 324 245. 
+    And this number is a COLORFUL number, since product of every digit of a contiguous subsequence is different.
+    */
+    public int colorful(int A) {
+        ArrayList<Integer> nums = new ArrayList<Integer>();
+        while (A > 0) {
+            nums.add(A % 10);
+            A = A / 10;
+        }
+
+        Collections.reverse(nums);
+
+        HashSet<Integer> set = new HashSet<Integer>();
+
+        for (int i = 0; i < nums.size(); i++) {
+            int product = 1;
+
+            for (int j = i; j < nums.size(); j++) {
+
+                product = product * nums.get(j);
+                if (set.contains(product))
+                    return 0;
+
+                set.add(product);
+            }
+        }
+
+        return 1;
+    }
+
 }
