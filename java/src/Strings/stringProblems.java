@@ -3,8 +3,20 @@ package Strings;
 import java.util.*;
 
 public class stringProblems {
-    /*
-     * Reverse the String Given a string A of size N. Return the string A after
+
+    /* Toggle characters in string without using If Else condition
+    * Capital -> Small & Small -> Capital
+    */
+    public String Toggle(String s){
+        String res = "";
+        for(int i=0; i<s.length(); i++){
+            res = res + (char)(s.charAt(i) ^ 32);
+        }
+
+        return res;
+    }
+
+     /* Reverse the String Given a string A of size N. Return the string A after
      * reversing the string word by word. NOTE: A sequence of non-space characters
      * constitutes a word. Your reversed string should not contain leading or
      * trailing spaces, even if it is present in the input string. If there are
@@ -31,30 +43,22 @@ public class stringProblems {
     }
 
     public String reverseWordByWord(String A) {
-        int s = 0, n = A.length();
+        int s=0, n=A.length();
         StringBuilder sb = new StringBuilder();
-
-        for (int e = 0; e < n; e++) {
-            if (e > 0 && A.charAt(e) == ' ' && A.charAt(e - 1) == ' ') {
-                s = e + 1;
-                continue;
-            }
-
-            if (A.charAt(e) == ' ') {
-                if (s < e) {
-                    sb.append(reverse(A, s, e - 1));
-                }
+        
+        for(int e=1; e<n; e++){
+            
+            if(A.charAt(e) == ' '){
+                sb.append(reverse(A, s, e-1));
                 sb.append(" ");
-                s = e + 1;
+                s=e+1;
             }
         }
-
-        if (s < n) {
-            sb.append(reverse(A, s, n - 1));
-        }
-
-        String res = reverse(sb.toString(), 0, n - 1);
-
+        
+        sb.append(reverse(A, s, n-1)); 
+        
+        String res = reverse(sb.toString(), 0, n-1);
+        
         return res.trim();
     }
 
@@ -120,38 +124,31 @@ public class stringProblems {
      * 
      * For Example: longest common prefix of "abcdefgh" and "abcefgh" is "abc".
      */
-    String findCommonPrefix(String s1, String s2) {
-        int i = 0;
-        StringBuilder sb = new StringBuilder();
-        while (i < s1.length() && i < s2.length() && s1.charAt(i) == s2.charAt(i)) {
-            sb.append(s1.charAt(i));
-            i++;
-        }
-
-        String pref = sb.toString();
-
-        return pref;
-    }
-
     public String longestCommonPrefix(String[] A) {
-        if (A.length == 0)
-            return "";
-
-        if (A.length == 1)
-            return A[0];
-
-        String s1 = A[0];
-        String s2 = A[1];
-
-        String pref = findCommonPrefix(s1, s2);
-        if (pref == "")
-            return "";
-
-        for (int i = 2; i < A.length; i++) {
-            pref = findCommonPrefix(pref, A[i]);
+        String minStr = A[0];
+        for (int i = 1; i < A.length; i++) {
+            if (A[i].length() < minStr.length()) {
+                minStr = A[i];
+            }
         }
 
-        return pref;
+        String ans = "";
+        for (int i = 0; i < minStr.length(); i++) {
+            boolean isQualified = true;
+            for (int j = 0; j < A.length; j++) {
+                if (A[j].charAt(i) != minStr.charAt(i)) {
+                    isQualified = false;
+                    break;
+                }
+            }
+
+            if (!isQualified)
+                return ans;
+
+            ans = ans + minStr.charAt(i);
+        }
+
+        return ans;
     }
 
     /*
@@ -255,11 +252,10 @@ public class stringProblems {
      * 
      * Input:
      * 
-     * A : "abb_c" This implies S is "abb" and T is "c".
+     * A : "A : "abbaca_cbddbc"" This implies S is "abbaca" and T is "cbddbc"".
      * 
      * Output:
-     * 
-     * P = "cbb"
+     * P = "ddcccb"
      */
     public static String getLargest(String A) {
 

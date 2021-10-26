@@ -19,11 +19,11 @@ public class hashingProblems {
     // Return 0 / 1 ( 0 for false, 1 for true ) for this problem
 
     public boolean isSudokuRowValid(String[] A, int rowStart, int rowEnd, int colStart, int colEnd) {
-        for (int i = rowStart; i < rowEnd; i++) {
+        for (int i = rowStart; i <= rowEnd; i++) {
 
             HashSet<Character> s = new HashSet<Character>();
 
-            for (int j = colStart; j < colEnd; j++) {
+            for (int j = colStart; j <= colEnd; j++) {
 
                 char ch = A[i].charAt(j);
                 if (ch != '.') {
@@ -35,16 +35,17 @@ public class hashingProblems {
                 }
             }
         }
+
         return true;
     }
 
     public boolean isSudokuColumnValid(String[] A, int rowStart, int rowEnd, int colStart, int colEnd) {
 
-        for (int j = colStart; j < colEnd; j++) {
+        for (int j = colStart; j <= colEnd; j++) {
 
             HashSet<Character> s = new HashSet<Character>();
 
-            for (int i = rowStart; i < rowEnd; i++) {
+            for (int i = rowStart; i <= rowEnd; i++) {
                 char ch = A[i].charAt(j);
 
                 if (ch != '.') {
@@ -63,9 +64,9 @@ public class hashingProblems {
     public boolean isSudokuMatrixValid(String[] A, int rowStart, int rowEnd, int colStart, int colEnd) {
         HashSet<Character> s = new HashSet<Character>();
 
-        for (int i = rowStart; i < rowEnd; i++) {
+        for (int i = rowStart; i <= rowEnd; i++) {
 
-            for (int j = colStart; j < colEnd; j++) {
+            for (int j = colStart; j <= colEnd; j++) {
 
                 char ch = A[i].charAt(j);
                 if (ch != '.') {
@@ -83,38 +84,35 @@ public class hashingProblems {
 
     // DO NOT MODIFY THE ARGUMENTS WITH "final" PREFIX. IT IS READ ONLY
     public int isValidSudoku(final String[] A) {
-
-        if (!isSudokuRowValid(A, 0, 9, 0, 9))
+        // check if each row is unique
+        if (!isSudokuRowValid(A, 0, 8, 0, 8))
             return 0;
 
-        if (!isSudokuColumnValid(A, 0, 9, 0, 9))
+        // check if each column is unique
+        if (!isSudokuColumnValid(A, 0, 8, 0, 8))
             return 0;
 
-        if (!isSudokuMatrixValid(A, 0, 3, 0, 3))
+        // check if each 3x3 tile is valid
+        if (!isSudokuMatrixValid(A, 0, 2, 0, 2))
+            return 0;
+        if (!isSudokuMatrixValid(A, 0, 2, 3, 5))
+            return 0;
+        if (!isSudokuMatrixValid(A, 0, 2, 6, 8))
             return 0;
 
-        if (!isSudokuMatrixValid(A, 0, 3, 3, 6))
+        if (!isSudokuMatrixValid(A, 3, 5, 0, 2))
+            return 0;
+        if (!isSudokuMatrixValid(A, 3, 5, 3, 5))
+            return 0;
+        if (!isSudokuMatrixValid(A, 3, 5, 6, 8))
             return 0;
 
-        if (!isSudokuMatrixValid(A, 0, 3, 6, 9))
+        if (!isSudokuMatrixValid(A, 6, 8, 0, 2))
             return 0;
-
-        int rowStart = 0, rowEnd = 3;
-
-        while (rowEnd <= 9) {
-
-            if (!isSudokuMatrixValid(A, rowStart, rowEnd, 0, 3))
-                return 0;
-
-            if (!isSudokuMatrixValid(A, rowStart, rowEnd, 3, 6))
-                return 0;
-
-            if (!isSudokuMatrixValid(A, rowStart, rowEnd, 6, 9))
-                return 0;
-
-            rowStart = rowStart + 3;
-            rowEnd = rowEnd + 3;
-        }
+        if (!isSudokuMatrixValid(A, 6, 8, 3, 5))
+            return 0;
+        if (!isSudokuMatrixValid(A, 6, 8, 6, 8))
+            return 0;
 
         return 1;
     }
@@ -158,7 +156,33 @@ public class hashingProblems {
         return ans;
     }
 
-    // Find Pairs with difference k
+    /*
+     * Diffk II Check if there exists pair with diff K Given an array A of integers
+     * and another non negative integer k, find if there exists 2 indices i and j
+     * such that A[i] - A[j] = k, i != j. A : [1 5 3] k : 2 O/P: 1
+     */
+    public int checkPairWithDiffK(final int[] A, int K) {
+        HashSet<Integer> set = new HashSet<Integer>();
+        for (int i = 0; i < A.length; i++) {
+            set.add(A[i]);
+        }
+
+        if (K == 0) {
+            return set.size() < A.length ? 1 : 0;
+        }
+
+        for (int i = 0; i < A.length; i++) {
+            // a-b=k => for given a, search b = a-k in map
+            if (set.contains(A[i] - K))
+                return 1;
+        }
+
+        return 0;
+    }
+
+    /*
+     * Find count of pairs with diff K( an extension to above problem)
+     */
     public int FindPairsWithDifferenceEqualToK(int[] A, int k) {
         HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
 
@@ -228,46 +252,43 @@ public class hashingProblems {
         return 0;
     }
 
-    // Get Subarray with given sum
-    // Given an array of positive integers A and an integer B, find and return first
-    // continuous subarray which adds to B.
-
-    // If the answer does not exist return an array with a single element "-1".
-
-    // First sub-array means the sub-array for which starting index in minimum.
-    // Return the first continuous sub-array which adds to B and if the answer does
-    // not exist return an array with a single element "-1".
+    /*
+     * Subarray with given sum Given an array of positive integers A and an integer
+     * B, find and return first continuous subarray which adds to B. If the answer
+     * does not exist return an array with a single element "-1". First sub-array
+     * means the sub-array for which starting index in minimum. Problem Constraints
+     * 1 <= length of the array <= 100000 1 <= A[i] <= 10^9 1 <= B <= 10^9 Input
+     * Format The first argument given is the integer array A. The second argument
+     * given is integer B. Output Format Return the first continuous sub-array which
+     * adds to B and if the answer does not exist return an array with a single
+     * element "-1". Example Input A = [1, 2, 3, 4, 5] B = 5, O/P: [2, 3]
+     */
     public ArrayList<Integer> SubArrayWithGivenSum(ArrayList<Integer> A, int B) {
-        Long prefixSum = 0L;
+        ArrayList<Integer> res = new ArrayList<Integer>();
         HashMap<Long, Integer> map = new HashMap<Long, Integer>();
+        Long pSum = 0L;
 
         for (int i = 0; i < A.size(); i++) {
-            prefixSum = prefixSum + A.get(i);
-
-            if (prefixSum == B) {
-
-                ArrayList<Integer> res = new ArrayList<Integer>();
+            pSum += A.get(i);
+            if (pSum == B) {
                 for (int j = 0; j <= i; j++) {
                     res.add(A.get(j));
                 }
+
                 return res;
             }
 
-            if (map.containsKey(prefixSum - B)) {
-
-                ArrayList<Integer> res = new ArrayList<Integer>();
-                for (int j = map.get(prefixSum - B) + 1; j <= i; j++) {
+            if (map.containsKey(pSum - B)) {
+                for (int j = map.get(pSum - B) + 1; j <= i; j++) {
                     res.add(A.get(j));
                 }
+
                 return res;
             }
 
-            if (!map.containsKey(prefixSum)) {
-                map.put(prefixSum, i);
-            }
+            map.put(pSum, i);
         }
 
-        ArrayList<Integer> res = new ArrayList<Integer>();
         res.add(-1);
         return res;
     }
@@ -382,67 +403,23 @@ public class hashingProblems {
         return res;
     }
 
-    public void CountDistinctElementsInWindowOfSizeK(int[] A, int k) {
-        HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
-
-        for (int i = 0; i < k; i++) {
-            map.put(A[i], map.getOrDefault(A[i], 0) + 1);
-        }
-
-        System.out.print(map.size() + " ");
-
-        for (int i = k; i < A.length; i++) {
-            map.put(A[i - k], map.get(A[i - k]) - 1);
-
-            if (map.get(A[i - k]) <= 0) {
-                map.remove(A[i - k]);
-            }
-
-            map.put(A[i], map.getOrDefault(A[i], 0) + 1);
-            System.out.print(map.size() + " ");
-        }
-    }
-
-    // Longest Consecutive Subsequence
-    // Given an array, we need to find the longest subsequence that has consecutive
-    // elements. These consecutive elements may appear in any order in the
-    // subsequence.
-    public int LongestConsecutiveSubsequence(int[] A) {
-
-        HashSet<Integer> s = new HashSet<Integer>();
-
-        for (int i = 0; i < A.length; i++) {
-            s.add(A[i]);
-        }
-
-        int res = 0;
-
-        for (int i = 0; i < A.length; i++) {
-            if (!s.contains(A[i] - 1)) {
-                int count = 1;
-                while (s.contains(A[i] + count)) {
-                    count++;
-                }
-                res = Math.max(res, count);
-            }
-        }
-
-        return res;
-    }
-
-    /* Perfect Cards
-    Problem Description
-
-    Tom and Harry are given N numbers, with which they play a game as a team.
-
-    Initially, Tom chooses a particular number P from the N numbers, and he takes away all the numbers that are equal to P.
-
-    Next, Harry chooses a different number Q, different from what Tom chose, and takes away all the numbers equal to Q from the remaining N numbers.
-
-    They win the game if they can take all the numbers by doing the above operation once and if each of them has the same amount of numbers towards the end.
-
-    If they win, return the string "WIN", else return "LOSE".
-    */
+    /*
+     * Perfect Cards Problem Description
+     * 
+     * Tom and Harry are given N numbers, with which they play a game as a team.
+     * 
+     * Initially, Tom chooses a particular number P from the N numbers, and he takes
+     * away all the numbers that are equal to P.
+     * 
+     * Next, Harry chooses a different number Q, different from what Tom chose, and
+     * takes away all the numbers equal to Q from the remaining N numbers.
+     * 
+     * They win the game if they can take all the numbers by doing the above
+     * operation once and if each of them has the same amount of numbers towards the
+     * end.
+     * 
+     * If they win, return the string "WIN", else return "LOSE".
+     */
     public String perfectCards(int[] A) {
         HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
 
@@ -472,65 +449,70 @@ public class hashingProblems {
 
     }
 
-    /* Is Dictionary?
-    Problem Description
+    /*
+     * Is Dictionary? In an alien language, surprisingly they also use english
+     * lowercase letters, but possibly in a different order. The order of the
+     * alphabet is some permutation of lowercase letters. Given an array of words A
+     * of size N written in the alien language, and the order of the alphabet
+     * denoted by string B of size 26, return 1 if and only if the given words are
+     * sorted lexicographicaly in this alien language else return 0. Problem
+     * Constraints: 1 <= N, length of each word <= 10^5 Sum of length of all words
+     * <= 2 * 10^6 O/P: Return 1 if and only if the given words are sorted
+     * lexicographicaly in this alien language else return 0.
+     */
+    public boolean isLexographicallySmaller(String A, String B, HashMap<Character, Integer> map) {
+        int i = 0, j = 0;
+        while (i < A.length() && j < B.length()) {
+            if (map.get(A.charAt(i)) < map.get(B.charAt(j)))
+                return true;
+            if (map.get(B.charAt(j)) < map.get(A.charAt(i)))
+                return false;
 
-    In an alien language, surprisingly they also use english lowercase letters, but possibly in a different order. The order of the alphabet is some permutation of lowercase letters.
-
-    Given an array of words A of size N written in the alien language, and the order of the alphabet denoted by string B of size 26, return 1 if and only if the given words are sorted lexicographicaly in this alien language else return 0.
-    */
-    public boolean isLexographical(String A, String B, HashMap<Character,Integer> map)
-    {
-        int i=0,j=0;
-        
-        while(i<A.length() && j<B.length())
-        {
-            if(map.get(A.charAt(i)) < map.get(B.charAt(j))) return true;
-            
-            if(map.get(A.charAt(i)) > map.get(B.charAt(j))) return false;
-            
             i++;
             j++;
         }
-        
-        if(i==A.length() && j==B.length()) return true;
-        
-        if(i==A.length()) return true;
-        
+
+        if (i == A.length() && j == B.length())
+            return true;
+
+        if (i == A.length())
+            return true;
+
         return false;
+
     }
-    
-    public int solve(String[] A, String B) {
-        HashMap<Character,Integer> map = new HashMap<Character,Integer>();
-        
-        for(int i=0; i<B.length(); i++){
+
+    public int areStringsInLexographicalOrder(String[] A, String B) {
+        // qwertyuiopasdfghjklzxcvbnm
+        HashMap<Character, Integer> map = new HashMap<Character, Integer>();
+
+        for (int i = 0; i < B.length(); i++) {
             map.put(B.charAt(i), i);
         }
-        
-        int i=0,j=1;
-        while(i<A.length-1 && j<A.length){
-            if(!isLexographical(A[i], A[j], map)) return 0;
-            
-            i++;
-            j++;
+
+        for (int i = 1; i < A.length; i++) {
+            if (!isLexographicallySmaller(A[i - 1], A[i], map)) {
+                return 0;
+            }
         }
-        
+
         return 1;
     }
 
-    /* Colorful Number
-    Problem Description
-
-    For Given Number A find if its COLORFUL number or not.
-
-    If number A is a COLORFUL number return 1 else return 0.
-
-    What is a COLORFUL Number:
-
-    A number can be broken into different contiguous sub-subsequence parts. 
-    Suppose, a number 3245 can be broken into parts like 3 2 4 5 32 24 45 324 245. 
-    And this number is a COLORFUL number, since product of every digit of a contiguous subsequence is different.
-    */
+    /*
+     * Colorful Number Problem Description
+     * 
+     * For Given Number A find if its COLORFUL number or not.
+     * 
+     * If number A is a COLORFUL number return 1 else return 0.
+     * 
+     * What is a COLORFUL Number:
+     * 
+     * A number can be broken into different contiguous sub-subsequence parts.
+     * Suppose, a number 3245 can be broken into parts like 3 2 4 5 32 24 45 324
+     * 245. And this number is a COLORFUL number, since product of every digit of a
+     * contiguous subsequence is different.
+     */
     public int colorful(int A) {
         ArrayList<Integer> nums = new ArrayList<Integer>();
         while (A > 0) {
@@ -558,4 +540,162 @@ public class hashingProblems {
         return 1;
     }
 
+    /*
+     * Shaggy and distances Shaggy has an array A consisting of N elements. We call
+     * a pair of distinct indices in that array as a special pair if elements at
+     * that index in the array are equal.
+     * 
+     * Shaggy wants you to find a special pair such that distance between that pair
+     * is minimum. Distance between two indices is defined as |i-j|. If there is no
+     * special pair in the array then return -1. Return one integer corresponding to
+     * the minimum possible distance between a special pair.
+     */
+    public int ShaggyAndDistances(int[] A) {
+        int ans = Integer.MAX_VALUE;
+
+        HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+        for (int i = 0; i < A.length; i++) {
+            if (map.containsKey(A[i])) {
+                ans = Math.min(ans, i - map.get(A[i]));
+
+            }
+
+            map.put(A[i], i);
+        }
+        return ans == Integer.MAX_VALUE ? -1 : ans;
+    }
+
+    /*
+     * Common Elements iven two integer array A and B of size N and M respectively.
+     * Your task is to find all the common elements in both the array. * NOTE: *
+     * Each element in the result should appear as many times as it shows in both
+     * arrays. The result can be in any order. Problem Constraints 1 <= N, M <= 10^5
+     * 1 <= A[i] <= 10^9 Input Format First argument is an integer array A of size
+     * N. Second argument is an integer array B of size M.* Output Format Return an
+     * integer array denoting the common elements.* Example Input Input 1: A = [1,
+     * 2, 2, 1] B = [2, 3, 1, 2] Input 2: A = [2, 1, 4, 10] B = [3, 6, 2, 10, 10]
+     * Example Output Output 1: [1, 2, 2] Output 2: [2, 10]
+     */
+    public ArrayList<Integer> commonElements(ArrayList<Integer> A, ArrayList<Integer> B) {
+        HashMap<Integer, Integer> freqA = new HashMap<Integer, Integer>();
+
+        for (int i = 0; i < A.size(); i++) {
+            freqA.put(A.get(i), freqA.getOrDefault(A.get(i), 0) + 1);
+        }
+
+        ArrayList<Integer> res = new ArrayList<Integer>();
+
+        for (int x : B) {
+            if (freqA.containsKey(x)) {
+                res.add(x);
+                int count = freqA.get(x);
+                count--;
+                if (count == 0) {
+                    freqA.remove(x);
+                } else {
+                    freqA.put(x, count);
+                }
+            }
+        }
+
+        return res;
+    }
+
+    /*
+     * Check Palindrome! Problem Description * Given a string A consisting of
+     * lowercase characters. Check if characters of the given string can be
+     * rearranged to form a palindrome.* Return 1 if it is possible to rearrange the
+     * characters of the string A such that it becomes a palindrome else return 0.
+     * Problem Constraints 1 <= |A| <= 10^5* A consists only of lower-case
+     * characters. Input Format First argument is an string A.* Output Format Return
+     * 1 if it is possible to rearrange the characters of the string A such that it
+     * becomes a palindrome else return 0. Example Input 1: A = "abcde" Input 2: A =
+     * "abbaee" Example Output Output 1: 0, Output 2: 1*
+     * 
+     * Example Explanation Explanation 1: No possible rearrangement to make the
+     * string palindrome. Explanation 2: Given string "abbaee" can be rearranged to
+     * "aebbea" to form a palindrome.
+     */
+    public int checkPalindrome(String A) {
+
+        int[] count = new int[26];
+        for (int i = 0; i < A.length(); i++) {
+            count[A.charAt(i) - 'a']++;
+        }
+
+        int c = 0;
+        for (int i = 0; i < 26; i++) {
+
+            if (count[i] % 2 != 0) {
+                c++;
+                if (c > 1)
+                    return 0;
+            }
+        }
+
+        return 1;
+    }
+
+    /*
+     * Longest Consecutive Sequence (Longest Consecutive Sub Sequence) Longest
+     * Consecutive Sequence Given an unsorted integer array A of size N. Find the
+     * length of the longest set of consecutive elements from the array A. Input: A
+     * = [100, 4, 200, 1, 3, 2] O/P: 4
+     */
+    public int longestConsecutiveSubsequence(final int[] A) {
+        // 100, 4, 200, 1, 3, 2
+        HashSet<Integer> set = new HashSet<Integer>();
+        for (int i = 0; i < A.length; i++) {
+            set.add(A[i]);
+        }
+
+        int res = 0;
+        for (int i = 0; i < A.length; i++) {
+            if (!set.contains(A[i] - 1)) {
+                int j = A[i];
+                while (set.contains(j)) {
+                    j++;
+                }
+
+                res = Math.max(res, j - A[i]);
+            }
+        }
+
+        return res;
+    }
+
+    /*
+     * Distinct Numbers in Window Problem Description You are given an array of N
+     * integers, A1, A2 ,..., AN and an integer B. Return the of count of distinct
+     * numbers in all windows of size B. Formally, return an array of size N-B+1
+     * where i'th element in this array contains number of distinct elements in
+     * sequence Ai, Ai+1 ,..., Ai+B-1. NOTE: if B > N, return an empty array. input:
+     * A = [1, 2, 1, 3, 4, 3], B = 3 output: [2, 3, 3, 2]
+     */
+    public int[] CountDistinctElementsInWindowOfSizeK(int[] A, int B) {
+        int n = A.length;
+        if (B > n)
+            return new int[0];
+
+        int[] res = new int[n - B + 1];
+        HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+
+        for (int i = 0; i < B; i++) {
+            map.put(A[i], map.getOrDefault(A[i], 0) + 1);
+        }
+
+        res[0] = map.size();
+
+        int j = 1;
+        for (int i = B; i < n; i++) {
+            map.put(A[i], map.getOrDefault(A[i], 0) + 1);
+            map.put(A[i - B], map.get(A[i - B]) - 1);
+            if (map.get(A[i - B]) == 0)
+                map.remove(A[i - B]);
+
+            res[j++] = map.size();
+        }
+
+        return res;
+    }
 }
