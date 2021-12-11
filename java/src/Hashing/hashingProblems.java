@@ -117,42 +117,89 @@ public class hashingProblems {
         return 1;
     }
 
-    // Q. You are given two strings A and B of size N and M respectively.
-    // You have to find the count of all permutations of A present in B as a
-    // substring. You can assume a string will have only lowercase letters.
-    // A = "abc" B = "abcbacabc" . O/P: 5
-    private boolean compare(int[] A, int[] B) {
-        for (int i = 0; i < 26; i++) {
+    /*
+     * Permutations of A in B Problem Description
+     * 
+     * You are given two strings A and B of size N and M respectively.
+     * 
+     * You have to find the count of all permutations of A present in B as a
+     * substring. You can assume a string will have only lowercase letters.
+     * 
+     * 
+     * 
+     * Problem Constraints
+     * 
+     * 1 <= N < M <= 105
+     * 
+     * 
+     * 
+     * Input Format
+     * 
+     * Given two argument, A and B of type String.
+     * 
+     * 
+     * 
+     * Output Format
+     * 
+     * Return a single Integer, i.e number of permutations of A present in B as a
+     * substring.
+     * 
+     * 
+     * 
+     * Example Input
+     * 
+     * Input 1:
+     * 
+     * A = "abc" B = "abcbacabc" Input 2:
+     * 
+     * A = "aca" B = "acaa"
+     * 
+     * 
+     * Example Output
+     * 
+     * Output 1:
+     * 
+     * 5 Output 2:
+     * 
+     * 2
+     */
+    private boolean isSame(int[] A, int[] B) {
+        if (A.length != B.length)
+            return false;
+
+        for (int i = 0; i < A.length; i++) {
             if (A[i] != B[i])
                 return false;
         }
+
         return true;
     }
 
     public int CountOfAllAnagramsA_In_B(String A, String B) {
-        int n = A.length();
-        int m = B.length();
-        if (m < n)
-            return 0;
-        int[] countA = new int[26];
-        for (int i = 0; i < n; i++) {
-            countA[A.charAt(i) - 'a']++;
+        int[] count1 = new int[26];
+        for (int i = 0; i < A.length(); i++) {
+            count1[A.charAt(i) - 'a']++;
         }
-        int[] countB = new int[26];
-        for (int i = 0; i < n; i++) {
-            countB[B.charAt(i) - 'a']++;
+
+        int[] count2 = new int[26];
+        for (int i = 0; i < A.length(); i++) {
+            count2[B.charAt(i) - 'a']++;
         }
+
         int ans = 0;
-        if (compare(countA, countB)) {
+        if (isSame(count1, count2)) {
             ans++;
         }
-        for (int i = n; i < m; i++) {
-            countB[B.charAt(i) - 'a']++;
-            countB[B.charAt(i - n) - 'a']--;
-            if (compare(countA, countB)) {
+
+        for (int i = A.length(); i < B.length(); i++) {
+            count2[B.charAt(i) - 'a']++;
+            count2[B.charAt(i - A.length()) - 'a']--;
+
+            if (isSame(count1, count2)) {
                 ans++;
             }
         }
+
         return ans;
     }
 
