@@ -2,6 +2,26 @@ package Arrays;
 
 import java.util.*;
 
+
+class PairComparator implements Comparator<Pair>
+{
+    @Override
+    public int compare(Pair p1, Pair p2) {
+        return p1.value - p2.value;
+    }
+}
+
+class Pair
+{
+    public int value;
+    public int index;
+
+    public Pair(int v, int i){
+        value = v;
+        index = i;
+    }
+}
+
 public class arrayProblems {
 
     public static void Swap(int[] A, int i, int j) {
@@ -2385,4 +2405,175 @@ public class arrayProblems {
         return ans;
     }
 
+    /*
+     * Max Distance
+     * Given an array A of integers of size N. Find the maximum of value of j - i
+     * such that A[i] <= A[j].
+     * 
+     * 
+     * 
+     * Problem Constraints
+     * 
+     * 1 <= N <= 1000000
+     * 
+     * -109 <= A[i] <= 109
+     * 
+     * 
+     * 
+     * Input Format
+     * 
+     * First argument is an integer array A of size N.
+     * 
+     * 
+     * 
+     * Output Format
+     * 
+     * Return an integer denoting the maximum value of j - i.
+     * 
+     * 
+     * 
+     * Example Input
+     * 
+     * Input 1:
+     * 
+     * A = [3, 5, 4, 2]
+     * 
+     * 
+     * Example Output
+     * 
+     * Output 1:
+     * 
+     * 2
+     * 
+     * 
+     * Example Explanation
+     * 
+     * Explanation 1:
+     * 
+     * For A[0] = 3 and A[2] = 4, the ans is (2 - 0) = 2.
+     * 
+     * 
+     * See Expected Output
+     * 
+     * 
+     */
+    public int maximumGap(final int[] A) {
+        Pair[] pairs = new Pair[A.length];
+
+        for(int i=0; i<A.length; i++)
+        {
+            pairs[i] = new Pair(A[i], i);
+        }
+
+        Arrays.sort(pairs, new PairComparator());
+
+        int maxj = pairs[pairs.length-1].index;
+        int ans = Integer.MIN_VALUE;
+
+        for(int i=pairs.length-1; i>=0; i--)
+        {
+            ans = Math.max(ans, maxj - pairs[i].index);
+            maxj = Math.max(maxj, pairs[i].index);
+        }
+
+        return ans;
+    }
+
+    /*
+     * Minimum Swaps
+     * Given an array of integers A and an integer B, find and return the minimum
+     * number of swaps required to bring all the numbers less than or equal to B
+     * together.
+     * 
+     * Note: It is possible to swap any two elements, not necessarily consecutive.
+     * 
+     * 
+     * 
+     * Problem Constraints
+     * 
+     * 1 <= length of the array <= 100000
+     * -109 <= A[i], B <= 109
+     * 
+     * 
+     * 
+     * Input Format
+     * 
+     * The first argument given is the integer array A.
+     * The second argument given is the integer B.
+     * 
+     * 
+     * 
+     * Output Format
+     * 
+     * Return the minimum number of swaps.
+     * 
+     * 
+     * 
+     * Example Input
+     * 
+     * Input 1:
+     * 
+     * A = [1, 12, 10, 3, 14, 10, 5]
+     * B = 8
+     * Input 2:
+     * 
+     * A = [5, 17, 100, 11]
+     * B = 20
+     * 
+     * 
+     * Example Output
+     * 
+     * Output 1:
+     * 
+     * 2
+     * Output 2:
+     * 
+     * 1
+     * 
+     * 
+     * Example Explanation
+     * 
+     * Explanation 1:
+     * 
+     * A = [1, 12, 10, 3, 14, 10, 5]
+     * After swapping 12 and 3, A => [1, 3, 10, 12, 14, 10, 5].
+     * After swapping the first occurence of 10 and 5, A => [1, 3, 5, 12, 14, 10,
+     * 10].
+     * Now, all elements less than or equal to 8 are together.
+     * Explanation 2:
+     * 
+     * A = [5, 17, 100, 11]
+     * After swapping 100 and 11, A => [5, 17, 11, 100].
+     * Now, all elements less than or equal to 20 are together.
+     * 
+     */
+    public int minimumSwaps(int[] A, int B) {
+        int k = 0;
+        for (int i = 0; i < A.length; i++) {
+            if (A[i] <= B) {
+                k++;
+            }
+        }
+
+        if (k == 1)
+            return 0;
+
+        int count = 0;
+        for (int i = 0; i < k; i++) {
+            if (A[i] > B)
+                count++;
+        }
+
+        int ans = count;
+        for (int i = k; i < A.length; i++) {
+            if (A[i] > B)
+                count++;
+            if (A[i - k] > B)
+                count--;
+
+            ans = Math.min(ans, count);
+        }
+
+        return ans;
+    }
 }

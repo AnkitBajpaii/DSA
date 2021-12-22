@@ -404,7 +404,7 @@ public class stringProblems {
             s += i >= 0 ? A.charAt(i) - '0' : 0;
             s += j >= 0 ? B.charAt(j) - '0' : 0;
 
-            result = (char) (s % 2 + '0') + result;
+            result = (s % 2) + result;
 
             s = s / 2;
 
