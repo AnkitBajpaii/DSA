@@ -177,28 +177,34 @@ public class hashingProblems {
 
     public int CountOfAllAnagramsA_In_B(String A, String B) {
         int[] count1 = new int[26];
-        for (int i = 0; i < A.length(); i++) {
+        for(int i=0; i<A.length(); i++)
+        {
             count1[A.charAt(i) - 'a']++;
         }
 
         int[] count2 = new int[26];
-        for (int i = 0; i < A.length(); i++) {
+        for(int i=0; i<A.length(); i++)
+        {
             count2[B.charAt(i) - 'a']++;
         }
 
-        int ans = 0;
-        if (isSame(count1, count2)) {
-            ans++;
-        }
+        int ans = 0;       
 
-        for (int i = A.length(); i < B.length(); i++) {
-            count2[B.charAt(i) - 'a']++;
-            count2[B.charAt(i - A.length()) - 'a']--;
-
-            if (isSame(count1, count2)) {
+        for(int i=A.length(); i<B.length(); i++)
+        {
+            if(isSame(count1, count2))
+            {
                 ans++;
             }
+
+            count2[B.charAt(i) - 'a']++;
+            count2[B.charAt(i - A.length()) - 'a']--;
         }
+
+        if(isSame(count1, count2))
+            {
+                ans++;
+            }
 
         return ans;
     }
@@ -248,9 +254,12 @@ public class hashingProblems {
 
         } else {
             for (int i = 0; i < A.length; i++) {
+                int a = A[i];
+                int b = a - k;
+
                 // a-b=k => for given a, search b = a-k in map
-                if (map.containsKey(A[i] - k)) {
-                    count += map.get(A[i] - k);
+                if (map.containsKey(b)) {
+                    count += map.get(b);
                 }
             }
         }
@@ -613,38 +622,88 @@ public class hashingProblems {
     }
 
     /*
-     * Common Elements iven two integer array A and B of size N and M respectively.
-     * Your task is to find all the common elements in both the array. * NOTE: *
-     * Each element in the result should appear as many times as it shows in both
-     * arrays. The result can be in any order. Problem Constraints 1 <= N, M <= 10^5
-     * 1 <= A[i] <= 10^9 Input Format First argument is an integer array A of size
-     * N. Second argument is an integer array B of size M.* Output Format Return an
-     * integer array denoting the common elements.* Example Input Input 1: A = [1,
-     * 2, 2, 1] B = [2, 3, 1, 2] Input 2: A = [2, 1, 4, 10] B = [3, 6, 2, 10, 10]
-     * Example Output Output 1: [1, 2, 2] Output 2: [2, 10]
+     Problem Description
+
+    Given two integer array A and B of size N and M respectively. Your task is to find all the common elements in both the array.
+
+    NOTE:
+
+    Each element in the result should appear as many times as it shows in both arrays.
+    The result can be in any order.
+
+
+    Problem Constraints
+
+    1 <= N, M <= 105
+
+    1 <= A[i] <= 109
+
+
+
+    Input Format
+
+    First argument is an integer array A of size N.
+
+    Second argument is an integer array B of size M.
+
+
+
+    Output Format
+
+    Return an integer array denoting the common elements.
+
+
+
+    Example Input
+
+    Input 1:
+
+    A = [1, 2, 2, 1]
+    B = [2, 3, 1, 2]
+    Input 2:
+
+    A = [2, 1, 4, 10]
+    B = [3, 6, 2, 10, 10]
+
+
+    Example Output
+
+    Output 1:
+
+    [1, 2, 2]
+    Output 2:
+
+    [2, 10]
+
+
+    Example Explanation
+
+    Explanation 1:
+
+    Elements (1, 2, 2) appears in both the array. Note 2 appears twice in both the array.
+    Explantion 2:
+
+    Elements (2, 10) appears in both the array.
      */
     public ArrayList<Integer> commonElements(ArrayList<Integer> A, ArrayList<Integer> B) {
-        HashMap<Integer, Integer> freqA = new HashMap<Integer, Integer>();
-
-        for (int i = 0; i < A.size(); i++) {
-            freqA.put(A.get(i), freqA.getOrDefault(A.get(i), 0) + 1);
+        HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+        for(int x:A){
+            map.put(x, map.getOrDefault(x,0)+1);
         }
-
+        
         ArrayList<Integer> res = new ArrayList<Integer>();
-
-        for (int x : B) {
-            if (freqA.containsKey(x)) {
+        
+        for(int x:B){
+            if(map.containsKey(x)){
                 res.add(x);
-                int count = freqA.get(x);
-                count--;
-                if (count == 0) {
-                    freqA.remove(x);
-                } else {
-                    freqA.put(x, count);
+                map.put(x, map.get(x) - 1);
+                if(map.get(x) == 0)
+                {
+                    map.remove(x);
                 }
             }
         }
-
+        
         return res;
     }
 
@@ -712,7 +771,8 @@ public class hashingProblems {
     }
 
     /*
-     * Distinct Numbers in Window Problem Description You are given an array of N
+     * Distinct Numbers in Window 
+     * Problem Description You are given an array of N
      * integers, A1, A2 ,..., AN and an integer B. Return the of count of distinct
      * numbers in all windows of size B. Formally, return an array of size N-B+1
      * where i'th element in this array contains number of distinct elements in
@@ -734,11 +794,11 @@ public class hashingProblems {
         res[0] = map.size();
 
         int j = 1;
-        for (int i = B; i < n; i++) {
-            map.put(A[i], map.getOrDefault(A[i], 0) + 1);
-            map.put(A[i - B], map.get(A[i - B]) - 1);
-            if (map.get(A[i - B]) == 0)
-                map.remove(A[i - B]);
+        for (int i = 1; i <=n-B; i++) {
+            map.put(A[i+B-1], map.getOrDefault(A[i+B-1], 0) + 1);
+            map.put(A[i - 1], map.get(A[i - 1]) - 1);
+            if (map.get(A[i - 1]) == 0)
+                map.remove(A[i - 1]);
 
             res[j++] = map.size();
         }

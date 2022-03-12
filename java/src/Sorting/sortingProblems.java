@@ -9,20 +9,17 @@ public class sortingProblems {
      * array such that the number of integers greater than p in the array equals to p.
      */
     public int CheckForNobelInteger(int[] A) {
-        int n = A.length;
-
+        
         Arrays.sort(A);
 
-        for (int i = 0; i < n - 1; i++) {
-            if (A[i] == A[i + 1])
-                continue;
-
-            if (A[i] == (n - 1 - i))
+        for (int i = 0; i < A.length; i++) {
+            if (i == A.length - 1 && A[i] == 0)
                 return 1;
-        }
 
-        if (A[n - 1] == 0)
-            return 1;
+            if (A[i] >= 0 && i + 1 < A.length && A[i] != A[i + 1] && A[i] == A.length - 1 - i) {
+                return 1;
+            }
+        }
 
         return -1;
     }
@@ -32,15 +29,12 @@ public class sortingProblems {
     A sequence of numbers is called an arithmetic progression if the difference between any two consecutive elements is the same.
     */
     public int CheckForArithmeticProgression(int[] A) {
-        if (A.length == 2)
-            return 1;
-
         Arrays.sort(A);
 
         int d = A[1] - A[0];
 
         for (int i = 2; i < A.length; i++) {
-            if ((A[i] - A[i - 1]) != d)
+            if (A[i] - A[i - 1] != d)
                 return 0;
         }
 
@@ -138,19 +132,36 @@ public class sortingProblems {
     */
     public int MinimumCostToRemoveAllElements(int[] A) {
 
-        int sum = 0;
-
-        for (int i = 0; i < A.length; i++) {
-            sum = sum + A[i];
-        }
-
-        Arrays.sort(A);
-
         int cost = 0;
 
-        for (int i = A.length - 1; i >= 0; i--) {
-            cost = cost + sum;
-            sum = sum - A[i];
+        // approach 1
+        {
+            cost = 0;
+
+            int sum = 0;
+
+            for (int i = 0; i < A.length; i++) {
+                sum = sum + A[i];
+            }
+    
+            Arrays.sort(A);
+    
+            for (int i = A.length - 1; i >= 0; i--) {
+                cost = cost + sum;
+                sum = sum - A[i];
+            }
+        }
+
+        // approach 2
+        {
+            cost = 0;
+
+            Arrays.sort(A);
+
+            for (int i = A.length - 1; i >= 0; i--) {
+                cost += A[i] * (A.length - i);
+            }
+
         }
 
         return cost;
@@ -229,14 +240,10 @@ public class sortingProblems {
         int count = 0;
 
         for (int i = 1; i < A.length; i++) {
-            if (A[i] == A[i - 1]) {
-                A[i] = A[i] + 1;
-                count = count + 1;
-
-            } else if (A[i] < A[i - 1]) {
-                int steps = A[i - 1] - A[i] + 1;
-                A[i] = A[i] + steps;
+            if(A[i] == A[i-1] || A[i] < A[i-1]){
+                int steps = A[i-1] - A[i]+1;
                 count = count + steps;
+                A[i] = A[i-1]+1;
             }
         }
 
@@ -298,6 +305,85 @@ public class sortingProblems {
         }
         
         return res;
+    }
+
+    /* Sort the Unsorted Array
+    Problem Description
+
+    You are given an integer array A having N integers.
+
+    You have to find the minimum length subarray A[l..r] such that sorting this subarray makes the whole array sorted.
+
+
+
+    Problem Constraints
+
+    1 <= N <= 105
+
+    -109 <= A[i] <= 109
+
+
+
+    Input Format
+
+    First and only argument is an integer array A.
+
+
+
+    Output Format
+
+    Return an integer denoting the minimum length.
+
+
+
+    Example Input
+
+    Input 1:
+
+    A = [0, 1, 15, 25, 6, 7, 30, 40, 50] 
+    Input 2:
+
+    A = [10, 12, 20, 30, 25, 40, 32, 31, 35, 50, 60] 
+
+
+    Example Output
+
+    Output 1:
+
+    4 
+    Output 2:
+
+    6 
+
+
+    Example Explanation
+
+    Explanation 1:
+
+    The smallest subarray to be sorted to make the whole array sorted =  A[3..6] i.e, subarray lying between positions 3 and 6. 
+    Explanation 2:
+
+    The smallest subarray to be sorted to make the whole array sorted =  A[4..9] i.e, subarray lying between positions 4 and 9. 
+    */
+    public int minimumLengthSubarraySort(int[] A)
+    {
+        int[] B = A.clone();
+        Arrays.sort(B);
+
+        int i = 0, j = A.length - 1;
+        while (i < j) {
+            if (A[i] != B[i] && A[j] != B[j])
+                break;
+
+            if (A[i] == B[i])
+                i++;
+
+            if (A[j] == B[j])
+                j++;
+
+        }
+
+        return j - i + 1;
     }
 
 }

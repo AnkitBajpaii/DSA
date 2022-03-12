@@ -265,10 +265,10 @@ public class stringProblems {
         String S = arr[0];// abb
         String T = arr[1];// c
 
-        int[] count = new int[26];
+        int[] freq = new int[26];
 
         for (int i = 0; i < T.length(); i++) {
-            count[T.charAt(i) - 'a']++;
+            freq[T.charAt(i) - 'a']++;
         }
 
         StringBuilder sb = new StringBuilder();
@@ -277,17 +277,20 @@ public class stringProblems {
 
         for (int i = 0; i < S.length(); i++) {
 
-            int x = S.charAt(i) - 'a';
+            int currCharIndex = S.charAt(i) - 'a';
 
-            for (; j > x; j--) {
-                if (count[j] > 0 && ('a' + j) > S.charAt(i)) {
+            while(j > currCharIndex) {
+                if (freq[j] > 0) {
                     sb.append((char) ('a' + j));
-                    count[j]--;
+                    freq[j]--;
+                    
                     break;
                 }
+
+                j--;
             }
 
-            if (j <= x) {
+            if (j <= currCharIndex) {
                 sb.append(S.charAt(i));
             }
         }

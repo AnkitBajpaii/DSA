@@ -2178,8 +2178,7 @@ public class arrayProblems {
     }
 
     /*
-     * Count ways to make sum of odd and even indexed elements equal by removing an
-     * array element
+     * Count ways to make sum of odd and even indexed elements equal     
      * Problem Description
      * 
      * Given an array, arr[] of size N, the task is to find the count of array
@@ -2247,44 +2246,83 @@ public class arrayProblems {
         return ps[r] - ps[l - 1];
     }
 
-    public int countWays(int[] A) {
+    public int CountWaysToMakeSumOfOddAndEvenIndexedElementsEqual_WithExtraSpace(int[] A) {
         int n = A.length;
 
-        int[] se = new int[n];
-        int[] so = new int[n];
+        int[] pfe = new int[n];
+        int[] pfo = new int[n];
 
-        se[0] = A[0];
-        so[0] = 0;
+        pfe[0] = A[0];
+        pfo[0] = 0;
 
-        for (int i = 1; i < n; i++) {
-            if (i % 2 != 0) {
-                se[i] = se[i - 1];
-                so[i] = so[i - 1] + A[i];
+        for(int i=1; i<n; i++)
+        {
+            if(i%2 == 0)
+            {
+                pfe[i] = pfe[i-1] + A[i];
+                pfo[i] = pfo[i-1];
             } else {
-                se[i] = se[i - 1] + A[i];
-                so[i] = so[i - 1];
+                pfo[i] = pfo[i-1] + A[i];
+                pfe[i] = pfe[i-1];
             }
         }
-        int count = 0;
-        for (int i = 0; i < n; i++) {
-            int see;
-            int soo;
 
-            if (i == 0) {
-                see = prefixSumLtoR(so, i + 1, n - 1);
-                soo = prefixSumLtoR(se, i + 1, n - 1);
+        int count=0;
 
-            } else if (i == n - 1) {
-                see = prefixSumLtoR(se, 0, i - 1);
-                soo = prefixSumLtoR(so, 0, i - 1);
+        for(int i=0; i<n; i++)
+        {
+            int eb = i == 0 ? 0 : pfe[i-1];
+            int ea = i == n-1 ? 0 : pfe[n-1] -  pfe[i];
 
-            } else {
-                see = prefixSumLtoR(se, 0, i - 1) + prefixSumLtoR(so, i + 1, n - 1);
-                soo = prefixSumLtoR(so, 0, i - 1) + prefixSumLtoR(se, i + 1, n - 1);
+            int ob = i == 0 ? 0 : pfo[i-1];
+            int oa = i == n-1 ? 0 : pfo[n-1] -  pfo[i];
+
+            if(eb+oa == ob+ea) count++;
+        }
+
+        return count;
+    }
+
+    public int CountWaysToMakeSumOfOddAndEvenIndexedElementsEqual_WithoutExtraSpace(int[] A) {
+        int n = A.length;
+        int sumEven = A[0], sumOdd = 0;        
+
+        for(int i=1; i<n; i++)
+        {
+            if(i%2 == 0)
+            {
+                sumEven += A[i];
+            } else{
+                sumOdd += A[i];
+            }
+        }
+
+        int currEven = 0, currOdd = 0;
+        int count=0;
+        for(int i=0; i<n; i++)        
+        {
+            int evenBefore, evenAfter, oddBefore, oddAfter;
+
+            if(i%2 == 0)
+            {
+                currEven += A[i];
+                evenBefore = currEven - A[i];
+                evenAfter = sumEven - currEven;
+                oddBefore = currOdd;
+                oddAfter = sumOdd - currOdd;
+            } else{
+                currOdd += A[i];
+                evenBefore = currEven;
+                evenAfter = sumEven - currEven;
+                oddBefore = currOdd - A[i];
+                oddAfter = sumOdd - currOdd;
             }
 
-            if (see == soo)
+            if(evenBefore + oddAfter == oddBefore + evenAfter)
+            {
                 count++;
+            }
+
         }
 
         return count;
@@ -2575,5 +2613,78 @@ public class arrayProblems {
         }
 
         return ans;
+    }
+
+    /*  N/3 Repeat Number
+    You're given a read only array of n integers. Find out if any integer occurs more than n/3 times in the array in linear time and constant additional space.
+    If so, return the integer. If not, return -1.
+
+    If there are multiple solutions, return any one.
+
+    Example:
+
+    Input: [1 2 3 1 1]
+    Output: 1 
+    1 occurs 3 times which is more than 5/3 times.
+    */
+    public int repeatedNumber(final List<Integer> a) {
+        if (a.size() == 0)
+            return -1;
+
+        Integer maj1 = null, maj2 = null;
+        int count1 = 0, count2 = 0;
+
+        for (int i = 0; i < a.size(); i++) {
+            if (maj1 == null) {
+                maj1 = a.get(i);
+                count1 = 1;
+            }
+
+            else if (maj2 == null) {
+                maj2 = a.get(i);
+                count2 = 1;
+            } else {
+                if (a.get(i) == maj1) {
+                    count1++;
+                } else if (a.get(i) == maj2) {
+                    count2++;
+                } else {
+                    count1--;
+                    count2--;
+
+                    if (count1 == 0) {
+                        maj1 = null;
+                    }
+
+                    if (count2 == 0) {
+                        maj2 = null;
+                    }
+                }
+            }
+        }
+
+        if (maj1 == null && maj2 == null)
+            return -1;
+
+        count1 = 0;
+        count2 = 0;
+        
+        for (int i = 0; i < a.size(); i++) {
+            if (maj1 != null && a.get(i) == maj1) {
+                count1++;
+
+                if (count1 > a.size() / 3)
+                    return a.get(i);
+            }
+
+            if (maj2 != null && a.get(i) == maj2) {
+                count2++;
+
+                if (count2 > a.size() / 3)
+                    return a.get(i);
+            }
+        }
+
+        return -1;
     }
 }
