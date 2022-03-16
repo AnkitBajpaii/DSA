@@ -1633,9 +1633,11 @@ public class arrayProblems {
         // i.e 1. f(i,j) = (A[i]-i) - (A[j] - j)
         // 2. f(i,j) = (A[j] + j) - (A[i] + i)
 
-        int xmax = A[0], xmin = A[0];
+        int xmax = A[0], xmin = A[0], ymax = A[0], ymin = A[0];
+
         for (int i = 1; i < A.length; i++) {
             int xi = A[i] + i;
+
             if (xi > xmax) {
                 xmax = xi;
             }
@@ -1643,11 +1645,9 @@ public class arrayProblems {
             if (xi < xmin) {
                 xmin = xi;
             }
-        }
 
-        int ymax = A[0], ymin = A[0];
-        for (int i = 1; i < A.length; i++) {
             int yi = A[i] - i;
+
             if (yi > ymax) {
                 ymax = yi;
             }
@@ -2061,26 +2061,26 @@ public class arrayProblems {
     */
     public void IsNonDreasing(int[] A, ArrayList<Query> queries)
     {
-        int[] arr = new int[A.length];
+        int[] pf = new int[A.length];
 
-        arr[0] = 0;
+        pf[0] = 0;
 
         for (int i = 1; i < A.length; i++) {
             if (A[i] < A[i - 1]) {
-                arr[i] = 1; // mark decrement points
+                pf[i] = 1; // mark decrement points
             }
         }
 
         // take prefix sum of array containing decrement points
-        for (int i = 1; i < arr.length; i++) {
-            arr[i] = arr[i - 1] + arr[i];
+        for (int i = 1; i < pf.length; i++) {
+            pf[i] = pf[i - 1] + pf[i];
         }
 
         for (Query Q : queries) {
             int start = Q.start;
             int end = Q.end;
 
-            if (arr[end] - arr[start] == 0) {// we didnt took start - 1 because, starting element we have to exclude
+            if (pf[end] - pf[start] == 0) {// we didnt took start - 1 because, starting element we have to exclude
                 System.out.println("Range from " + start + " to " + end + " is Non decreasing");
             } else {
                 System.out.println("Range from " + start + " to " + end + " is not non decreasing");
@@ -2686,5 +2686,58 @@ public class arrayProblems {
         }
 
         return -1;
+    }
+
+    /* Max Difference 
+    Given an array of integers A and an integer B. Find and return the maximum value of | s1 - s2 |
+
+    where s1 = sum of any subset of size B, s2 = sum of elements of A - sum of elemets of s1
+
+    Note |x| denotes the absolute value of x.
+
+
+    Input Format
+
+    The arguments given are the integer array A and integer B.
+    Output Format
+
+    Return the maximum value of | s1 - s2 |.
+    Constraints
+
+    1 <= B < length of the array <= 100000
+    1 <= A[i] <= 10^5 
+    For Example
+
+    Input 1:
+        A = [1, 2, 3, 4, 5]
+        B = 2
+    Output 1:
+        9
+
+    Input 2:
+        A = [5, 17, 100, 11]
+        B = 3
+    Output 2:
+        123
+    */
+    public int maxDifference(int[] A, int B) {
+        int n = A.length;
+
+        Arrays.sort(A);
+
+        int i = 0;
+        int s1Min = 0, s1Max = 0;
+        while (i < B && i < n) {
+            s1Min += A[i];
+            s1Max += A[n - 1 - i];
+            i++;
+        }
+
+        int sum = 0;
+        for (i = 0; i < n; i++) {
+            sum += A[i];
+        }
+
+        return Math.max((s1Max - (sum - s1Max)), (sum - s1Min) - s1Min);
     }
 }

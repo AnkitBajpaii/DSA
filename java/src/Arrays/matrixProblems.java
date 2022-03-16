@@ -1032,7 +1032,9 @@ public class matrixProblems {
         return pf;
     }
 
-    /*Given a prefix sum matrix and top left and bottom right corner of a matrix, Find Sum of a submatrix Using Prefix Sum Matrix*/
+    /* Sub-matrix Sum Queries
+
+    */
     public int SumOfSubMatrixUsingPrefixSumMatrix(int[][] pf, int r1, int c1, int r2, int c2)
     {
         int sum = pf[r2][c2];
@@ -1077,14 +1079,14 @@ public class matrixProblems {
     /* Sum of All Submatrices Optimized using Contribution Technique
     // TC: O(N*M)
     */
-    public int SumOfAllSubMatricesOptimizedUsingContributionTechnique(int[][] mat) {
-        int N = mat.length, M = mat[0].length;
+    public int SumOfAllSubMatricesOptimizedUsingContributionTechnique(int[][] A) {
+        int N = A.length, M = A[0].length;
         int sum = 0;
 
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < M; j++) {
 
-                sum += mat[i][j] * ((i + 1) * (j + 1) * (N - i) * (M - j));
+                sum += A[i][j] * ((i + 1) * (j + 1) * (N - i) * (M - j));
             }
         }
 
@@ -1185,6 +1187,5 @@ public class matrixProblems {
 
         return ans;
     }
-
     
 }
