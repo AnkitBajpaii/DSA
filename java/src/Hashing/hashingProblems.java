@@ -285,18 +285,17 @@ public class hashingProblems {
         }
     }
 
-    // Given n array elements, check if there exist a sub array with zero sum
+    // Given n array elements, check if there exist a sub array with zero sum 
+    //( Sub-Array with 0 sum)
     public int CheckIfThereExistSubArrayWithZeroSum(int[] A) {
 
-        HashSet<Integer> s = new HashSet<Integer>();
+        HashSet<Integer> s = new HashSet<Integer>();       
 
         int prefixSum = 0;
+        s.add(prefixSum);
 
         for (int i = 0; i < A.length; i++) {
             prefixSum = prefixSum + A[i];
-
-            if (prefixSum == 0)
-                return 1;
 
             if (s.contains(prefixSum)) {
                 return 1;
@@ -597,7 +596,8 @@ public class hashingProblems {
     }
 
     /*
-     * Shaggy and distances Shaggy has an array A consisting of N elements. We call
+     * Shaggy and distances  ( Minimum distinct between any 2 same elements)
+     * Shaggy has an array A consisting of N elements. We call
      * a pair of distinct indices in that array as a special pair if elements at
      * that index in the array are equal.
      * 
@@ -613,7 +613,6 @@ public class hashingProblems {
         for (int i = 0; i < A.length; i++) {
             if (map.containsKey(A[i])) {
                 ans = Math.min(ans, i - map.get(A[i]));
-
             }
 
             map.put(A[i], i);
@@ -723,26 +722,30 @@ public class hashingProblems {
      * "aebbea" to form a palindrome.
      */
     public int checkPalindrome(String A) {
+        
+        if (A.length() == 1)
+            return 1;
 
-        int[] count = new int[26];
+        HashMap<Character, Integer> map = new HashMap<Character, Integer>();
+
         for (int i = 0; i < A.length(); i++) {
-            count[A.charAt(i) - 'a']++;
+            map.put(A.charAt(i), map.getOrDefault(A.charAt(i), 0) + 1);
         }
 
-        int c = 0;
-        for (int i = 0; i < 26; i++) {
+        if (map.size() == A.length())
+            return 0;
 
-            if (count[i] % 2 != 0) {
-                c++;
-                if (c > 1)
-                    return 0;
+        int count = 0;
+        for (Map.Entry<Character, Integer> e : map.entrySet()) {
+            if (e.getValue() % 2 != 0) {
+                count++;
             }
         }
 
-        return 1;
+        return count > 1 ? 0 : 1;
     }
 
-    /*
+    /* 
      * Longest Consecutive Sequence (Longest Consecutive Sub Sequence) Longest
      * Consecutive Sequence Given an unsorted integer array A of size N. Find the
      * length of the longest set of consecutive elements from the array A. Input: A
@@ -751,23 +754,31 @@ public class hashingProblems {
     public int longestConsecutiveSubsequence(final int[] A) {
         // 100, 4, 200, 1, 3, 2
         HashSet<Integer> set = new HashSet<Integer>();
-        for (int i = 0; i < A.length; i++) {
+
+        int ans = Integer.MIN_VALUE;
+
+        for(int i=0; i<A.length; i++)
+        {
             set.add(A[i]);
         }
 
-        int res = 0;
-        for (int i = 0; i < A.length; i++) {
-            if (!set.contains(A[i] - 1)) {
-                int j = A[i];
-                while (set.contains(j)) {
-                    j++;
-                }
-
-                res = Math.max(res, j - A[i]);
+        for(int i=0; i<A.length; i++)
+        {
+            if(set.contains(A[i] - 1))
+            {
+                continue;
             }
+
+            int x = A[i];
+            while(set.contains(x))
+            {
+                x++;
+            }
+
+            ans = Math.max(ans, x - A[i]);
         }
 
-        return res;
+        return ans;
     }
 
     /*
@@ -780,29 +791,227 @@ public class hashingProblems {
      * A = [1, 2, 1, 3, 4, 3], B = 3 output: [2, 3, 3, 2]
      */
     public int[] CountDistinctElementsInWindowOfSizeK(int[] A, int B) {
-        int n = A.length;
-        if (B > n)
-            return new int[0];
+        int N = A.length;
+        int[] res = new int[N - B + 1];
+        if (B > N)
+            return res;
 
-        int[] res = new int[n - B + 1];
         HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
 
         for (int i = 0; i < B; i++) {
             map.put(A[i], map.getOrDefault(A[i], 0) + 1);
         }
 
-        res[0] = map.size();
+        for (int i = B; i < N; i++) {
+            res[i - B] = map.size();
 
-        int j = 1;
-        for (int i = 1; i <=n-B; i++) {
-            map.put(A[i+B-1], map.getOrDefault(A[i+B-1], 0) + 1);
-            map.put(A[i - 1], map.get(A[i - 1]) - 1);
-            if (map.get(A[i - 1]) == 0)
-                map.remove(A[i - 1]);
+            map.put(A[i], map.getOrDefault(A[i], 0) + 1);
 
-            res[j++] = map.size();
+            map.put(A[i - B], map.get(A[i - B]) - 1);
+
+            if (map.get(A[i - B]) == 0) {
+                map.remove(A[i - B]);
+            }
+        }
+
+        res[N - B] = map.size();
+
+        return res;
+    }
+
+    /* Largest Continuous Sequence Zero Sum
+    Problem Description
+
+    Given an array A of N integers.
+
+    Find the largest continuous sequence in a array which sums to zero.
+
+
+
+    Problem Constraints
+
+    1 <= N <= 106
+
+    -107 <= A[i] <= 107
+
+
+
+    Input Format
+
+    Single argument which is an integer array A.
+
+
+
+    Output Format
+
+    Return an array denoting the longest continuous sequence with total sum of zero.
+
+    NOTE : If there are multiple correct answers, return the sequence which occurs first in the array.
+
+
+
+    Example Input
+
+    A = [1,2,-2,4,-4]
+
+
+    Example Output
+
+    [2,-2,4,-4]
+
+
+    Example Explanation
+
+    [2,-2,4,-4] is the longest sequence with total sum of zero.
+
+    */
+    public ArrayList<Integer> LargestContinuousSequenceZeroSum(ArrayList<Integer> A) {
+        HashMap<Long, Integer> map = new HashMap<Long, Integer>();
+        Long pSum = 0L;
+        int maxDist = -1;
+        int start = -1, end = -1;
+
+        map.put(pSum, -1);
+
+        for (int i = 0; i < A.size(); i++) {
+            pSum += A.get(i);
+            if (pSum == 0) {
+                start = 0;
+                end = i;
+            }
+
+            if (map.containsKey(pSum)) {
+                if (i - map.get(pSum) > maxDist) {
+                    start = map.get(pSum) + 1;
+                    end = i;
+                    maxDist = i - map.get(pSum);
+                }
+
+            } else {
+                map.put(pSum, i);
+            }
+        }
+
+        ArrayList<Integer> res = new ArrayList<Integer>();
+        if (start != -1) {
+            for (int i = start; i <= end; i++) {
+                res.add(A.get(i));
+            }
         }
 
         return res;
+    }
+
+    /* Sort Array in given Order
+    Given two arrays of integers A and B, Sort A in such a way that the relative order among the elements will be the same as those are in B.
+    For the elements not present in B, append them at last in sorted order.
+
+    Return the array A after sorting from the above method.
+
+    NOTE: Elements of B are unique.
+
+
+
+    Problem Constraints
+    1 <= length of the array A <= 100000
+
+    1 <= length of the array B <= 100000
+
+    -10^9 <= A[i] <= 10^9
+
+
+
+    Input Format
+    The first argument given is the integer array A.
+
+    The second argument given is the integer array B.
+
+
+
+    Output Format
+    Return the array A after sorting as described.
+
+
+
+    Example Input
+    Input 1:
+
+    A = [1, 2, 3, 4, 5]
+    B = [5, 4, 2]
+    Input 2:
+
+    A = [5, 17, 100, 11]
+    B = [1, 100]
+
+
+    Example Output
+    Output 1:
+
+    [5, 4, 2, 1, 3]
+    Output 2:
+
+    [100, 5, 11, 17]
+
+
+    Example Explanation
+    Explanation 1:
+
+    Simply sort as described.
+    Explanation 2:
+
+    Simply sort as described.
+    */
+    public ArrayList<Integer> sortArrayInGivenOrder(ArrayList<Integer> A, ArrayList<Integer> B) {
+        HashMap<Integer, Integer> originalOrderMap = new HashMap<Integer, Integer>();
+        for(int i=0; i<A.size(); i++)
+        {
+            originalOrderMap.put(A.get(i), i);
+        }
+
+        HashMap<Integer, Integer> relativeOrderMap = new HashMap<Integer, Integer>();
+        for(int i=0; i<B.size(); i++)
+        {
+            relativeOrderMap.put(B.get(i), i);
+        }
+
+        A.sort(new Comparator<Integer>() {
+
+            @Override
+            public int compare(Integer i1, Integer i2) {
+                Integer pos1 = relativeOrderMap.get(i1);
+                Integer pos2 = relativeOrderMap.get(i2);
+
+                if(pos1 == null && pos2 == null)
+                {
+                    pos1 = i1;
+                    pos2 = i2;
+                }
+
+                if(pos1 == null)
+                {
+                    return 1;
+                }
+
+                if(pos2 == null)
+                {
+                    return -1;
+                }                
+
+                if(pos1 < pos2)
+                {
+                    return -1;
+                }
+
+                if(pos1 > pos2)
+                {
+                    return 1;
+                }
+                
+                return 0;
+            }
+            
+        });
+
+        return A;
     }
 }

@@ -30,48 +30,53 @@ public class searchingProblems {
         return res;
     }
 
-    public int BinarySearch(int[] A, int x) {
-        return BinarySearchUtil(A, x, 0, A.length - 1);
+    public int BinarySearch(int[] A, int K) {
+        return BinarySearchUtil(A, K, 0, A.length - 1);
     }
 
-    public int FirstOccurence(int[] A, int x) {
+    
+    public int FirstOccurence(int[] A, int K) {
         // Assume A is sorted
-        int res = -1;
-        int low = 0, high = A.length - 1;
-        while (low <= high) {
-            int mid = low + (high - low) / 2;
+        int ans = -1;
 
-            if (A[mid] == x && (mid == 0 || A[mid] != A[mid - 1]))
-                return mid;
+        int l = 0, r = A.length - 1;
 
-            if (x > A[mid]) {
-                low = mid + 1;
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
+
+            if (A[mid] > K) {
+                r = mid - 1;
+            } else if (A[mid] < K) {
+                l = mid + 1;
             } else {
-                high = mid - 1;
+                ans = mid;
+                r = mid - 1;
             }
         }
 
-        return res;
+        return ans;
     }
 
-    public int LastOccurence(int[] A, int x) {
+    public int LastOccurence(int[] A, int K) {
         // Assume A is sorted
-        int res = -1;
-        int low = 0, high = A.length - 1;
-        while (low <= high) {
-            int mid = low + (high - low) / 2;
+        int ans = -1;
 
-            if (A[mid] == x && (mid == A.length - 1 || A[mid] != A[mid + 1]))
-                return mid;
+        int l = 0, r = A.length - 1;
 
-            if (x < A[mid]) {
-                high = mid - 1;
+        while (l <= r) {
+            int mid = l + (r - l) / 2;
+
+            if (A[mid] > K) {
+                r = mid - 1;
+            } else if (A[mid] < K) {
+                l = mid + 1;
             } else {
-                low = mid + 1;
+                ans = mid;
+                l = mid + 1;
             }
         }
 
-        return res;
+        return ans;
     }
 
     public int CountOnesInBinarySortedArray(int[] A) {
@@ -734,5 +739,188 @@ public class searchingProblems {
         }
 
         return -1;
+    }
+
+    /* Special Integer 
+    Given an array of integers A and an integer B, find and return the maximum value K such that there is no subarray in A of size K with the sum of elements greater than B.
+
+
+
+    Problem Constraints
+    1 <= |A| <= 100000
+    1 <= A[i] <= 10^9
+
+    1 <= B <= 10^9
+
+
+
+    Input Format
+    The first argument given is the integer array A.
+
+    The second argument given is integer B.
+
+
+
+    Output Format
+    Return the maximum value of K (sub array length).
+
+
+
+    Example Input
+    Input 1:
+
+    A = [1, 2, 3, 4, 5]
+    B = 10
+    Input 2:
+
+    A = [5, 17, 100, 11]
+    B = 130
+
+
+    Example Output
+    Output 1:
+
+    2
+    Output 2:
+
+    3
+
+
+    Example Explanation
+    Explanation 1:
+
+    Constraints are satisfied for maximal value of 2.
+    Explanation 2:
+
+    Constraints are satisfied for maximal value of 3.
+    */
+    boolean checkIfAllSubArrayOfLengthKHasSumLessThanB(int[] A, int K, int B) {
+        long sum = 0;
+        for (int i = 0; i < K; i++) {
+            sum += A[i];
+        }
+
+        if (sum > B)
+            return false;
+
+        for (int i = K; i < A.length; i++) {
+            sum += A[i] - A[i - K];
+
+            if (sum > B)
+                return false;
+        }
+
+        return true;
+
+    }
+
+    public int SpecialInteger(int[] A, int B) {
+        long l = 0, r = A.length;
+        int ans = 0;
+
+        while (l <= r) {
+            int mid = (int) ((l + r) / 2);
+
+            if (checkIfAllSubArrayOfLengthKHasSumLessThanB(A, mid, B)) {
+                ans = mid;
+                l = mid + 1;
+            } else {
+                r = mid - 1;
+            }
+        }
+
+        return ans;
+    }
+
+    /* Aggressive cows 
+    Problem Description
+    Farmer John has built a new long barn with N stalls. Given an array of integers A of size N where each element of the array represents the location of the stall and an integer B which represents the number of cows.
+
+    His cows don't like this barn layout and become aggressive towards each other once put into a stall. To prevent the cows from hurting each other, John wants to assign the cows to the stalls, such that the minimum distance between any two of them is as large as possible. What is the largest minimum distance?
+
+
+
+    Problem Constraints
+    2 <= N <= 100000
+    0 <= A[i] <= 109
+    2 <= B <= N
+
+
+
+    Input Format
+    The first argument given is the integer array A.
+    The second argument given is the integer B.
+
+
+
+    Output Format
+    Return the largest minimum distance possible among the cows.
+
+
+
+    Example Input
+    Input 1:
+
+    A = [1, 2, 3, 4, 5]
+    B = 3
+    Input 2:
+
+    A = [1, 2]
+    B = 2
+
+
+    Example Output
+    Output 1:
+
+    2
+    Output 2:
+
+    1
+
+
+    Example Explanation
+    Explanation 1:
+
+    John can assign the stalls at location 1, 3 and 5 to the 3 cows respectively. So the minimum distance will be 2.
+    Explanation 2:
+
+    The minimum distance will be 1.
+    */
+    public boolean checkIfWeCanKeepKCowsMaintainingMinimumDistanceD(int[] A, int K, int d) {
+        int prevPos = A[0];
+        K--;
+        for (int i = 1; i < A.length; i++) {
+            if (A[i] - prevPos >= d) {
+                prevPos = A[i];
+                K--;
+
+                if (K == 0)
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    public int AggresiveCows(int[] A, int B) {
+        int n = A.length;
+        Arrays.sort(A);
+
+        int ansMax = A[n - 1] - A[0], ansMin = 1;
+        int ans = 0;
+        while (ansMin <= ansMax) {
+            int mid = (ansMin + ansMax) / 2;
+
+            if (checkIfWeCanKeepKCowsMaintainingMinimumDistanceD(A, B, mid)) {
+                ans = mid;
+                ansMin = mid + 1;
+
+            } else {
+                ansMax = mid - 1;
+
+            }
+        }
+
+        return ans;
     }
 }
