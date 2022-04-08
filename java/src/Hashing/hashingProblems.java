@@ -1014,4 +1014,491 @@ public class hashingProblems {
 
         return A;
     }
+
+    /* Count Rectangles
+    Given two arrays of integers A and B of size N each, where each pair (A[i], B[i]) for 0 <= i < N represents a unique point (x, y) in a 2-D Cartesian plane.
+
+    Find and return the number of unordered quadruplet (i, j, k, l) such that (A[i], B[i]), (A[j], B[j]), (A[k], B[k]) and (A[l], B[l]) form a rectangle with the rectangle having all the sides parallel to either x-axis or y-axis.
+
+
+    Problem Constraints
+    1 <= N <= 2000
+    0 <= A[i], B[i] <= 109
+
+    Input Format
+    The first argument given is the integer array A.
+    The second argument given is the integer array B.
+
+    Output Format
+    Return the number of unordered quadruplets that form a rectangle.
+
+    Example Input
+    Input 1:
+
+    A = [1, 1, 2, 2]
+    B = [1, 2, 1, 2]
+    Input 1:
+
+    A = [1, 1, 2, 2, 3, 3]
+    B = [1, 2, 1, 2, 1, 2]
+
+
+    Example Output
+    Output 1:
+
+    1
+    Output 2:
+
+    3
+
+    Example Explanation
+    Explanation 1:
+
+    All four given points make a rectangle. So, the answer is 1.
+    Explanation 2:
+
+    3 quadruplets which make a rectangle are: (1, 1), (2, 1), (2, 2), (1, 2)
+                                            (1, 1), (3, 1), (3, 2), (1, 2)
+                                            (2, 1), (3, 1), (3, 2), (2, 2)
+
+    */
+    public int CountRectangles(int[] A, int[] B) {
+        class Pair {
+            int x;
+            int y;
+
+            public Pair(int x, int y) {
+                this.x = x;
+                this.y = y;
+            }
+
+            @Override
+            public int hashCode() {
+                final int prime = 31;
+                int result = 1;
+                result = prime * result + x;
+                result = prime * result + y;
+                return result;
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                if (obj == null)
+                    return false;
+
+                return (this.x == ((Pair) obj).x) && (this.y == ((Pair) obj).y);
+            }
+        }
+
+        int c = 0;
+
+        HashSet<Pair> set = new HashSet<Pair>();
+
+        for (int i = 0; i < A.length && i < B.length; i++) {
+            set.add(new Pair(A[i], B[i]));
+        }
+
+        for (int i = 0; i < A.length; i++) {
+            for (int j = i + 1; j < B.length; j++) {
+                int x1 = A[i], y1 = B[i], x2 = A[j], y2 = B[j];
+
+                if (x1 != x2 && y1 != y2) {
+                    Pair p1 = new Pair(x1, y2);
+                    Pair p2 = new Pair(x2, y1);
+
+                    if (set.contains(p1) && set.contains(p2)) {
+                        c++;
+                    }
+                }
+            }
+        }
+
+        return c / 2;
+    }
+
+    /* Count Right Triangles
+    Given two arrays of integers A and B of size N each, where each pair (A[i], B[i]) for 0 <= i < N represents a unique point (x, y) in 2D Cartesian plane.
+
+    Find and return the number of unordered triplets (i, j, k) such that (A[i], B[i]), (A[j], B[j]) and (A[k], B[k]) form a right-angled triangle with the triangle having one side parallel to the x-axis and one side parallel to the y-axis.
+
+    NOTE: The answer may be large so return the answer modulo (109 + 7).
+
+    Problem Constraints
+    1 <= N <= 105
+
+    0 <= A[i], B[i] <= 109
+
+    Input Format
+    The first argument given is an integer array A.
+    The second argument given is the integer array B.
+
+    Output Format
+    Return the number of unordered triplets that form a right angled triangle modulo (109 + 7).
+
+    Example Input
+    Input 1:
+
+    A = [1, 1, 2]
+    B = [1, 2, 1]
+    Input 2:
+
+    A = [1, 1, 2, 3, 3]
+    B = [1, 2, 1, 2, 1]
+
+
+    Example Output
+    Output 1:
+
+    1
+    Output 2:
+
+    6
+
+
+    Example Explanation
+    Explanation 1:
+
+    All three points make a right angled triangle. So return 1.
+    Explanation 2:
+
+    6 triplets which make a right angled triangle are:    (1, 1), (1, 2), (2, 2)
+                                                        (1, 1), (3, 1), (1, 2)
+                                                        (1, 1), (3, 1), (3, 2)
+                                                        (2, 1), (3, 1), (3, 2)
+                                                        (1, 1), (1, 2), (3, 2)
+                                                        (1, 2), (3, 1), (3, 2)
+    */    
+    public int CountRightAngleTriangles_BruteForce(int[] A, int[] B) {
+        int c = 0;
+        for (int i = 0; i < A.length; i++) {
+            for (int j = 0; j < A.length; j++) {
+                if (i == j)
+                    continue;
+                for (int k = 0; k < A.length; k++) {
+                    if (i == k || j == k)
+                        continue;
+
+                    if (A[i] == A[k] && B[i] == B[j]) {
+                        c++;
+                    }
+                }
+            }
+        }
+
+        return c;
+    }
+
+    public int CountRightAngleTriangles_Better(int[] A, int[] B) {
+        class Pair {
+            int x;
+            int y;
+
+            public Pair(int x, int y) {
+                this.x = x;
+                this.y = y;
+            }
+
+            @Override
+            public int hashCode() {
+                final int prime = 31;
+                int result = 1;
+                result = prime * result + x;
+                result = prime * result + y;
+                return result;
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                if (obj == null)
+                    return false;
+
+                return (this.x == ((Pair) obj).x) && (this.y == ((Pair) obj).y);
+            }
+        }
+
+        HashSet<Pair> set = new HashSet<Pair>();
+
+        for (int i = 0; i < A.length && i < B.length; i++) {
+            set.add(new Pair(A[i], B[i]));
+        }
+
+        int c = 0, mod = 1000 * 1000 * 1000 + 7;
+        for (int i = 0; i < A.length; i++) {
+            for (int j = i + 1; j < B.length; j++) {
+                int x1 = A[i], y1 = B[i];
+                int x2 = A[j], y2 = B[j];
+                if (x1 == x2 || y1 == y2)
+                    continue;
+
+                if (set.contains(new Pair(x1, y2))) {
+                    c = (c + 1) % mod;
+                }
+                if (set.contains(new Pair(x2, y1))) {
+                    c = (c + 1) % mod;
+                }
+            }
+        }
+
+        return c;
+    }
+
+    public int CountRightAngleTriangles_Optimized(int[] A, int[] B) {
+        
+        HashMap<Integer, Integer> mapA = new HashMap<Integer, Integer>();
+        HashMap<Integer, Integer> mapB = new HashMap<Integer, Integer>();
+
+        for (int i = 0; i < A.length; i++) {
+            mapA.put(A[i], mapA.getOrDefault(A[i], 0) + 1);
+            mapB.put(B[i], mapB.getOrDefault(B[i], 0) + 1);
+        }
+
+        int c = 0, mod = 1000 * 1000 * 1000 + 7;
+        for (int i = 0; i < A.length; i++) {
+            int x = A[i], y = B[i];
+
+            int n = mapA.get(x) - 1, m = mapB.get(y) - 1;
+
+            c = (c + (n % mod * m % mod) % mod) % mod;
+        }
+
+        return c;
+    }
+
+    /* Replicating Substring
+    Given a string B, find if it is possible to re-order the characters of the string B so that it can be represented as a concatenation of A similar strings.
+
+    Eg: B = aabb and A = 2, then it is possible to re-arrange the string as "abab" which is a concatenation of 2 similar strings "ab".
+
+    If it is possible, return 1, else return -1.
+
+
+
+    Problem Constraints
+
+    1 <= Length of string B <= 1000
+
+    1 <= A <= 1000
+
+    All the alphabets of S are lower case (a - z)
+
+
+
+    Input Format
+
+    First argument is an integer A.
+    Second argument is a string B.
+
+
+
+    Output Format
+
+    Your function should return 1 if it is possible to re-arrange the characters of the string B so that it can be represented as a concatenation of A similar strings. If it is not, return -1.
+
+
+
+    Example Input
+
+    Input 1:
+
+    A = 2
+    B = "bbaabb"
+    Input 2:
+
+    A = 1
+    B = "bc"
+
+
+    Example Output
+
+    Output 1:
+
+    1
+    Output 2:
+
+    1
+
+
+    Example Explanation
+
+    Explanation 1:
+
+    We can re-order the given string into "abbabb".
+    Explanation 2:
+
+    String "bc" is already arranged.
+    */
+    public int ReplicatingSubstring(int A, String B) {
+
+        HashMap<Character, Integer> map = new HashMap<Character, Integer>();
+        for (int i = 0; i < B.length(); i++) {
+            map.put(B.charAt(i), map.getOrDefault(B.charAt(i), 0) + 1);
+        }
+        for (Map.Entry<Character, Integer> e : map.entrySet()) {
+            if (e.getValue() % A != 0)
+                return -1;
+        }
+
+        return 1;
+    }
+
+    /* Points on same line
+
+    */
+    int gcd(int a, int b) {
+        // Everything divides 0
+        if (a == 0)
+            return b;
+        if (b == 0)
+            return a;
+
+        // base case
+        if (a == b)
+            return a;
+
+        // a is greater
+        if (a > b)
+            return gcd(a - b, b);
+        return gcd(a, b - a);
+    }
+
+    public int PointsOnSameLine(int[] A, int[] B) {
+
+        int ans = Integer.MIN_VALUE;
+        for (int i = 0; i < A.length; i++) {
+            HashMap<String, Integer> map = new HashMap<String, Integer>();
+            int overlap = 0, vertical = 0, currMax = 0;
+
+            for (int j = i + 1; j < B.length; j++) {
+                int x1 = A[i], y1 = B[i], x2 = A[j], y2 = B[j];
+
+                if (y2 == y1 && x2 == x1) {
+                    overlap++;
+                } else if (x1 == x2) {
+                    vertical++;
+                } else {
+                    int dy = y2 - y1, dx = x2 - x1;
+                    String sign = "";
+                    if ((dy < 0 && dx < 0) || (dy > 0 && dx > 0)) {
+                        sign = "";
+                    } else {
+                        sign = "-";
+                    }
+                    int GCD = gcd(Math.abs(dy), Math.abs(dx));
+
+                    dy = dy / GCD;
+                    dx = dx / GCD;
+
+                    String slopeKey = sign + String.valueOf(Math.abs(dy)) + "/" + String.valueOf(Math.abs(dx));
+
+                    map.put(slopeKey, map.getOrDefault(slopeKey, 0) + 1);
+
+                    currMax = Math.max(currMax, map.get(slopeKey));
+                }
+
+                currMax = Math.max(currMax, vertical);
+            }
+
+            ans = Math.max(ans, currMax + overlap);
+        }
+
+        return ans + 1;
+    }
+
+    /* Compare Sorted Subarrays
+    Given an array A of length N. You have to answer Q queries.
+
+    Each query will contain four integers l1, r1, l2, and r2. If sorted segment from [l1, r1] is the same as the sorted segment from [l2 r2], then the answer is 1 else 0.
+
+    NOTE The queries are 0-indexed.
+
+
+
+    Problem Constraints
+    0 <= A[i] <= 100000
+    1 <= N <= 100000
+    1 <= Q <= 100000
+
+
+
+    Input Format
+    The first argument is an array A.
+    The second is a 2D array B denoting queries with dimension Q * 4.
+    Consider ith query as l1 = B[i][0], r1 = B[i][1], l2 = A[i][2], r2 = B[i][3].
+
+
+
+    Output Format
+    Return an array of length Q with answers to the queries in the same order as the input.
+
+
+
+    Example Input
+    Input 1:
+
+    A = [1, 7, 11, 8, 11, 7, 1]
+    B = [ 
+        [0, 2, 4, 6]
+        ]
+    Input 2:
+
+    A = [1, 3, 2]
+    B = [
+        [0, 1, 1, 2]
+        ] 
+
+
+    Example Output
+    Output 1:
+
+    [1]
+    Output 2:
+
+    [0]
+
+
+    Example Explanation
+    Explanation 1:
+
+    (0, 2) -> [1, 7, 11]
+    (4, 6) -> [11, 7, 1]
+    Both are same when sorted hence 1.
+    Explanation 2:
+
+    (0, 1) -> [1, 3]
+    (1, 2) -> [3, 2] 
+    Both are different when sorted hence 0.
+
+    */
+    public int[] CompareSortedSubarrays(int[] A, int[][] B) {
+
+        HashMap<Integer, Long> map = new HashMap<Integer, Long>();
+        long min = 0;
+        long max = 1L * 1000000 * 1000000 * 10;
+
+        long[] pf = new long[A.length];
+
+        for (int i = 0; i < A.length; i++) {
+            if (!map.containsKey(A[i])) {
+                long hash = min + (long) (1L * Math.random() * (max - min));
+                map.put(A[i], hash);
+            }
+
+            pf[i] = i == 0 ? map.get(A[i]) : pf[i - 1] + map.get(A[i]);
+        }
+
+        int[] res = new int[B.length];
+
+        for (int i = 0; i < B.length; i++) {
+            int l1 = B[i][0];
+            int r1 = B[i][1];
+            int l2 = B[i][2];
+            int r2 = B[i][3];
+
+            if ((pf[r1] - (l1 == 0 ? 0 : pf[l1 - 1])) == (pf[r2] - (l2 == 0 ? 0 : pf[l2 - 1]))) {
+                res[i] = 1;
+            }
+        }
+
+        return res;
+    }
 }
