@@ -691,4 +691,254 @@ public class stringProblems {
         return res;  
     }
 
+    /* Smallest Prefix String
+    Given 2 strings A and B of size N and M respectively consisting of lowercase alphabets, find the lexicographically smallest string that can be formed by concatenating non-empty prefixes of A and B (in that order).
+    Note: The answer string has to start with a non-empty prefix of string A followed by a non-empty prefix of string B.
+
+
+
+    Problem Constraints
+    1 <= N, M <= 100000
+
+
+
+    Input Format
+    The first argument is a string A of size N.
+    The second argument is a string B of size M.
+
+
+
+    Output Format
+    Return lexicographically smallest string that can be formed by concatenating non-empty prefixes of A and B (in that order).
+
+
+
+    Example Input
+    Input 1:
+
+    A = "abba"
+    B = "cdd"
+    Input 2:
+
+    A = "acd"
+    B = "bay"
+
+
+    Example Output
+    Output 1:
+
+    "abbac"
+    Output 2:
+
+    "ab"
+
+
+    Example Explanation
+    Explanation 1:
+
+    We can concatenate prefix of A i.e "abba" and prefix of B i.e "c".
+    The lexicographically smallest string will be "abbac".
+    Explanation 2:
+
+    We can concatenate prefix of A i.e "a" and prefix of B i.e "b".
+    The lexicographically smallest string will be "ab".
+
+
+
+    See Expected Output
+    */
+    public String smallestPrefix(String A, String B) {
+        String res = "" + A.charAt(0);
+        for(int i=1; i<A.length(); i++)
+        {
+            if(A.charAt(i) < B.charAt(0))
+            {
+                res = res + A.charAt(i);
+            } else {
+                break;
+            }
+        }
+
+        res = res + B.charAt(0);
+
+        return res;
+    }
+
+    public int[] fillLps(String S) {
+        int[] lps = new int[S.length()];
+        lps[0] = 0;
+
+        for (int i = 1; i < S.length(); i++) {
+            int x = lps[i - 1];
+            while (S.charAt(i) != S.charAt(x)) {
+                if (x == 0) {
+                    x = -1;
+                    break;
+                }
+
+                x = lps[x - 1];
+            }
+
+            lps[i] = x + 1;
+        }
+
+        return lps;
+    }
+
+    /* Make String Pallindrome
+    Problem Description
+    Given a string A of size N consisting only of lowercase alphabets. The only operation allowed is to insert characters in the beginning of the string.
+
+    Find and return how many minimum characters are needed to be inserted to make the string a palindrome string.
+
+
+
+    Problem Constraints
+    1 <= N <= 106
+
+
+
+    Input Format
+    The only argument given is a string A.
+
+
+
+    Output Format
+    Return an integer denoting the minimum characters needed to be inserted in the beginning to make the string a palindrome string.
+
+
+
+    Example Input
+    Input 1:
+
+    A = "abc"
+    Input 2:
+
+    A = "bb"
+
+
+    Example Output
+    Output 1:
+
+    2
+    Output 2:
+
+    0
+
+
+    Example Explanation
+    Explanation 1:
+
+    Insert 'b' at beginning, string becomes: "babc".
+    Insert 'c' at beginning, string becomes: "cbabc".
+    Explanation 2:
+
+    There is no need to insert any character at the beginning as the string is already a palindrome. 
+    */
+    public String reverse(String S)
+    {
+        char[] chAr = S.toCharArray();
+
+        int i=0, j = chAr.length - 1;
+
+        while(i < j)
+        {
+            char t = chAr[i];
+            chAr[i] = chAr[j];
+            chAr[j] = t;
+
+            i++;
+            j--;
+        }
+
+        return new String(chAr);
+    }
+
+    public int MakeStringPallindrome(String A) {
+        String T = A + "$" + reverse(A);
+
+        int[] lps = fillLps(T);
+
+        return A.length() - lps[lps.length - 1];
+
+    }
+
+    /*  Longest Substring Without Repeat
+    Problem Description
+    Given a string A, find the length of the longest substring without repeating characters.
+
+    Note: Users are expected to solve in O(N) time complexity.
+
+
+
+    Problem Constraints
+    1 <= size(A) <= 106
+
+    String consists of lowerCase,upperCase characters and digits are also present in the string A.
+
+
+
+    Input Format
+    Single Argument representing string A.
+
+
+
+    Output Format
+    Return an integer denoting the maximum possible length of substring without repeating characters.
+
+
+
+    Example Input
+    Input 1:
+
+    A = "abcabcbb"
+    Input 2:
+
+    A = "AaaA"
+
+
+    Example Output
+    Output 1:
+
+    3
+    Output 2:
+
+    2
+
+
+    Example Explanation
+    Explanation 1:
+
+    Substring "abc" is the longest substring without repeating characters in string A.
+    Explanation 2:
+
+    Substring "Aa" or "aA" is the longest substring without repeating characters in string A.
+    */
+    public int lengthOfLongestSubstring(String A) {
+        int[] freq = new int[256];
+        int[] index = new int[256];
+
+        int i=0;
+        int ans = 1;
+        
+        for(int j=0; j<A.length(); j++)
+        {
+            freq[A.charAt(j)]++;
+
+            if(freq[A.charAt(j)] > 1)
+            {
+                while(i <= index[A.charAt(j)])
+                {
+                    freq[A.charAt(i)]--;                    
+                    i++;                    
+                }                
+            }
+
+            index[A.charAt(j)] = j;
+            ans = Math.max(ans, j-i+1);  
+        }
+
+        return ans;
+    }
+
 }
