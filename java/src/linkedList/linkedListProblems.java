@@ -1,4 +1,5 @@
 package linkedList;
+import java.util.*;
 
 public class linkedListProblems {
     /*
@@ -625,13 +626,19 @@ public class linkedListProblems {
     */
     public ListNode sortList(ListNode A) {
         //asumption: sortList function when given a node sorts the entire list starting this node.
+
+        //base condition: input of size 1 is considered already sorted
         if(A == null || A.next == null) return A;
         
+        // divide input in two half's
         ListNode mid = FindMiddleElement_2_findingFirstMid(A);
         ListNode mid2 = mid.next;
         mid.next = null;
 
+        // sort first half
         ListNode h1 = sortList(A);
+
+        // sort second half
         ListNode h2 = sortList(mid2);
 
         return mergeTwoLists(h1, h2);
@@ -841,4 +848,63 @@ public class linkedListProblems {
         prev.next = null;
         return head;
     }
+
+    /* Clone Copy List
+
+    */
+    class RandomListNode {
+      
+        int label;
+      
+        RandomListNode next, random;
+      
+        RandomListNode(int x) { this.label = x; }
+    };
+
+    public RandomListNode copyRandomList_UsingHashMap(RandomListNode head) {
+        if (head == null)
+            return null;
+
+        HashMap<RandomListNode, RandomListNode> map = new HashMap<RandomListNode, RandomListNode>();
+
+        RandomListNode curr = head;
+        while (curr != null) {
+            map.put(curr, new RandomListNode(curr.label));
+
+            curr = curr.next;
+        }
+
+        curr = head;
+        while (curr != null) {
+            RandomListNode n = map.get(curr);
+            n.next = map.get(curr.next);
+            n.random = curr.random == null ? null : map.get(curr.random);
+
+            curr = curr.next;
+        }
+
+        return map.get(head);
+    }
+
+    /* Palindrome List
+    */
+    public int lPalin(ListNode A) {
+
+        ListNode mid = FindMiddleElement_2_findingFirstMid(A);
+
+        ListNode h2 = reverseList(mid.next);
+        mid.next = null;
+
+        ListNode h1 = A;
+        while (h1 != null && h2 != null) {
+            if (h1.val != h2.val)
+                return 0;
+
+            h1 = h1.next;
+            h2 = h2.next;
+        }
+
+        return 1;
+    }
+    
 }
