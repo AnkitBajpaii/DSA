@@ -497,7 +497,7 @@ public class linkedListProblems {
 
     We don't need to merge as B is empty. 
     */
-    public ListNode mergeTwoLists(ListNode h1, ListNode h2) {
+    public ListNode mergeTwoSortedLists(ListNode h1, ListNode h2) {
         if (h1 == null)
             return h2;
 
@@ -641,7 +641,7 @@ public class linkedListProblems {
         // sort second half
         ListNode h2 = sortList(mid2);
 
-        return mergeTwoLists(h1, h2);
+        return mergeTwoSortedLists(h1, h2);
     }
 
     /* Reorder List
@@ -752,7 +752,7 @@ public class linkedListProblems {
         ListNode head1 = Flatten2DList(head);// sort first half
         ListNode head2 = Flatten2DList(h2);// sort second half
 
-        return mergeTwoLists(head1, head2);//merge 
+        return mergeTwoSortedLists(head1, head2);//merge 
     }
 
     /* Remove Loop from Linked List
@@ -886,6 +886,37 @@ public class linkedListProblems {
         return map.get(head);
     }
 
+    public RandomListNode copyRandomList_Optimized(RandomListNode A) {
+        if (A == null)
+            return null;
+
+        RandomListNode curr = A;
+        while (curr != null) {
+            RandomListNode temp = curr.next;
+            curr.next = new RandomListNode(curr.label);
+            curr.next.next = temp;
+            curr = temp;
+        }
+
+        curr = A;
+        while (curr != null) {
+            curr.next.random = curr.random == null ? null : curr.random.next;
+            curr = curr.next.next;
+        }
+
+        RandomListNode h1 = A, h2 = A.next, cloneHead = h2;
+
+        while (h1 != null && h2 != null) {
+            h1.next = h1.next == null ? null : h1.next.next;
+            h2.next = h2.next == null ? null : h2.next.next;
+
+            h1 = h1.next;
+            h2 = h2.next;
+        }
+
+        return cloneHead;
+    }
+
     /* Palindrome List
     */
     public int lPalin(ListNode A) {
@@ -906,5 +937,243 @@ public class linkedListProblems {
 
         return 1;
     }
+
+    /* Add Two Numbers as Lists
+    ou are given two linked lists, A and B, representing two non-negative numbers.
+
+    The digits are stored in reverse order, and each of their nodes contains a single digit.
+
+    Add the two numbers and return it as a linked list.
+
+
+
+    Problem Constraints
+    1 <= |A|, |B| <= 105
+
+
+
+    Input Format
+    The first argument of input contains a pointer to the head of linked list A.
+
+    The second argument of input contains a pointer to the head of linked list B.
+
+
+
+    Output Format
+    Return a pointer to the head of the required linked list.
+
+
+
+    Example Input
+    Input 1:
+
+    
+    A = [2, 4, 3]
+    B = [5, 6, 4]
+    Input 2:
+
+    
+    A = [9, 9]
+    B = [1]
+
+
+    Example Output
+    Output 1:
+
+    
+    [7, 0, 8]
+    Output 2:
+
+    
+    [0, 0, 1]
+
+
+    Example Explanation
+    Explanation 1:
+
+    A = 342 and B = 465. A + B = 807. 
+    Explanation 2:
+
+    A = 99 and B = 1. A + B = 100. 
+    */
+    public ListNode addTwoNumbers(ListNode A, ListNode B) {
+        ListNode h = null, t = null;
+        int carry = 0;
+        while (A != null || B != null || carry != 0) {
+            int sum = (A == null ? 0 : A.val) + (B == null ? 0 : B.val) + carry;
+
+            ListNode n = new ListNode(sum % 10);
+            if (h == null) {
+                h = t = n;
+            } else {
+                t.next = n;
+                t = t.next;
+            }
+
+            carry = sum / 10;
+
+            if (A != null) {
+                A = A.next;
+            }
+
+            if (B != null) {
+                B = B.next;
+            }
+        }
+
+        return h;
+    }
+
+    /* Swap List Nodes in pairs
+    Given a linked list A, swap every two adjacent nodes and return its head.
+
+    NOTE: Your algorithm should use only constant space. You may not modify the values in the list; only nodes themselves can be changed.
+
+
+
+    Problem Constraints
+    1 <= |A| <= 106
+
+
+
+    Input Format
+    The first and the only argument of input contains a pointer to the head of the given linked list.
+
+
+
+    Output Format
+    Return a pointer to the head of the modified linked list.
+
+
+
+    Example Input
+    Input 1:
+
+    A = 1 -> 2 -> 3 -> 4
+    Input 2:
+
+    A = 7 -> 2 -> 1
+
+
+    Example Output
+    Output 1:
+
+    2 -> 1 -> 4 -> 3
+    Output 2:
+
+    2 -> 7 -> 1
+
+
+    Example Explanation
+    Explanation 1:
+
+    In the first example (1, 2) and (3, 4) are the adjacent nodes. Swapping them will result in 2 -> 1 -> 4 -> 3
+    Explanation 2:
+
+    In the second example, 3rd element i.e. 1 does not have an adjacent node, so it won't be swapped. 
+    */
+    public ListNode swapPairs(ListNode A) {
+        if (A == null || A.next == null)
+            return A;
+
+        // reverse first two pairs and adjust pointers
+        ListNode h = A.next, curr = A.next.next;
+        A.next.next = A;
+        A.next = null;
+
+        ListNode prev = A;
+
+        // reverse remaining pairs and adjust pointers
+        while (curr != null) {
+            if (curr.next == null) {
+                prev.next = curr;
+                break;
+            }
+
+            ListNode t = curr.next.next;
+
+            prev.next = curr.next;
+
+            curr.next.next = curr;
+
+            curr.next = t;
+
+            prev = curr;
+
+            curr = t;
+        }
+
+        return h;
+    }
+
+    /* Merge K Sorted Lists
+    Given a list containing head pointers of N sorted linked lists.
+    Merge these given sorted linked lists and return them as one sorted list.
+
+
+
+    Problem Constraints
+    1 <= total number of elements in given linked lists <= 100000
+
+
+
+    Input Format
+    The first and only argument is a list containing N head pointers.
+
+
+
+    Output Format
+    Return a pointer to the head of the sorted linked list after merging all the given linked lists.
+
+
+
+    Example Input
+    Input 1:
+
+    1 -> 10 -> 20
+    4 -> 11 -> 13
+    3 -> 8 -> 9
+    Input 2:
+
+    10 -> 12
+    13
+    5 -> 6
+
+
+    Example Output
+    Output 1:
+
+    1 -> 3 -> 4 -> 8 -> 9 -> 10 -> 11 -> 13 -> 20
+    Output 2:
+
+    5 -> 6 -> 10 -> 12 ->13
+
+
+    Example Explanation
+    Explanation 1:
+
+    The resulting sorted Linked List formed after merging is 1 -> 3 -> 4 -> 8 -> 9 -> 10 -> 11 -> 13 -> 20.
+    Explanation 2:
+
+    The resulting sorted Linked List formed after merging is 5 -> 6 -> 10 -> 12 ->13.
+
+    */
+    public ListNode mergeSort(ArrayList<ListNode> a, int start, int end) {
+        if (start == end)
+            return a.get(start);
+
+        int mid = (start + end) / 2;
+
+        ListNode h1 = mergeSort(a, start, mid);
+
+        ListNode h2 = mergeSort(a, mid + 1, end);
+
+        return mergeTwoSortedLists(h1, h2);
+    }
+
+    public ListNode mergeKLists(ArrayList<ListNode> a) {
+        return mergeSort(a, 0, a.size() - 1);
+    }
+    
     
 }

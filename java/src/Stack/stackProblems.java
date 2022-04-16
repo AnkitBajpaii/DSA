@@ -62,41 +62,6 @@ public class stackProblems {
         return merge(S, S2);
     }
 
-    public int evaluatePostfixExpression(String S) {
-        String[] letters = S.split(" ");
-
-        Stack<Integer> st = new Stack<Integer>();
-
-        for (int i = 0; i < letters.length; i++) {
-            String str = letters[i];
-            if (str == " ")
-                continue;
-
-            if (str == "+" || str == "-" || str == "*" || str == "/") {
-
-                int x = st.pop();
-                int y = st.pop();
-
-                if (str == "+") {
-                    st.push(x + y);
-                } else if (str == "-") {
-                    st.push(x - y);
-                } else if (str == "*") {
-                    st.push(x * y);
-                } else // if (ch == "/")
-                {
-                    st.push(x / y);
-                }
-
-            } else {
-
-                st.push(Integer.parseInt(String.valueOf(str)));
-            }
-        }
-
-        return st.pop();
-    }
-
     public String convertInfixToPostfix(String infix) {
 
         HashMap<Character, Integer> precedenceMap = new HashMap<Character, Integer>();
@@ -145,6 +110,41 @@ public class stackProblems {
         }
 
         return postfix.toString();
+    }
+
+    public int evaluatePostfixExpression(String S) {
+        String[] letters = S.split(" ");
+
+        Stack<Integer> st = new Stack<Integer>();
+
+        for (int i = 0; i < letters.length; i++) {
+            String str = letters[i];
+            if (str == " ")
+                continue;
+
+            if (str == "+" || str == "-" || str == "*" || str == "/") {
+
+                int x = st.pop();
+                int y = st.pop();
+
+                if (str == "+") {
+                    st.push(x + y);
+                } else if (str == "-") {
+                    st.push(x - y);
+                } else if (str == "*") {
+                    st.push(x * y);
+                } else // if (ch == "/")
+                {
+                    st.push(x / y);
+                }
+
+            } else {
+
+                st.push(Integer.parseInt(String.valueOf(str)));
+            }
+        }
+
+        return st.pop();
     }
 
 }
