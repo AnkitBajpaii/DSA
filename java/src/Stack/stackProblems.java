@@ -368,6 +368,84 @@ public class stackProblems {
         return st.size() == 0 ? 1 : 0;
     }
 
+    /* Redundant Braces
+    Problem Description
+    Given a string A denoting an expression. It contains the following operators '+', '-', '*', '/'.
+
+    Check whether A has redundant braces or not.
+
+    NOTE: A will be always a valid expression and will not contain any white spaces.
+
+
+
+    Problem Constraints
+    1 <= |A| <= 105
+
+
+
+    Input Format
+    The only argument given is string A.
+
+
+
+    Output Format
+    Return 1 if A has redundant braces else, return 0.
+
+
+
+    Example Input
+    Input 1:
+
+    A = "((a+b))"
+    Input 2:
+
+    A = "(a+(a+b))"
+
+
+    Example Output
+    Output 1:
+
+    1
+    Output 2:
+
+    0
+
+
+    Example Explanation
+    Explanation 1:
+
+    ((a+b)) has redundant braces so answer will be 1.
+    Explanation 2:
+
+    (a+(a+b)) doesn't have have any redundant braces so answer will be 0.
+    */
+    public int checkForRedundantBraces(String A) {        
+        
+        Stack<Character> st = new Stack<Character>();
+
+        for (int i = 0; i < A.length(); i++) {
+            char ch = A.charAt(i);
+
+            if (ch == '(') {
+                st.push(ch);
+            } else if (ch == ')') {
+                if (st.size() > 0 && st.peek() == '(') {
+                    return 1;
+                }
+
+                while (st.size() > 0) {
+                    char c = st.pop();
+                    if (c == '(')
+                        break;
+                }
+            } else if (ch == '+' || ch == '-' || ch == '*' || ch == '/') {
+                st.push(ch);
+            }
+        }
+
+        return 0;
+    }
+
     /* Nearest smaller element (Previous smaller element)
     Given an array of +ive integers, for every i, find the nearest element on the left side of i, which is smaller than A[i]
     Elements for which there is no previous smaller element, output -1 for those elements
@@ -501,5 +579,108 @@ public class stackProblems {
         }
 
         return ans;
+    }
+
+    /* Check two bracket expressions
+    Problem Description
+    Given two strings A and B. Each string represents an expression consisting of lowercase English alphabets, '+', '-', '(' and ')'.
+
+    The task is to compare them and check if they are similar. If they are identical, return 1 else, return 0.
+
+    NOTE: It may be assumed that there are at most 26 operands from ‘a’ to ‘z’, and every operand appears only once.
+
+
+
+    Problem Constraints
+    1 <= length of the each String <= 100
+
+
+
+    Input Format
+    The given arguments are string A and string B.
+
+
+
+    Output Format
+    Return 1 if they represent the same expression else return 0.
+
+
+
+    Example Input
+    Input 1:
+
+    A = "-(a+b+c)"
+    B = "-a-b-c"
+    Input 2:
+
+    A = "a-b-(c-d)"
+    B = "a-b-c-d"
+
+
+    Example Output
+    Output 1:
+
+    1
+    Output 2:
+
+    0
+
+
+    Example Explanation
+    Explanation 1:
+
+    The expression "-(a+b+c)" can be written as "-a-b-c" which is equal as B. 
+    Explanation 2:
+
+    Both the expression are different.
+
+    */
+    boolean adjSign(String S, int i) {
+        if (i == 0)
+            return true;
+
+        return S.charAt(i - 1) == '-' ? false : true;
+    }
+
+    boolean[] signMap(String S) {
+        boolean[] map = new boolean[26];
+        Stack<Boolean> st = new Stack<Boolean>();
+        st.push(true);
+        for (int i = 0; i < S.length(); i++) {
+            char ch = S.charAt(i);
+
+            if (ch == '+' || ch == '-')
+                continue;
+
+            if (ch == '(') {
+                if (adjSign(S, i))
+                    st.push(st.peek());
+                else
+                    st.push(!st.peek());
+
+            } else if (ch == ')') {
+                st.pop();
+            } else {
+                if (st.peek()) {
+                    map[ch - 'a'] = adjSign(S, i);
+                } else {
+                    map[ch - 'a'] = !adjSign(S, i);
+                }
+            }
+        }
+
+        return map;
+    }
+
+    public int compareExpressionsIfTheyAreSimilar(String A, String B) {
+        boolean[] b1 = signMap(A);
+        boolean[] b2 = signMap(B);
+
+        for (int i = 0; i < 26; i++) {
+            if (b1[i] != b2[i])
+                return 0;
+        }
+
+        return 1;
     }
 }
