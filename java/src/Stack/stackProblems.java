@@ -207,7 +207,7 @@ public class stackProblems {
         return merge(S, S2);
     }
 
-    public String convertInfixToPostfix(String infix) {
+    public String convertInfixToPostfix(String A) {
 
         HashMap<Character, Integer> precedenceMap = new HashMap<Character, Integer>();
         precedenceMap.put('^', 3);
@@ -220,8 +220,8 @@ public class stackProblems {
 
         StringBuilder postfix = new StringBuilder();
 
-        for (int i = 0; i < infix.length(); i++) {
-            char str = infix.charAt(i);
+        for (int i = 0; i < A.length(); i++) {
+            char str = A.charAt(i);
 
             if (str == '(') {
                 st.push(str);
