@@ -212,7 +212,7 @@ public class queueProblems {
     4. 1221
     *
 */
-    public String finfNthPerfectNumber(int n) {
+    public String findNthPerfectNumber(int n) {
         Queue<String> q = new ArrayDeque<String>();
 
         q.offer("1");
