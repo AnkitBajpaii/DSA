@@ -1,4 +1,27 @@
 package Trees;
+import java.util.*;
+
+class BSTTreeInfo {
+    public boolean isBST;
+    public int min;
+    public int max;
+
+    public BSTTreeInfo(boolean isBST, int min, int max)
+    {
+        this.isBST = isBST;
+        this.min = min;
+        this.max = max;
+    }
+}
+
+class BSTTreeInfoWithSize extends BSTTreeInfo {
+    public int size;
+    public BSTTreeInfoWithSize(boolean isBST, int min, int max, int size)
+    {
+        super(isBST, min, max);
+        this.size = size;
+    }
+}
 
 public class BinarySearchTreeProblems {
 
@@ -53,7 +76,7 @@ public class BinarySearchTreeProblems {
 
         root.val = predecessor.val;
 
-        root.left = Delete(root.left, k);
+        root.left = Delete(root.left, predecessor.val);
 
         return root;
     }
@@ -245,4 +268,368 @@ Explanation 2:
 
     }
 
+    /* Floor and Ceil in BST
+    Given a Binary Search Tree rooted at A.
+
+Given an integer array B of size N. Find the floor and ceil of every element of the array B.
+
+Floor(X) is the highest element in the tree <= X, while the ceil(X) is the lowest element in the tree >= X.
+
+NOTE: If floor or ceil of any element of B doesn't exists, output -1 for the value which doesn't exists.
+
+
+
+Problem Constraints
+
+0 <= Number of nodes in the tree <= 1000000
+0 <= node values <= 109
+0 <= N <= 100000
+0 <= B[i] <= 109
+
+
+
+Input Format
+
+First argument represents the root of binary tree A.
+Second argument is an integer array B.
+
+
+
+Output Format
+
+Return an integer array C of size N*2. C[i][0] denotes the floor value of B[i] and C[i][1] represents the ceil value of B[i] in the given tree.
+
+
+
+Example Input
+
+Input 1:
+
+Given Tree A:
+           10
+         /    \
+        4      15
+       / \
+      1   8
+B = [4, 19]
+Input 2:
+
+Given Tree A:
+            8
+          /   \
+         5     19
+        / \     \
+       4   7     100
+B = [1, 11]       
+
+
+Example Output
+
+Output 1:
+
+[
+    [4, 4]
+    [15, -1]
+]
+Output 2:
+
+[
+    [-1, 4]
+    [8, 19]
+]
+
+
+Example Explanation
+
+Explanation 1:
+
+Take all elements of given tree in sorted form: [1, 4, 8, 10, 15].
+4 is present in the tree. So, for B[0] = 4, output is [4, 4] as both floor and ceil value is 4.
+
+For B[1] = 19,
+Highest element <= 19 is 15. So the floor value of 19 is 15. 
+19 is greater than all elements in the tree. So, the ceil value of 19 doesn't exists.
+So, output is [15, -1].
+Explanation 2:
+
+All elements of tree in sorted form: [4, 5, 7, 8, 19, 100].
+
+For B[0] = 1, 
+There is no element in the tree <= 1. So, the floor value doesn't exists.
+Lowest element >= 1 is 4. So, the ceil value is 4.
+So, output is [-1, 4]
+
+Similarily for B[1] = 11, output is [8, 19].
+    */
+    TreeNode floor(TreeNode root, int x) {
+        if (root == null)
+            return null;
+
+        if (root.val == x)
+            return root;
+
+        if (root.val > x)
+            return floor(root.left, x);
+
+        TreeNode possibleAns = floor(root.right, x);
+        if (possibleAns != null)
+            return possibleAns;
+
+        return root;
+    }
+
+    TreeNode ceil(TreeNode root, int x) {
+        if (root == null)
+            return null;
+
+        if (root.val == x)
+            return root;
+
+        if (root.val < x)
+            return ceil(root.right, x);
+
+        TreeNode possibleAns = ceil(root.left, x);
+        if (possibleAns != null)
+            return possibleAns;
+
+        return root;
+    }
+
+    public ArrayList<ArrayList<Integer>> FindFloorAndCeilForAllElements(TreeNode A, ArrayList<Integer> B) {
+        ArrayList<ArrayList<Integer>> res = new ArrayList<ArrayList<Integer>>();
+        
+        for (int x : B) {
+            TreeNode f = floor(A, x);
+            TreeNode c = ceil(A, x);
+
+            ArrayList<Integer> al = new ArrayList<Integer>();
+            al.add(f == null ? -1 : f.val);
+            al.add(c == null ? -1 : c.val);
+
+            res.add(al);
+        }
+
+        return res;
+    }
+
+    /* Valid Binary Search Tree
+    Problem Description
+You are given a binary tree represented by root A.
+
+Assume a BST is defined as follows:
+
+1) The left subtree of a node contains only nodes with keys less than the node's key.
+
+2) The right subtree of a node contains only nodes with keys greater than the node's key.
+
+3) Both the left and right subtrees must also be binary search trees.
+
+
+
+Problem Constraints
+1 <= Number of nodes in binary tree <= 105
+
+0 <= node values <= 109
+
+
+
+Input Format
+First and only argument is head of the binary tree A.
+
+
+
+Output Format
+Return 0 if false and 1 if true.
+
+
+
+Example Input
+Input 1:
+
+ 
+   1
+  /  \
+ 2    3
+Input 2:
+
+ 
+  2
+ / \
+1   3
+
+
+Example Output
+Output 1:
+
+ 0
+Output 2:
+
+ 1
+
+
+Example Explanation
+Explanation 1:
+
+ 2 is not less than 1 but is in left subtree of 1.
+Explanation 2:
+
+Satisfies all conditions.
+    */
+    public boolean isValidBST(TreeNode root, int l, int h) {
+        if (root == null)
+            return true;
+
+        return root.val >= l && root.val <= h && isValidBST(root.left, l, root.val - 1)
+                && isValidBST(root.right, root.val + 1, h);
+    }
+
+    public int isValidBST(TreeNode A) {
+        return isValidBST(A, Integer.MIN_VALUE, Integer.MAX_VALUE) ? 1 : 0;
+    }
+
+    public boolean isValidBSTPostOrder(TreeNode root) {
+        BSTTreeInfo treeInfo = isValidBSTPostOrderUtil(root);
+
+        return treeInfo.isBST;
+    }
+
+    public BSTTreeInfo isValidBSTPostOrderUtil(TreeNode root) {
+        if (root == null) {
+            return new BSTTreeInfo(true, Integer.MAX_VALUE, Integer.MIN_VALUE);
+        }
+
+        BSTTreeInfo left = isValidBSTPostOrderUtil(root.left);
+
+        BSTTreeInfo right = isValidBSTPostOrderUtil(root.right);
+
+        if (left.isBST && right.isBST && root.val > left.max && root.val < right.min) {
+            return new BSTTreeInfo(true, Math.min(root.val, left.min), Math.max(root.val, right.max));
+        }
+
+        return new BSTTreeInfo(false, Math.min(root.val, left.min), Math.max(root.val, right.max));
+    }
+
+    // Given a Binary tree, find max size BST.
+    public BSTTreeInfoWithSize maxSizeBSTUtil(TreeNode root) {
+        if (root == null) {
+            return new BSTTreeInfoWithSize(true, Integer.MAX_VALUE, Integer.MIN_VALUE, 0);
+        }
+
+        BSTTreeInfoWithSize left = maxSizeBSTUtil(root.left);
+
+        BSTTreeInfoWithSize right = maxSizeBSTUtil(root.right);
+
+        if (left.isBST && right.isBST && root.val > left.max && root.val < right.min) {
+            return new BSTTreeInfoWithSize(true, Math.min(root.val, left.min), Math.max(root.val, right.max),
+                    1 + left.size + right.size);
+        }
+
+        return new BSTTreeInfoWithSize(false, Math.min(Math.min(root.val, left.min), right.min),
+                Math.max(Math.max(root.val, right.max), left.max), Math.max(left.size, right.size));
+    }
+
+    /* Recover Binary Search Tree
+    Problem Description
+Two elements of a binary search tree (BST), represented by root A are swapped by mistake. Tell us the 2 values swapping which the tree will be restored.
+
+A solution using O(n) space is pretty straightforward. Could you devise a constant space solution?
+
+
+
+Problem Constraints
+1 <= size of tree <= 100000
+
+
+
+Input Format
+First and only argument is the head of the tree,A
+
+
+
+Output Format
+Return the 2 elements which need to be swapped.
+
+
+
+Example Input
+Input 1:
+
+ 
+         1
+        / \
+       2   3
+Input 2:
+
+ 
+         2
+        / \
+       3   1
+
+
+
+Example Output
+Output 1:
+
+ [2, 1]
+Output 2:
+
+ [3, 1]
+
+
+Example Explanation
+Explanation 1:
+
+Swapping 1 and 2 will change the BST to be 
+         2
+        / \
+       1   3
+which is a valid BST 
+Explanation 2:
+
+Swapping 1 and 3 will change the BST to be 
+         2
+        / \
+       1   3
+which is a valid BST 
+    */
+}
+class RecoverBSTSolution {
+    TreeNode first;
+    TreeNode second;
+    TreeNode prev;
+
+    public void fixBST(TreeNode root)
+    {
+        if(root == null) return;
+
+        fixBST(root.left);
+
+        if(prev != null)
+        {
+            if(root.val < prev.val)
+            {
+                if(first == null)
+                {
+                    first = prev;
+                }
+
+                second = root;
+            }
+        }
+
+        prev = root;
+
+        fixBST(root.right);
+    }
+
+    public ArrayList<Integer> recoverTree(TreeNode A) {
+        fixBST(A);
+
+        ArrayList<Integer> res = new ArrayList<Integer>();
+
+        res.add(second.val);
+        res.add(first.val);        
+
+        return res;
+    }
 }
