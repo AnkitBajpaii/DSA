@@ -941,4 +941,37 @@ public class stringProblems {
         return ans;
     }
 
+    /*    Given a string of the following form, “aaabbcccccdeeeaag”,
+    * write an algorithm to compress the string into the following form, “a3b2c5d1e3a2g1”
+    If the compressed string is not shorter than the original string, return the original string instead
+    I.e., compressing the string “abc” should result in the original string being returned
+    */
+    public String TryCompress(String originalText) {
+        // aaabbcccccdeeeaag
+        // aaabbcccccdeeeaaa
+
+        int i = 1;
+        int count = 1;
+        StringBuilder sb = new StringBuilder();
+
+        while (i < originalText.length()) {
+            if (originalText.charAt(i) == originalText.charAt(i - 1)) {
+                count++;
+            } else {
+                sb.append(originalText.charAt(i - 1)).append(count);
+                count = 1;
+            }
+
+            i++;
+        }
+
+        sb.append(originalText.charAt(originalText.length() - 1)).append(count);
+
+        String compressedText = sb.toString();
+        if (compressedText.length() >= originalText.length()) {
+            return originalText;
+        }
+
+        return compressedText;
+    }
 }
