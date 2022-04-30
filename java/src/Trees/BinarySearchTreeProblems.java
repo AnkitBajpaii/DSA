@@ -816,6 +816,342 @@ Explanation 2:
           TreeNode lca = LeastCommonAncestor(A, B, C);
    
           return lca != null ? lca.val : -1;
-       }
-   }
+       }}
+
+       /* Check for BST with One Child
+       Problem Description
+
+Given preorder traversal of a binary tree, check if it is possible that it is also a preorder traversal of a Binary Search Tree (BST), where each internal node (non-leaf nodes) have exactly one child.
+
+
+
+Problem Constraints
+
+1 <= number of nodes <= 100000
+
+
+
+Input Format
+
+First and only argument is an integer array denoting the preorder traversal of binary tree.
+
+
+
+Output Format
+
+Return a string "YES" if true else "NO".
+
+
+
+Example Input
+
+Input 1:
+
+ A : [4, 10, 5, 8]
+Input 2:
+
+ A : [1, 5, 6, 4]
+
+
+Example Output
+
+Output 1:
+
+ "YES"
+Output 2:
+
+ "NO"
+
+
+Example Explanation
+
+Explanation 1:
+
+ The possible BST is:
+            4
+             \
+             10
+             /
+             5
+              \
+              8
+Explanation 2:
+
+ There is no possible BST which have the above preorder traversal.
+       */
+      public boolean checkBSTWithOneChild(int[] pre)
+      {
+          int L = Integer.MIN_VALUE;
+          int R = Integer.MAX_VALUE;
+  
+          int root = pre[0];
+          for(int i=1; i<pre.length; i++)
+          {
+              if(pre[i] > root)
+              {
+                  L = root;
+              } else {
+                  R = root;
+              }
+  
+              if(pre[i] < L || pre[i] > R) return false;
+  
+              root = pre[i];
+          }
+  
+          return true;
+      }
+
+      /* Common Nodes in Two BST
+      Problem Description
+
+Given two BST's A and B, return the (sum of all common nodes in both A and B) % (109 +7) .
+
+In case there is no common node, return 0.
+
+NOTE:
+
+Try to do it one pass through the trees.
+
+
+
+Problem Constraints
+
+1 <= Number of nodes in the tree A and B <= 105
+
+1 <= Node values <= 106
+
+
+
+Input Format
+
+First argument represents the root of BST A.
+
+Second argument represents the root of BST B.
+
+
+
+Output Format
+
+Return an integer denoting the (sum of all common nodes in both BST's A and B) % (109 +7) .
+
+
+
+Example Input
+
+Input 1:
+
+ Tree A:
+    5
+   / \
+  2   8
+   \   \
+    3   15
+        /
+        9
+
+ Tree B:
+    7
+   / \
+  1  10
+   \   \
+    2  15
+       /
+      11
+Input 2:
+
+  Tree A:
+    7
+   / \
+  1   10
+   \   \
+    2   15
+        /
+       11
+
+ Tree B:
+    7
+   / \
+  1  10
+   \   \
+    2  15
+       /
+      11
+
+
+Example Output
+
+Output 1:
+
+ 17
+Output 2:
+
+ 46
+
+
+Example Explanation
+
+Explanation 1:
+
+ Common Nodes are : 2, 15
+ So answer is 2 + 15 = 17
+Explanation 2:
+
+ Common Nodes are : 7, 2, 1, 10, 15, 11
+ So answer is 7 + 2 + 1 + 10 + 15 + 11 = 46
+      */
+      class CommonNodesInTwoBSTSolution {
+        void buildFreqMap(TreeNode root, HashMap<Integer, Integer> map)
+        {
+            if(root == null)
+            {
+                return;
+            }
+    
+            map.put(root.val, map.getOrDefault(root.val, 0) + 1 );
+    
+            buildFreqMap(root.left, map);
+    
+            buildFreqMap(root.right, map);
+        }
+    
+        long getSumOfCommon(TreeNode root, HashMap<Integer, Integer> map)
+        {
+            if(root == null) return 0;
+    
+            long leftSum = getSumOfCommon(root.left, map);
+    
+            long rightSum = getSumOfCommon(root.right, map);
+    
+            long sum = leftSum + rightSum;
+    
+            if(map.containsKey(root.val))
+            {
+                sum = sum + root.val;
+                map.put(root.val, map.get(root.val) - 1);
+    
+                if(map.get(root.val) == 0)
+                {
+                    map.remove(root.val);
+                }
+            }
+    
+            return sum;
+        }
+    
+        public int sumOfCommonNodesInBSTUsingHashMap(TreeNode A, TreeNode B) {
+            HashMap<Integer, Integer> map = new HashMap<Integer, Integer>();
+    
+            buildFreqMap(A, map);
+    
+            long sum = getSumOfCommon(B, map);
+    
+            int mod = 1000 * 1000 * 1000 + 7;
+    
+            return (int)(sum % mod);
+        }
+    }
+
+    // Find all common nodes in Two BST
+    ArrayList<Integer> commonNotesInTwoBST(TreeNode root1, TreeNode root2)
+    {
+        TreeNode curr1 = root1, curr2 = root2;
+        Stack<TreeNode> s1 = new Stack<TreeNode>();
+        Stack<TreeNode> s2 = new Stack<TreeNode>();
+
+        ArrayList<Integer> ans = new ArrayList<Integer>();
+
+        while((curr1 != null || !s1.isEmpty()) && (curr2 != null || !s2.isEmpty()))
+        {
+            while(curr1 != null)
+            {
+                s1.push(curr1);
+                curr1 = curr1.left;
+            }
+
+            while(curr2 != null)
+            {
+                s2.push(curr2);
+                curr2 = curr2.left;
+            }
+
+            curr1 = s1.peek();
+            curr2 = s2.peek();
+
+            if(curr1.val == curr2.val)
+            {
+                ans.add(curr1.val);
+
+                s1.pop();
+                s2.pop();
+
+                curr1 = curr1.right;
+                curr2 = curr2.right;
+            } else if(curr1.val < curr2.val)
+            {
+                curr1 = curr1.right;
+                s1.pop();
+                curr2 = null;
+
+            } else // if(curr1.val > curr2.val)
+            {
+                curr2 = curr2.right;
+                s2.pop();
+                curr1 = null;
+            }
+        }
+
+        return ans;
+    }
+
+    //Sum of all common nodes in BST Optimized solution using Preorder traversal iterative
+    long sumOfCommonNodesInTwoBST(TreeNode root1, TreeNode root2)
+    {
+        TreeNode curr1 = root1, curr2 = root2;
+        Stack<TreeNode> s1 = new Stack<TreeNode>();
+        Stack<TreeNode> s2 = new Stack<TreeNode>();
+
+        long ans = 0;
+
+        while((curr1 != null || !s1.isEmpty()) && (curr2 != null || !s2.isEmpty()))
+        {
+            while(curr1 != null)
+            {
+                s1.push(curr1);
+                curr1 = curr1.left;
+            }
+
+            while(curr2 != null)
+            {
+                s2.push(curr2);
+                curr2 = curr2.left;
+            }
+
+            curr1 = s1.peek();
+            curr2 = s2.peek();
+
+            if(curr1.val == curr2.val)
+            {
+                ans = ans + curr1.val;
+                s1.pop();
+                s2.pop();
+
+                curr1 = curr1.right;
+                curr2 = curr2.right;
+            } else if(curr1.val < curr2.val)
+            {
+                curr1 = curr1.right;
+                s1.pop();
+                curr2 = null;
+
+            } else // if(curr1.val > curr2.val)
+            {
+                curr2 = curr2.right;
+                s2.pop();
+                curr1 = null;
+            }
+        }
+
+        return ans;
+    }
 }

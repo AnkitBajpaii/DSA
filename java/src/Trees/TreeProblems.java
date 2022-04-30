@@ -438,6 +438,69 @@ Explanation 2:
         return res;
     }
 
+    // Iterative Post Order Traversal
+    public ArrayList<Integer> postorderTraversalIterativeUsingTwoStacks(TreeNode A) {
+        ArrayList<Integer> res = new ArrayList<Integer>();
+
+        Stack<TreeNode> S1 = new Stack<TreeNode>();
+        Stack<TreeNode> S2 = new Stack<TreeNode>();
+        TreeNode curr = A;
+
+        S1.push(curr);
+        while (!S1.isEmpty()) {
+            TreeNode temp = S1.pop();
+            S2.push(temp);
+
+            if (temp.left != null) {
+                S1.push(temp.left);
+            }
+
+            if (temp.right != null) {
+                S1.push(temp.right);
+            }
+        }
+
+        while (!S2.isEmpty()) {
+            res.add(S2.pop().val);
+        }
+
+        return res;
+    }
+
+    public ArrayList<Integer> OptimizedPostorderTraversalIterativeUsingOneStack(TreeNode A) {
+        //Post Order - Left Right Root
+        // Lets reverse this, and you will get , Root Right Left
+        // This is similar to Pre-Order algo - Root Left Right, except we need to reverse ordering of pushing left and right sub tree
+        // in the end you get reverse of post order, so finally reverse the answer
+        ArrayList<Integer> res = new ArrayList<Integer>();
+
+        Stack<TreeNode> st = new Stack<TreeNode>();
+        
+        TreeNode curr = A;
+
+        st.push(curr);
+
+        while (!st.isEmpty()) {
+            curr = st.pop();
+
+            res.add(curr.val);
+
+            if(curr.left != null)
+            {
+                st.push(curr.left);
+            }
+
+            if(curr.right != null)
+            {
+                st.push(curr.right);
+            }
+        }
+
+        Collections.reverse(res);
+
+        return res;
+    }
+
     /* Identical Binary Trees
     Given two binary trees, check if they are equal or not.
 
