@@ -495,6 +495,7 @@ Satisfies all conditions.
 
     public BSTTreeInfo isValidBSTPostOrderUtil(TreeNode root) {
         if (root == null) {
+            // min : Inf, max : -Inf
             return new BSTTreeInfo(true, Integer.MAX_VALUE, Integer.MIN_VALUE);
         }
 
@@ -503,7 +504,9 @@ Satisfies all conditions.
         BSTTreeInfo right = isValidBSTPostOrderUtil(root.right);
 
         if (left.isBST && right.isBST && root.val > left.max && root.val < right.min) {
+            // lmin < lmax < root.val < rmin <rmax
             return new BSTTreeInfo(true, Math.min(root.val, left.min), Math.max(root.val, right.max));
+            // we do  Math.min, &&  Math.max because consider case of leaf node.
         }
 
         return new BSTTreeInfo(false, Math.min(root.val, left.min), Math.max(root.val, right.max));
@@ -604,18 +607,15 @@ class RecoverBSTSolution {
 
         fixBST(root.left);
 
-        if(prev != null)
+        if(prev != null && root.val < prev.val) // if current is less than previous, that means we encountered a swap
         {
-            if(root.val < prev.val)
+            if(first == null)
             {
-                if(first == null)
-                {
-                    first = prev;
-                }
-
-                second = root;
+                first = prev;
             }
-        }
+
+            second = root;
+        }            
 
         prev = root;
 
@@ -1153,5 +1153,223 @@ Explanation 2:
         }
 
         return ans;
+    }
+
+    /* Distance between Nodes of BST
+    Given a binary search tree.
+Return the distance between two nodes with given two keys B and C. It may be assumed that both keys exist in BST.
+
+NOTE: Distance between two nodes is number of edges between them.
+
+
+
+Problem Constraints
+
+1 <= Number of nodes in binary tree <= 1000000
+
+0 <= node values <= 109
+
+
+
+Input Format
+
+First argument is a root node of the binary tree, A.
+
+Second argument is an integer B.
+
+Third argument is an integer C.
+
+
+
+Output Format
+
+Return an integer denoting the distance between two nodes with given two keys B and C
+
+
+
+Example Input
+
+Input 1:
+
+    
+         5
+       /   \
+      2     8
+     / \   / \
+    1   4 6   11
+ B = 2
+ C = 11
+Input 2:
+
+    
+         6
+       /   \
+      2     9
+     / \   / \
+    1   4 7   10
+ B = 2
+ C = 6
+
+
+Example Output
+
+Output 1:
+
+ 3
+Output 2:
+
+ 1
+
+
+Example Explanation
+
+Explanation 1:
+
+ Path between 2 and 11 is: 2 -> 5 -> 8 -> 11. Distance will be 3.
+Explanation 2:
+
+ Path between 2 and 6 is: 2 -> 6. Distance will be 1
+
+ An efficient way to solve the above problem:
+
+We start from the root and for every node, we do following.
+
+If both keys are greater than the current node, we move to the right child of the current node.
+If both keys are smaller than current node, we move to left child of current node.
+If one keys is smaller and other key is greater, current node is Lowest Common Ancestor (LCA) of two nodes. We find distances of current node from two keys and return sum of the distances.
+
+Time Complexity : O(h) (height of Tree)
+    */
+    private int DistanceFromRoot(TreeNode root, int x) {
+        if (root.val == x)
+            return 0;
+
+        int dist;
+
+        if (x < root.val) {
+            dist = DistanceFromRoot(root.left, x);
+        } else {
+            dist = DistanceFromRoot(root.right, x);
+        }
+
+        return 1 + dist;
+    }
+
+    public int DistanceBetweenNodes(TreeNode root, int B, int C) {
+        if (B < root.val && C < root.val) {
+            return DistanceBetweenNodes(root.left, B, C);
+        }
+
+        if (B > root.val && C > root.val) {
+            return DistanceBetweenNodes(root.right, B, C);
+        }
+
+        return DistanceFromRoot(root, B) + DistanceFromRoot(root, C);
+
+    }
+
+    /*  Binary tree to Circular Doubly Linked List
+    Problem Description
+
+Given a binary tree convert it into circular doubly linked list based on the following rules:
+
+The left and right pointers in nodes are to be used as previous and next pointers respectively in converted Circular Linked List.
+The order of nodes in List must be same as Inorder of the given Binary Tree.
+The first node of Inorder traversal must be the head node of the Circular List.
+NOTE: You are expected to convert the binary tree into Doubly linked list in place.
+
+
+
+Problem Constraints
+
+1 <= Number of nodes in tree <= 100000
+
+1 <= Value of node <= 109
+
+
+
+Input Format
+
+The only argument given is the root pointer of the tree, A.
+
+
+
+Output Format
+
+Return the head pointer of the converted circular doubly linked list.
+
+
+
+Example Input
+
+Input 1:
+
+ Serialized from input of binary tree:(where 7 denotes the number of elements in serial)
+    7 20 8 -1 -1 22 -1 -1 
+    Binary tree is
+      20 
+     /  \
+    8    22
+    8 is the left child of 20 and 22 is the right child of 20.
+Input 2:
+
+ Serialized from input of binary tree:(where 7 denotes the number of elements in serial)
+    7 10 8 -1 -1 11 -1 -1 
+    Binary tree is
+      10 
+     /  \
+    8    11
+    8 is the left child of 10 and 11 is the right child of 10.
+
+
+Example Output
+
+Output 1:
+
+     _____________
+    |             |
+    8 <-> 20 <-> 22
+    |_____________|
+Output 2:
+
+     _____________
+    |             |
+    8 <-> 10 <-> 11
+    |_____________|
+
+
+Example Explanation
+
+Explanation 1:
+
+ The inorder traversal of binary tree is: [8, 20, 22]. Return the head pointer of the circular doubly linked list.
+Explanation 2:
+
+ The inorder traversal of binary tree is: [8, 10, 11]. Return the head pointer of the circular doubly linked list.
+    */
+
+    class convertBST2DLLSolution {
+
+        TreeNode prev = null;
+
+        TreeNode convertBST2DLL(TreeNode root) {
+            if (root == null)
+                return null;
+
+            TreeNode left = convertBST2DLL(root.left);
+
+            if (prev != null) {
+                root.left = prev;
+                prev.right = root;
+            }
+
+            prev = root;
+            if (left == null)
+                left = prev;
+
+            convertBST2DLL(root.right);
+
+            return left;
+        }
     }
 }
