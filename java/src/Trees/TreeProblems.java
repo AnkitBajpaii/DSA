@@ -1356,4 +1356,118 @@ Tree has been inverted.
         return root;
     }
 
+    // checks if a node with given value K , is present on tree rooted at root node and also fills the ancestors
+    public boolean isNodePresent(TreeNode root, int k, ArrayList<Integer> al)
+    {
+        if(root == null) return false;
+
+        al.add(root.val);
+
+        if(root.val == k) return true;
+
+        boolean found = isNodePresent(root.left, k, al) || isNodePresent(root.right, k, al);
+        if(found) return true;
+
+        al.remove(al.size() - 1);
+
+        return false;
+    }
+
+    public ArrayList<Integer> FindAncestorsOfANodeUtil(TreeNode root, int k) {
+        ArrayList<Integer> al = new ArrayList<Integer>();
+
+        isNodePresent(root, k, al);
+
+        return al;
+    }
+
+    /* Diameter of binary tree
+    Problem Description
+Given a Binary Tree A consisting of N integer nodes, you need to find the diameter of the tree.
+
+The diameter of a tree is the number of edges on the longest path between two nodes in the tree.
+
+
+
+Problem Constraints
+0 <= N <= 105
+
+
+
+Input Format
+First and only Argument represents the root of binary tree A.
+
+
+
+Output Format
+Return an single integer denoting the diameter of the tree.
+
+
+
+Example Input
+Input 1:
+
+           1
+         /   \
+        2     3
+       / \
+      4   5
+Input 2:
+
+            1
+          /   \
+         2     3
+        / \     \
+       4   5     6
+
+
+Example Output
+Output 1:
+
+ 3
+Output 2:
+
+ 4
+
+
+Example Explanation
+Explanation 1:
+
+ Longest Path in the tree is 4 -> 2 -> 1 -> 3 and the number of edges in this path is 3 so diameter is 3.
+Explanation 2:
+
+ Longest Path in the tree is 4 -> 2 -> 1 -> 3 -> 6 and the number of edges in this path is 4 so diameter is 4.
+    */
+    public class DiameterOfTreeSolution {
+        class TreeInfo {
+            public int height;
+            public int diameter;
+
+            public TreeInfo(int h, int d) {
+                this.height = h;
+                this.diameter = d;
+            }
+        }
+
+        TreeInfo Diameter(TreeNode root) {
+            if (root == null) {
+                return new TreeInfo(-1, -1);
+            }
+
+            TreeInfo left = Diameter(root.left);
+
+            TreeInfo right = Diameter(root.right);
+
+            int currentNodeHeight = Math.max(left.height, right.height) + 1;
+            int currentNodeDiameter = Math.max(Math.max(left.diameter, right.diameter), left.height + right.height + 2);
+
+            return new TreeInfo(currentNodeHeight, currentNodeDiameter);
+        }
+
+        public int SolveDiameterOfTree(TreeNode A) {
+            TreeInfo treeInfo = Diameter(A);
+
+            return treeInfo.diameter;
+        }
+    }
 }
