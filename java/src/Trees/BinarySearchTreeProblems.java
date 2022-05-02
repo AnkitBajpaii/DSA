@@ -1488,4 +1488,39 @@ Explanation 2:
 
         return false;
     }
+
+    // Given a BST, find if it is height balanced or not
+    class IsBStBalancedSolution{
+        class TreeInfo {
+            public int height;
+            public boolean isBalanced;
+
+            public TreeInfo(int h, boolean isBalanced) {
+                this.height = h;
+                this.isBalanced = isBalanced;
+            }
+        }
+
+        TreeInfo IsBinarySearchTreeBalancedUtil(TreeNode root) {
+            if (root == null) {
+                return new TreeInfo(-1, true);
+            }
+
+            TreeInfo left = IsBinarySearchTreeBalancedUtil(root.left);
+            TreeInfo right = IsBinarySearchTreeBalancedUtil(root.right);
+
+            if (left.isBalanced && right.isBalanced && Math.abs(left.height - right.height) <= 1) {
+                return new TreeInfo(Math.max(left.height, right.height) + 1, true);
+            }
+
+            return new TreeInfo(Math.max(left.height, right.height) + 1, false);
+        }
+
+        public boolean IsBinarySearchTreeBalanced(TreeNode root) {
+            TreeInfo info = IsBinarySearchTreeBalancedUtil(root);
+
+            return info.isBalanced;
+        }
+    }
+    
 }
