@@ -331,6 +331,33 @@ Explanation 2:
         fillDepthUtil(root, null);
     }
 
+    // Morris Traversal - In order traversal of Binary tree without using Extra space
+    public void MorrisTraversal(TreeNode root) {
+        TreeNode curr = root;
+        while (curr != null) {
+            if (curr.left == null) {
+                System.out.print(curr.val + " ");
+                curr = curr.right;
+            } else {
+                TreeNode tmp = curr.left;
+                while (tmp.right != null && tmp.right != curr) {
+                    tmp = tmp.right;
+                }
+
+                if (tmp.right == null) {
+                    tmp.right = curr;
+                    curr = curr.left;
+                } else {
+                    tmp.right = null;
+
+                    System.out.print(curr.val + " ");
+
+                    curr = curr.right;
+                }
+            }
+        }
+    }
+
     /* InOrder Traversal Iterative
     Given a binary tree, return the inorder traversal of its nodes' values.
 
@@ -1649,7 +1676,7 @@ Output 2:
         GetLeafs(root.right, al);
     }
 
-    public ArrayList<Integer> solve(TreeNode A) {
+    public ArrayList<Integer> BoundaryTraversalOfBinaryTree(TreeNode A) {
         ArrayList<Integer> al = new ArrayList<Integer>();
 
         GetLeftMost(A, al);
@@ -1668,5 +1695,243 @@ Output 2:
         }
 
         return res;
+    }
+
+    /* Path Sum
+    Problem Description
+Given a binary tree and a sum, determine if the tree has a root-to-leaf path such that adding up all the values along the path equals the given sum.
+
+
+
+Problem Constraints
+1 <= number of nodes <= 105
+
+-100000 <= B, value of nodes <= 100000
+
+
+
+Input Format
+First argument is a root node of the binary tree, A.
+
+Second argument is an integer B denoting the sum.
+
+
+
+Output Format
+Return 1, if there exist root-to-leaf path such that adding up all the values along the path equals the given sum. Else, return 0.
+
+
+
+Example Input
+Input 1:
+
+ Tree:    5
+         / \
+        4   8
+       /   / \
+      11  13  4
+     /  \      \
+    7    2      1
+
+ B = 22
+Input 2:
+
+ Tree:    5
+         / \
+        4   8
+       /   / \
+     -11 -13  4
+
+ B = -1
+
+
+Example Output
+Output 1:
+
+ 1
+Output 2:
+
+ 0
+
+
+Example Explanation
+Explanation 1:
+
+ There exist a root-to-leaf path 5 -> 4 -> 11 -> 2 which has sum 22. So, return 1.
+Explanation 2:
+
+ There is no path which has sum -1.
+    */
+    private boolean hasSumPathUtil(TreeNode root, int sum) {
+        if (root == null) {
+            return false;
+        }
+
+        if (root.left == null && root.right == null) {
+            return sum == root.val;
+        }
+
+        return hasSumPathUtil(root.left, sum - root.val) || hasSumPathUtil(root.right, sum - root.val);
+    }
+
+    public int hasPathSum(TreeNode A, int B) {
+
+        boolean found = hasSumPathUtil(A, B);
+        if (found)
+            return 1;
+
+        return 0;
+    }
+
+    /* Next Pointer Binary Tree
+    Problem Description
+Given a binary tree,
+
+Populate each next pointer to point to its next right node. If there is no next right node, the next pointer should be set to NULL.
+
+Initially, all next pointers are set to NULL.
+
+Assume perfect binary tree and try to solve this in constant extra space.
+
+
+
+Problem Constraints
+1 <= Number of nodes in binary tree <= 100000
+
+0 <= node values <= 10^9
+
+
+
+Input Format
+First and only argument is head of the binary tree A.
+
+
+
+Output Format
+Return the head of the binary tree after the changes are made.
+
+
+
+Example Input
+Input 1:
+
+ 
+     1
+    /  \
+   2    3
+Input 2:
+
+ 
+        1
+       /  \
+      2    5
+     / \  / \
+    3  4  6  7
+
+
+Example Output
+Output 1:
+
+ 
+        1 -> NULL
+       /  \
+      2 -> 3 -> NULL
+Output 2:
+
+ 
+         1 -> NULL
+       /  \
+      2 -> 5 -> NULL
+     / \  / \
+    3->4->6->7 -> NULL
+
+
+Example Explanation
+Explanation 1:
+
+Next pointers are set as given in the output.
+Explanation 2:
+
+Next pointers are set as given in the output.
+    */
+public void connectUsingExtraSpace(TreeLinkNode root) {
+    
+        Queue<TreeLinkNode> q = new ArrayDeque<TreeLinkNode>();
+        q.offer(root);
+
+        while (!q.isEmpty()) {
+            int size = q.size();
+            TreeLinkNode prev = null;
+            for (int i = 0; i < size; i++) {
+                TreeLinkNode node = q.poll();
+
+                if (prev != null) {
+                    prev.next = node;
+                }
+
+                if (node.left != null) {
+                    q.offer(node.left);
+                }
+
+                if (node.right != null) {
+                    q.offer(node.right);
+                }
+
+                prev = node;
+            }
+
+        }
+    }
+
+    private TreeLinkNode GetNextChild(TreeLinkNode root) {
+        if (root == null)
+            return null;
+
+        TreeLinkNode temp = root.next;
+        while (temp != null) {
+            if (temp.left != null) {
+                return temp.left;
+            }
+
+            if (temp.right != null) {
+                return temp.right;
+            }
+
+            temp = temp.next;
+        }
+
+        return null;
+    }
+
+    public void connectSiblingsInConstantSpace(TreeLinkNode root) {
+        TreeLinkNode level = root;
+
+        while (level != null) {
+            TreeLinkNode curr = level;
+
+            while (curr != null) {
+                if (curr.left != null) {
+                    if (curr.right != null) {
+                        curr.left.next = curr.right;
+                    } else {
+                        curr.left.next = GetNextChild(curr);
+                    }
+                }
+
+                if (curr.right != null) {
+                    curr.right.next = GetNextChild(curr);
+                }
+
+                curr = curr.next;
+            }
+
+            if (level.left != null) {
+                level = level.left;
+            } else if (level.right != null) {
+                level = level.right;
+            } else {
+                level = GetNextChild(level);
+            }
+        }
     }
 }
