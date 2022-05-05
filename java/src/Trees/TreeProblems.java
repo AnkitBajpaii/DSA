@@ -2060,6 +2060,182 @@ Explanation 2:
             return (int) (Math.pow(2, lh + 1) - 1);
 
         return 1 + CountNumberOfNodesInCompleteBinaryTree(root.left)
-                + CountNumberOfNodesInCompleteBinaryTree(root.right);
+                 + CountNumberOfNodesInCompleteBinaryTree(root.right);
     }
+
+    /* Serialize Binary Tree
+
+    */
+    public ArrayList<Integer> SerializeBinaryTree(TreeNode A) {
+        Queue<TreeNode> q = new LinkedList<TreeNode>();
+        q.offer(A);
+
+        ArrayList<Integer> al = new ArrayList<Integer>();
+
+        while(!q.isEmpty())
+        {
+            int size = q.size();
+
+            for(int i=0; i<size; i++)
+            {
+                TreeNode node = q.poll();
+
+                if(node == null)
+                {
+                    al.add(-1);
+                } else {
+                    al.add(node.val);
+
+                    q.offer(node.left);
+
+                    q.offer(node.right);
+                }
+            }
+        }
+
+        return al;
+    }
+
+    /* Equal Tree Partition - Approach 1
+    Problem Description
+Given a binary tree A. Check whether it is possible to partition the tree to two trees which have equal sum of values after removing exactly one edge on the original tree.
+
+
+
+Problem Constraints
+1 <= size of tree <= 100000
+
+0 <= value of node <= 109
+
+
+
+Input Format
+First and only argument is head of tree A.
+
+
+
+Output Format
+Return 1 if the tree can be partitioned into two trees of equal sum else return 0.
+
+
+
+Example Input
+Input 1:
+
+ 
+                5
+               /  \
+              3    7
+             / \  / \
+            4  6  5  6
+Input 2:
+
+ 
+                1
+               / \
+              2   10
+                  / \
+                 20  2
+
+
+Example Output
+Output 1:
+
+ 1
+Output 2:
+
+ 0
+
+
+Example Explanation
+Explanation 1:
+
+ Remove edge between 5(root node) and 7: 
+        Tree 1 =                                               Tree 2 =
+                        5                                                     7
+                       /                                                     / \
+                      3                                                     5   6    
+                     / \
+                    4   6
+        Sum of Tree 1 = Sum of Tree 2 = 18
+Explanation 2:
+
+ The given Tree cannot be partitioned.
+    */
+    public class EqualTreePartitionApprach1 {
+        class TreeInfo {
+            public long sum;
+            public boolean found;
+
+            public TreeInfo(long sum, boolean found) {
+                this.sum = sum;
+                this.found = found;
+            }
+        }
+
+        public long sumOfNodes(TreeNode root) {
+            if (root == null)
+                return 0L;
+
+            return root.val + sumOfNodes(root.left) + sumOfNodes(root.right);
+        }
+
+        public TreeInfo parition(TreeNode root, long treeSum) {
+            if (root == null)
+                return new TreeInfo(0L, false);
+
+            TreeInfo left = parition(root.left, treeSum);
+
+            TreeInfo right = parition(root.right, treeSum);
+
+            long currSum = left.sum + right.sum + root.val;
+
+            if (left.found || right.found) {
+                return new TreeInfo(currSum, true);
+            }
+
+            if (currSum == treeSum / 2) {
+                return new TreeInfo(currSum, true);
+            }
+
+            return new TreeInfo(currSum, false);
+        }
+
+        public int solve(TreeNode A) {
+            if (parition(A, sumOfNodes(A)).found)
+                return 1;
+
+            return 0;
+        }
+    }
+
+    public class EqualTreePartitionApprach2 {
+
+        public long parition(TreeNode root, HashSet<Long> set) {
+            if (root == null)
+                return 0L;
+
+            long left = parition(root.left, set);
+
+            long right = parition(root.right, set);
+
+            long currSum = left + right + root.val;
+
+            set.add(currSum);
+
+            return currSum;
+        }
+
+        public int solve(TreeNode A) {
+            
+            HashSet<Long> set = new HashSet<Long>();
+
+            long treeSum = parition(A, set);
+
+            if(set.contains(treeSum/2)) return 1;
+
+            return 0;
+        }
+    }
+    
 }
