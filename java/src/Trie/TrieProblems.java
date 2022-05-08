@@ -331,14 +331,169 @@ Explanation 2:
 
  Maximum XOR occurs between element of indicies(0-based) 1 and 2 i.e. 17 ^ 100 = 117.
     */
-    public class MaxXORSolution1 {
+    public class MaximumXORSolution {
         class TrieNode {
-            public boolean isEnd;
-            public HashMap<Character, TrieNode> map;
+            public TrieNode left;
+            public TrieNode right;
 
             public TrieNode() {
-                map = new HashMap<Character, TrieNode>();
-                isEnd = false;
+                left = null;
+                right = null;
+            }
+        }
+
+        public int solve(int[] A) {
+            int ans = 0;
+
+            TrieNode root = new TrieNode();
+
+            for (int i = 0; i < A.length; i++) {
+                int n = A[i];
+
+                TrieNode curr = root;
+
+                for (int j = 31; j >= 0; j--) {
+
+                    int k = (n >> j) & 1;
+
+                    if (k == 1) {
+                        if (curr.right == null) {
+                            curr.right = new TrieNode();
+                        }
+
+                        curr = curr.right;
+
+                    } else {
+                        if (curr.left == null) {
+                            curr.left = new TrieNode();
+                        }
+
+                        curr = curr.left;
+                    }
+                }
+            }
+
+            for (int i = 0; i < A.length; i++) {
+                int n = A[i];
+
+                int x = 0;
+
+                TrieNode curr = root;
+
+                for (int j = 31; j >= 0; j--) {
+
+                    int k = (n >> j) & 1;
+
+                    if (k == 1) {
+                        if (curr.left != null) {
+                            curr = curr.left;
+                        } else {
+                            curr = curr.right;
+                            x += 1 << j;
+                        }
+                    } else {
+                        if (curr.right != null) {
+                            curr = curr.right;
+                            x += 1 << j;
+                        } else {
+                            curr = curr.left;
+                        }
+                    }
+                }
+
+                ans = Math.max(ans, n ^ x);
+            }
+
+            return ans;
+        }
+    }
+
+    /* Contact Finder
+    Problem Description
+
+We want to make a custom contacts finder applications as part of our college project. The application must perform two types of operations:
+
+Type 1: Add name B[i] ,denoted by 0 in vector A where B[i] is a string in vector B denoting a contact name. This must store B[i] as a new contact in the application.
+
+Type 2: Find partial for B[i] ,denoted by 1 in vector A where B[i] is a string in vector B denoting a partial name to search the application for. It must count the number of contacts starting with B[i].
+
+You have been given sequential add and find operations. You need to perform each operation in order.
+
+And return as an array of integers, answers for each query of type 2(denoted by 1 in A) .
+
+
+
+Problem Constraints
+
+1 <= |A| <= 10000
+
+1 <= |length of strings in B| <= 10
+
+
+
+Input Format
+
+First argument is the vector A, which denotes the type of query.
+
+Second argument is the vector B, which denotes the string for corresponding query.
+
+
+
+Output Format
+
+Return an array of integers, denoting answers for each query of type 1.
+
+
+
+Example Input
+
+Input 1:
+
+A = [0, 0, 1, 1]
+B = ["hack", "hacker", "hac", "hak"]
+Input 2:
+
+A = [0, 1]
+B = ["abcde", "abc"]
+
+
+Example Output
+
+Output 1:
+
+ 
+[2, 0]
+Output 2:
+
+[1]
+
+
+Example Explanation
+
+Explanation 1:
+
+ 
+We perform the following sequence of operations:
+Add a contact named "hack".
+Add a contact named "hacker".
+Find the number of contact names beginning with "hac". There are currently two contact names in the application and both of them start with "hac", so we have 2.
+Find the number of contact names beginning with "hak". There are currently two contact names in the application but neither of them start with "hak", so we get0.
+Explanation 2:
+
+ 
+Add "abcde"
+Find words with prefix "abc". We have answer as 1.
+    */
+    public class ContactFinderSolution {
+        class TrieNode {
+            public HashMap<Character, TrieNode> map;
+            public boolean isEnd;
+            public int count;
+
+            public TrieNode() {
+                this.map = new HashMap<Character, TrieNode>();
+                this.isEnd = false;
+                this.count = 0;
             }
         }
 
@@ -355,69 +510,119 @@ Explanation 2:
                 }
 
                 curr = curr.map.get(S.charAt(i));
+                curr.count++;
             }
 
             curr.isEnd = true;
 
             return root;
-
         }
 
-        public int solve(int[] A) {
-            int ans = 0;
+        int getCountOfStringBeginingWith(String S, TrieNode root) {
+            TrieNode curr = root;
+
+            for (int i = 0; i < S.length(); i++) {
+                if (!curr.map.containsKey(S.charAt(i))) {
+                    return 0;
+                }
+
+                curr = curr.map.get(S.charAt(i));
+            }
+
+            return curr.count;
+        }
+
+        public ArrayList<Integer> solve(ArrayList<Integer> A, ArrayList<String> B) {
 
             TrieNode root = new TrieNode();
 
-            for (int i = 0; i < A.length; i++) {
-                int n = A[i];
+            ArrayList<Integer> res = new ArrayList<Integer>();
 
-                String S = "";
-                for (int j = 31; j >= 0; j--) {
-                    int k = n >> j;
-                    if ((k & 1) > 0)
-                        S += "1";
-                    else
-                        S += "0";
+            for (int i = 0; i < B.size(); i++) {
+                if (A.get(i) == 0) {
+                    root = insert(B.get(i), root);
+                } else {
+                    int count = getCountOfStringBeginingWith(B.get(i), root);
+
+                    res.add(count);
                 }
-
-                insert(S, root);
             }
 
-            for (int i = 0; i < A.length; i++) {
-                int n = A[i];
-
-                String S = "";
-                TrieNode curr = root;
-
-                for (int j = 31; j >= 0; j--) {
-                    int k = n >> j;
-                    if ((k & 1) > 0) {
-                        if (curr.map.containsKey('0')) {
-                            S += "0";
-                            curr = curr.map.get('0');
-                        } else {
-                            S += "1";
-                            curr = curr.map.get('1');
-                        }
-
-                    } else {
-                        if (curr.map.containsKey('1')) {
-                            S += "1";
-                            curr = curr.map.get('1');
-                        } else {
-                            S += "0";
-                            curr = curr.map.get('0');
-                        }
-                    }
-                }
-
-                int m = Integer.parseInt(S, 2);
-
-                ans = Math.max(ans, n ^ m);
-            }
-
-            return ans;
+            return res;
         }
     }
+
+    /* Modified Search
+    Problem Description
+
+Given two arrays of strings A of size N and B of size M.
+
+Return a binary string C where C[i] = '1' if B[i] can be found in dictionary A using exactly one modification in B[i], Else C[i] = '0'.
+
+NOTE: modification is defined as converting a character into another character.
+
+
+
+Problem Constraints
+
+1 <= N <= 30000
+
+1 <= M <= 2500
+
+1 <= length of any string either in A or B <= 20
+
+strings contains only lowercase alphabets
+
+
+
+Input Format
+
+First argument is the string arrray A.
+
+Second argument is the string array B.
+
+
+
+Output Format
+
+Return a binary string C where C[i] = '1' if B[i] can be found in dictionary A using one modification in B[i], Else C[i] = '0'.
+
+
+
+Example Input
+
+Input 1:
+
+ A = [data, circle, cricket]
+ B = [date, circel, crikket, data, circl]
+Input 2:
+
+ A = [hello, world]
+ B = [hella, pello, pella]
+
+
+Example Output
+
+Output 1:
+
+ "10100"
+Output 2:
+
+ "110"
+
+
+Example Explanation
+
+Explanation 1:
+
+ 1. date = dat*(can be found in A)
+ 2. circel =(cannot be found in A using exactly one modification)
+ 3. crikket = cri*ket(can be found in A)
+ 4. data = (cannot be found in A using exactly one modification)
+ 5. circl = (cannot be found in A using exactly one modification)
+Explanation 2:
+
+ Only pella cannot be found in A using only one modification.
+    */
 
 }
