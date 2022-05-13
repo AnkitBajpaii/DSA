@@ -389,7 +389,7 @@ Explanation 2:
     }
 
     /*
-     * Sort K-Sorted array
+     * Sort K Sorted array
      * Given an array, which is nearly sorted (or what we call K-Sorted i.e every
      * eleemnt is atmost K positions away from it's sorted position).
      * You need to sort the array optimally.
@@ -405,7 +405,7 @@ Explanation 2:
         A[i++] = minHeap.poll();
 
         for (int j = K + 1; j < A.length; j++) {
-            minHeap.offer(A[i]);
+            minHeap.offer(A[j]);
 
             A[i++] = minHeap.poll();
         }
@@ -743,6 +743,314 @@ Explanation 2:
         }
 
         return ans;
+    }
+
+    /* Kth Smallest Element in a Sorted Matrix
+    Problem Description
+Given a sorted matrix of integers A of size N x M and an integer B.
+
+Each of the rows and columns of matrix A is sorted in ascending order, find the Bth smallest element in the matrix.
+
+NOTE: Return The Bth smallest element in the sorted order, not the Bth distinct element.
+
+
+
+Problem Constraints
+1 <= N, M <= 500
+
+1 <= A[i] <= 109
+
+1 <= B <= N * M
+
+
+
+Input Format
+The first argument given is the integer matrix A.
+The second argument given is an integer B.
+
+
+
+Output Format
+Return the B-th smallest element in the matrix.
+
+
+
+Example Input
+Input 1:
+
+ A = [ [9, 11, 15],
+       [10, 15, 17] ] 
+ B = 6
+Input 2:
+
+ A = [  [5, 9, 11],
+        [9, 11, 13],
+        [10, 12, 15],
+        [13, 14, 16],
+        [16, 20, 21] ]
+ B = 12
+
+
+Example Output
+Output 1:
+
+ 17
+Output 2:
+
+ 16
+
+
+Example Explanation
+Explanation 1:
+
+ 6th smallest element in the sorted matrix is 17.
+Explanation 2:
+
+ 12th smallest element in the sorted matrix is 16.
+    */
+    public int KthSmallestInSortedMatrix(int[][] A, int B) {
+        PriorityQueue<Integer> maxHeap = new PriorityQueue<Integer>(Collections.reverseOrder());
+
+        for (int i = 0; i < A.length; i++) {
+            for (int j = 0; j < A[i].length; j++) {
+                if (maxHeap.size() < B) {
+                    maxHeap.offer(A[i][j]);
+                } else {
+                    if (A[i][j] < maxHeap.peek()) {
+                        maxHeap.poll();
+
+                        maxHeap.offer(A[i][j]);
+                    }
+                }
+            }
+        }
+
+        return maxHeap.peek();
+    }
+
+    /* B-th Smallest Prime Fraction
+    Problem Description
+Given a sorted array of integers A which contains 1 and some number of primes.
+Then, for every p < q in the list, we consider the fraction p / q.
+
+What is the B-th smallest fraction considered?
+
+Return your answer as an array of integers, where answer[0] = p and answer[1] = q.
+
+
+
+Problem Constraints
+1 <= length(A) <= 2000
+1 <= A[i] <= 30000
+1 <= B <= length(A)*(length(A) - 1)/2
+
+
+
+Input Format
+The first argument of input contains the integer array, A.
+The second argument of input contains an integer B.
+
+
+
+Output Format
+Return an array of two integers, where answer[0] = p and answer[1] = q.
+
+
+
+Example Input
+Input 1:
+
+ A = [1, 2, 3, 5]
+ B = 3
+Input 2:
+
+ A = [1, 7]
+ B = 1
+
+
+Example Output
+Output 1:
+
+ [2, 5]
+Output 2:
+
+ [1, 7]
+
+
+Example Explanation
+Explanation 1:
+
+ The fractions to be considered in sorted order are:
+ [1/5, 1/3, 2/5, 1/2, 3/5, 2/3]
+ The third fraction is 2/5.
+Explanation 2:
+
+ The fractions to be considered in sorted order are:
+ [1/7]
+ The first fraction is 1/7.
+    */
+
+    public class BthSmallestPrimeFractionSolution {
+        class Pair {
+            public int p;
+            public int q;
+
+            public Pair(int p, int q) {
+                this.p = p;
+                this.q = q;
+            }
+        }
+
+        class PairComparator implements Comparator<Pair> {
+
+            public int compare(Pair p1, Pair p2) {
+                double f1 = (double) p1.p / p1.q;
+                double f2 = (double) p2.p / p2.q;
+
+                if (f1 < f2)
+                    return 1;
+
+                if (f2 < f1)
+                    return -1;
+
+                return 0;
+            }
+
+        }
+
+        public int[] solve(int[] A, int B) {
+            PriorityQueue<Pair> maxHeap = new PriorityQueue<Pair>(new PairComparator());
+
+            for (int i = 0; i < A.length - 1; i++) {
+                for (int j = A.length - 1; j > i; j--) {
+                    Pair p = new Pair(A[i], A[j]);
+
+                    if (maxHeap.size() < B) {
+                        maxHeap.offer(p);
+                    } else {
+                        double f = (double) A[i] / A[j];
+                        double maxFrac = (double) maxHeap.peek().p / maxHeap.peek().q;
+                        if (f < maxFrac) {
+                            maxHeap.poll();
+
+                            maxHeap.offer(p);
+                        }
+                    }
+                }
+            }
+
+            Pair bthSmallestPair = maxHeap.peek();
+            return new int[] { (int) bthSmallestPair.p, (int) bthSmallestPair.q };
+        }
+    }
+
+    /* Running Median
+    Problem Description
+Given an array of integers, A denoting a stream of integers. New arrays of integer B and C are formed.
+Each time an integer is encountered in a stream, append it at the end of B and append the median of array B at the C.
+
+Find and return the array C.
+
+NOTE:
+
+If the number of elements is N in B and N is odd, then consider the median as B[N/2] ( B must be in sorted order).
+If the number of elements is N in B and N is even, then consider the median as B[N/2-1]. ( B must be in sorted order).
+
+
+Problem Constraints
+1 <= length of the array <= 100000
+1 <= A[i] <= 109
+
+
+
+Input Format
+The only argument given is the integer array A.
+
+
+
+Output Format
+Return an integer array C, C[i] denotes the median of the first i elements.
+
+
+
+Example Input
+Input 1:
+
+ A = [1, 2, 5, 4, 3]
+Input 2:
+
+ A = [5, 17, 100, 11]
+
+
+Example Output
+Output 1:
+
+ [1, 1, 2, 2, 3]
+Output 2:
+
+ [5, 5, 17, 11]
+
+
+Example Explanation
+Explanation 1:
+
+ stream          median
+ [1]             1
+ [1, 2]          1
+ [1, 2, 5]       2
+ [1, 2, 5, 4]    2
+ [1, 2, 5, 4, 3] 3
+Explanation 2:
+
+ stream          median
+ [5]              5
+ [5, 17]          5
+ [5, 17, 100]     17
+ [5, 17, 100, 11] 11 
+    */
+    public int[] RunningMedian(int[] A) {
+        //max heap
+        PriorityQueue<Integer> left = new PriorityQueue<Integer>(Collections.reverseOrder());
+
+        // min heap
+        PriorityQueue<Integer> right = new PriorityQueue<Integer>();
+
+        int[] res = new int[A.length];
+
+        left.offer(A[0]);
+        res[0] = A[0];
+
+        for(int i=1; i<A.length; i++)
+        {
+            if (A[i] <= left.peek()) {
+                left.offer(A[i]);
+            } else {
+                right.offer(A[i]);
+            }
+
+            if (right.size() > left.size()) {
+                left.offer(right.poll());
+            }
+
+            else if (left.size() - right.size() > 1) {
+                right.offer(left.poll());
+
+            }
+
+            int median;
+
+            if((left.size() + right.size()) % 2 == 0)
+            {
+                median = left.peek(); // ideally it should be , left max + right min / 2, but we are going with problem constraint
+
+            } else {
+                median = left.peek();
+            }
+
+            res[i] = median;
+        }
+
+        return res;
     }
     
 }
