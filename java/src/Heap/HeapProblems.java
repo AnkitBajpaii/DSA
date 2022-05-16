@@ -364,7 +364,7 @@ Explanation 2:
 
     public int[] KSmallestElements(int[] A, int k) {
         int[] res = new int[k];
-
+        
         PriorityQueue<Integer> maxHeap = new PriorityQueue<Integer>(Collections.reverseOrder());
 
         for (int i = 0; i < k; i++) {
@@ -1052,5 +1052,358 @@ Explanation 2:
 
         return res;
     }
+
+    /* Ath largest element
+    Problem Description
+Given an integer array B of size N.
+
+You need to find the Ath largest element in the subarray [1 to i], where i varies from 1 to N. In other words, find the Ath largest element in the sub-arrays [1 : 1], [1 : 2], [1 : 3], ...., [1 : N].
+
+NOTE: If any subarray [1 : i] has less than A elements, then the output should be -1 at the ith index.
+
+
+
+Problem Constraints
+1 <= N <= 100000
+1 <= A <= N
+1 <= B[i] <= INT_MAX
+
+
+
+Input Format
+The first argument is an integer A.
+The second argument is an integer array B of size N.
+
+
+
+Output Format
+Return an integer array C, where C[i] (1 <= i <= N) will have the Ath largest element in the subarray [1 : i].
+
+
+
+Example Input
+Input 1:
+
+ A = 4  
+ B = [1 2 3 4 5 6] 
+Input 2:
+
+ A = 2
+ B = [15, 20, 99, 1]
+
+
+Example Output
+Output 1:
+
+ [-1, -1, -1, 1, 2, 3]
+Output 2:
+
+ [-1, 15, 20, 20]
+
+
+Example Explanation
+Explanation 1:
+
+ for i <= 3 output should be -1.
+ for i = 4, Subarray [1:4] has 4 elements 1, 2, 3 and 4. So, 4th maximum element is 1.
+ for i = 5, Subarray [1:5] has 5 elements 1, 2, 3, 4 and 5. So, 4th maximum element is 2.
+ for i = 6, Subarray [1:6] has 6 elements 1, 2, 3, 4, 5 and 6. So, 4th maximum element is 3.
+ So, output array is [-1, -1, -1, 1, 2, 3].
+ 
+Explanation 2:
+
+ for i <= 1 output should be -1.
+ for i = 2 , Subarray [1:2] has 2 elements 15 and 20. So, 2th maximum element is 15.
+ for i = 3 , Subarray [1:3] has 3 elements 15, 20 and 99. So, 2th maximum element is 20.
+ for i = 4 , Subarray [1:4] has 4 elements 15, 20, 99 and 1. So, 2th maximum element is 20.
+ So, output array is [-1, 15, 20, 20].
+    */
+    public int[] solve(int A, int[] B) {
+
+        int[] res = new int[B.length];
+
+        PriorityQueue<Integer> minHeap = new PriorityQueue<Integer>();
+
+        for (int i = 0; i < A; i++) {
+            minHeap.offer(B[i]);
+
+            if (i == A - 1) {
+                res[i] = minHeap.peek();
+            } else {
+                res[i] = -1;
+            }
+        }
+
+        for (int i = A; i < B.length; i++) {
+            if (B[i] > minHeap.peek()) {
+                minHeap.poll();
+                minHeap.offer(B[i]);
+            }
+
+            res[i] = minHeap.peek();
+        }
+
+        return res;
+    }
+
+    /* Minimum largest element
+    Problem Description
+Given an array A of N numbers, you have to perform B operations. In each operation, you have to pick any one of the N elements and add the original value(value stored at the index before we did any operations) to its current value. You can choose any of the N elements in each operation.
+
+Perform B operations in such a way that the largest element of the modified array(after B operations) is minimized.
+Find the minimum possible largest element after B operations.
+
+
+
+Problem Constraints
+1 <= N <= 106
+0 <= B <= 105
+-105 <= A[i] <= 105
+
+
+
+Input Format
+The first argument is an integer array A.
+The second argument is an integer B.
+
+
+
+Output Format
+Return an integer denoting the minimum possible largest element after B operations.
+
+
+
+Example Input
+Input 1:
+
+ A = [1, 2, 3, 4] 
+ B = 3
+Input 2:
+
+ A = [5, 1, 4, 2] 
+ B = 5
+
+
+Example Output
+Output 1:
+
+ 4
+Output 2:
+
+ 5
+
+
+Example Explanation
+Explanation 1:
+
+ Apply operation on element at index 0, the array would change to [2, 2, 3, 4]
+ Apply operation on element at index 0, the array would change to [3, 2, 3, 4]
+ Apply operation on element at index 0, the array would change to [4, 2, 3, 4]
+ Minimum possible largest element after 3 operations is 4.
+Explanation 2:
+
+ Apply operation on element at index 1, the array would change to [5, 2, 4, 2]
+ Apply operation on element at index 1, the array would change to [5, 3, 4, 2]
+ Apply operation on element at index 1, the array would change to [5, 4, 4, 2]
+ Apply operation on element at index 1, the array would change to [5, 5, 4, 2]
+ Apply operation on element at index 3, the array would change to [5, 5, 4, 4]
+ Minimum possible largest element after 5 operations is 5.
+    */
+    public class MinimumPossibleLargestElementSolution {
+        class Pair {
+            public int index;
+            public int value;
+
+            public Pair(int i, int v) {
+                this.index = i;
+                this.value = v;
+            }
+        }
+
+        class PairComparator implements Comparator<Pair> {
+
+            public int compare(Pair p1, Pair p2) {
+                return p1.value - p2.value;
+            }
+        }
+
+        public int solve(int[] A, int B) {
+            int[] state = new int[A.length];
+
+            PriorityQueue<Pair> minHeap = new PriorityQueue<Pair>(new PairComparator());
+
+            for (int i = 0; i < A.length; i++) {
+                state[i] = A[i];
+
+                minHeap.offer(new Pair(i, 2 * state[i]));
+            }
+
+            while (B > 0) {
+                Pair p = minHeap.poll();
+
+                state[p.index] = p.value;
+
+                p.value += A[p.index];
+
+                minHeap.offer(p);
+
+                B--;
+            }
+
+            int max = state[0];
+
+            for (int i = 1; i < state.length; i++) {
+                max = Math.max(max, state[i]);
+            }
+
+            return max;
+        }
+    }
+    
+    /* N max pair combinations
+    Problem Description
+Given two integers arrays, A and B, of size N each.
+
+Find the maximum N elements from the sum combinations (Ai + Bj) formed from elements in arrays A and B.
+
+
+
+Problem Constraints
+1 <= N <= 2 * 105
+
+-1000 <= A[i], B[i] <= 1000
+
+
+
+Input Format
+The first argument is an integer array A.
+The second argument is an integer array B.
+
+
+
+Output Format
+Return an integer array denoting the N maximum element in descending order.
+
+
+
+Example Input
+Input 1:
+
+ A = [1, 4, 2, 3]
+ B = [2, 5, 1, 6]
+Input 2:
+
+ A = [2, 4, 1, 1]
+ B = [-2, -3, 2, 4]
+
+
+Example Output
+Output 1:
+
+ [10, 9, 9, 8]
+Output 2:
+
+ [8, 6, 6, 5]
+
+
+Example Explanation
+Explanation 1:
+
+ 4 maximum elements are 10(6+4), 9(6+3), 9(5+4), 8(6+2).
+Explanation 2:
+
+ 4 maximum elements are 8(4+4), 6(4+2), 6(4+2), 5(4+1).
+    */
+    public class NMaxPairCombinationsSolution {
+        class Pair {
+            public int sum;
+            public int i;
+            public int j;
+
+            public Pair(int sum, int i, int j) {
+                this.sum = sum;
+                this.i = i;
+                this.j = j;
+            }
+
+            @Override
+            public int hashCode() {
+                // overriding hashCode() method to first
+                // check the length of the names*/
+                return this.i * 10 + this.j;
+            }
+
+            @Override
+            public boolean equals(Object obj) {
+                if (this == obj)
+                    return true;
+
+                if (obj == null || this.getClass() != obj.getClass())
+                    return false;
+
+                Pair p1 = (Pair) obj;
+
+                return this.i == p1.i && this.j == p1.j;
+            }
+        }
+
+        class PairComparator implements Comparator<Pair> {
+            public int compare(Pair p1, Pair p2) {
+                return p2.sum - p1.sum;
+            }
+        }
+
+        public int[] solve(int[] A, int[] B) {
+
+            Arrays.sort(A);
+
+            Arrays.sort(B);
+
+            int N = A.length;
+
+            HashSet<Pair> set = new HashSet<Pair>();
+
+            PriorityQueue<Pair> maxHeap = new PriorityQueue<Pair>(new PairComparator());
+
+            Pair maxSumPair = new Pair((A[N - 1] + B[N - 1]), N - 1, N - 1);
+
+            maxHeap.offer(maxSumPair);
+            set.add(maxSumPair);
+
+            int[] res = new int[N];
+
+            for (int k = 0; k < res.length; k++) {
+                Pair p = maxHeap.poll();
+
+                res[k] = p.sum;
+
+                int i = p.i;
+                int j = p.j;
+
+                Pair q = null;
+
+                if (i - 1 >= 0) {
+                    q = new Pair(A[i - 1] + B[j], i - 1, j);
+                }
+
+                if (q != null && !set.contains(q)) {
+                    maxHeap.offer(q);
+                    set.add(q);
+                }
+
+                if (j - 1 >= 0) {
+                    q = new Pair(A[i] + B[j - 1], i, j - 1);
+                }
+
+                if (q != null && !set.contains(q)) {
+                    maxHeap.offer(q);
+                    set.add(q);
+                }
+
+            }
+
+            return res;
+        }
+    }    
     
 }
