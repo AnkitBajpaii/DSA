@@ -226,6 +226,170 @@ Explanation 2:
 
             return res;
         }
-    }    
+    }
+    
+    /* Distribute Candy
+    Problem Description
+N children are standing in a line. Each child is assigned a rating value.
+
+You are giving candies to these children subjected to the following requirements:
+
+Each child must have at least one candy.
+Children with a higher rating get more candies than their neighbors.
+What is the minimum number of candies you must give?
+
+
+
+Problem Constraints
+1 <= N <= 105
+-109 <= A[i] <= 109
+
+
+
+Input Format
+The first and only argument is an integer array A representing the rating of children.
+
+
+
+Output Format
+Return an integer representing the minimum candies to be given.
+
+
+
+Example Input
+Input 1:
+
+ A = [1, 2]
+Input 2:
+
+ A = [1, 5, 2, 1]
+
+
+Example Output
+Output 1:
+
+ 3
+Output 2:
+
+ 7
+
+
+Example Explanation
+Explanation 1:
+
+ The candidate with 1 rating gets 1 candy and candidate with rating 2 cannot get 1 candy as 1 is its neighbor. 
+ So rating 2 candidate gets 2 candies. In total, 2 + 1 = 3 candies need to be given out.
+Explanation 2:
+
+ Candies given = [1, 3, 2, 1]
+    */
+    public int distributeCandy(int[] A) {
+
+        int n = A.length;
+
+        int[] cl = new int[n];
+        int[] cr = new int[n];
+
+        cl[0] = 1;
+        cr[n - 1] = 1;
+
+        for (int i = 1; i < n; i++) {
+            if (A[i] > A[i - 1]) {
+                cl[i] = cl[i - 1] + 1;
+            } else {
+                cl[i] = 1;
+            }
+
+            if (A[n - i - 1] > A[n - i]) {
+                cr[n - i - 1] = cr[n - i] + 1;
+            } else {
+                cr[n - i - 1] = 1;
+            }
+        }
+
+        int ans = 0;
+        for (int i = 0; i < n; i++) {
+            ans += Math.max(cl[i], cr[i]);
+        }
+
+        return ans;
+    }
+
+    /* Assign Mice to Holes
+    Problem Description
+N Mice and N holes are placed in a straight line. Each hole can accommodate only one mouse.
+
+The positions of Mice are denoted by array A, and the position of holes is denoted by array B.
+
+A mouse can stay at his position, move one step right from x to x + 1, or move one step left from x to x − 1. Any of these moves consume 1 minute.
+
+Assign mice to holes so that the time when the last mouse gets inside a hole is minimized.
+
+
+
+Problem Constraints
+1 <= N <= 105
+
+-109 <= A[i], B[i] <= 109
+
+
+
+Input Format
+The first argument is an integer array A.
+
+The second argument is an integer array B.
+
+
+
+Output Format
+Return an integer denoting the minimum time when the last nouse gets inside the holes.
+
+
+
+Example Input
+Input 1:
+
+ A = [-4, 2, 3]
+ B = [0, -2, 4]
+Input 2:
+
+ A = [-2]
+ B = [-6]
+
+
+Example Output
+Output 1:
+
+ 2
+Output 2:
+
+ 4
+
+
+Example Explanation
+Explanation 1:
+
+ Assign the mouse at position (-4 to -2), (2 to 0) and (3 to 4).
+ The number of moves required will be 2, 2 and 1 respectively.
+ So, the time taken will be 2.
+Explanation 2:
+
+ Assign the mouse at position -2 to -6.
+ The number of moves required will be 4.
+ So, the time taken will be 4.
+    */
+    public int mice(int[] A, int[] B) {
+        Arrays.sort(A);
+        Arrays.sort(B);
+
+        int n = A.length;
+
+        int ans = Integer.MIN_VALUE;
+        for (int i = 0; i < n; i++) {
+            ans = Math.max(ans, Math.abs(B[i] - A[i]));
+        }
+
+        return ans;
+    }
     
 }
