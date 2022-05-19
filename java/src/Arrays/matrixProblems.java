@@ -1187,5 +1187,98 @@ public class matrixProblems {
 
         return ans;
     }
-    
+
+    /* Print all intergers from 0 to n, in spiral order, starting from center of matrix
+    */
+    class PrintSpiralFromCenterSolution {
+        void PrintMatrix(int[][] mat, int n)
+        {
+            for (int i = 0; i < mat.length; i++)
+            {
+                for (int j = 0; j < mat[i].length; j++)
+                {
+                    int intVal = mat[i][j];
+
+                    String strVal = intVal + "";
+
+                    if (intVal > n)
+                    {
+                        strVal = "-";
+                    }
+
+                    if (j == mat[i].length - 1)
+                    {
+                        System.out.print(strVal);
+                    }
+                    else
+                    {
+                        System.out.print(strVal + "\t");
+                    }
+                }
+
+                System.out.println();
+            }
+
+        }
+
+        boolean isSafe(int size, int r, int c)
+        {
+            return r >= 0 && r < size && c >= 0 && c < size;
+        }
+
+        void PrintSpiralFromCenter(int n)
+        {
+            int size = (int)Math.sqrt(n) + 1;
+
+            int[][] mat = new int[size][size];
+
+            int r = (size - 1) / 2, c = (size - 1) / 2;
+
+            int l = 0, count = 0;
+
+            mat[r][c] = count++;
+
+            while (l < size)
+            {
+                l++;
+
+                // go right
+                for (int i = 0; i < l; i++)
+                {
+                    c++;
+                    if (!isSafe(size, r, c)) break;
+                    mat[r][c] = count++;
+                }
+
+                // go down
+                for (int i = 0; i < l && r < size; i++)
+                {
+                    r++;
+                    if (!isSafe(size, r, c)) break;
+                    mat[r][c] = count++;
+                }
+
+                l++;
+
+                // go left
+                for (int i = 0; i < l && c < size; i++)
+                {
+                    c--;
+                    if (!isSafe(size, r, c)) break;
+                    mat[r][c] = count++;
+                }
+
+                // go up
+                for (int i = 0; i < l && c < size; i++)
+                {
+                    r--;
+                    if (!isSafe(size, r, c)) break;
+                    mat[r][c] = count++;
+                }
+            }
+
+            PrintMatrix(mat, n);
+        }
+
+    }
 }
