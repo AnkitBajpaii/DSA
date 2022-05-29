@@ -2,6 +2,8 @@ package Backtrackking;
 
 import java.util.*;
 
+import javax.xml.crypto.dsig.keyinfo.RetrievalMethod;
+
 public class BackTrackkingProblems {
 
     /* Generate all N digit numbers, using digits only 1 & 2
@@ -869,7 +871,7 @@ Explanation 2:
             return false;
         }
 
-        public int[][] solve(int[][] A) {
+        public int[][] RatInMaze(int[][] A) {
 
             int N = A.length, M = A[0].length;
 
@@ -879,5 +881,391 @@ Explanation 2:
             
             return sol;
         }
+    }
+
+    /* Given a matrix & start point of rat, end point, blocked cells, cells filled with cheese.
+    count no of path from start to end such that rat can eat all the cheese available in the maze without stepping on same cell
+    twice in a single path.
+    start: si, sj
+    end: ei, ej
+    cheese: 0
+    blocked: 1
+    empty: 2
+    */
+    int countPathsUtil(int[][] mat, int si, int sj, int ei, int ej, int currCheeseCount, int totalCheeseCount) {
+        if (si == ei && sj == ej) {
+            if (currCheeseCount == totalCheeseCount)
+                return 1;
+
+            return 0;
+        }
+
+        // is safe check
+        if (si < 0 || si >= mat.length || ej < 0 || ej >= mat[0].length || mat[si][sj] == 1)
+            return 0;
+
+        int prevState = mat[si][sj];
+
+        int cheeseCount = currCheeseCount;
+        
+        if (prevState == 0) { // 0 means cell has cheese
+            cheeseCount++;
+        }
+
+        mat[si][sj] = 1;// 1 means blocked.
+
+        int ans = countPathsUtil(mat, si, sj - 1, ei, ej, cheeseCount, totalCheeseCount)
+                + countPathsUtil(mat, si, sj + 1, ei, ej, cheeseCount, totalCheeseCount)
+                + countPathsUtil(mat, si - 1, sj, ei, ej, cheeseCount, totalCheeseCount)
+                + countPathsUtil(mat, si + 1, sj, ei, ej, cheeseCount, totalCheeseCount);
+
+        mat[si][sj] = prevState;
+
+        return ans;
+    }
+
+    public int countPaths(int[][] mat, int si, int sj, int ei, int ej) {
+        int totalCheeseCount = 0;
+        for (int i = 0; i < mat.length; i++) {
+            for (int j = 0; j < mat[i].length; j++) {
+                if (mat[i][j] == 0) {
+                    totalCheeseCount++;
+                }
+            }
+        }
+
+        return countPathsUtil(mat, si, sj, ei, ej, 0, totalCheeseCount);
+    }
+
+    /* N Queens
+    The n-queens puzzle is the problem of placing n queens on an n×n chessboard such that no two queens attack each other.
+    Check if you can place N queens(wazir) in this board, following above constraint. 
+    */
+    boolean isCellSafeForQueen(int[][] mat, int i, int j) {
+        if (i < 0 || i >= mat.length || j < 0 || j >= mat.length) {
+            return false;
+        }
+
+        for (int col = 0; col < mat.length; col++) {
+            if (mat[i][col] == 1) {
+                return false;
+            }
+        }
+
+        for (int row = 0; row < mat.length; row++) {
+            if (mat[row][j] == 1) {
+                return false;
+            }
+        }
+
+        int r = i - 1, c = j - 1;
+        while (r >= 0 && c >= 0) {
+            if (mat[r][c] == 1)
+                return false;
+            r--;
+            j--;
+        }
+
+        r = i + 1;
+        c = j + 1;
+        while (r < mat.length && c < mat.length) {
+            if (mat[r][c] == 1)
+                return false;
+            r++;
+            j++;
+        }
+
+        r = i - 1;
+        c = j + 1;
+        while (r >= 0 && c < mat.length) {
+            if (mat[r][c] == 1)
+                return false;
+            r--;
+            j++;
+        }
+
+        r = i + 1;
+        c = j - 1;
+        while (r < mat.length && c >= 0) {
+            if (mat[r][c] == 1)
+                return false;
+            r++;
+            j--;
+        }
+
+        return true;
+    }
+
+    boolean solveNQueensUtil(int[][] mat, int row) {
+        if (row == mat.length)
+            return true;
+
+        for (int col = 0; col < mat.length; col++) {
+            if (isCellSafeForQueen(mat, row, col)) {
+                mat[row][col] = 1;
+
+                if (solveNQueensUtil(mat, row + 1)) {
+                    return true;
+                }
+                mat[row][col] = 0;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean solveNQueens(int[][] mat) {
+        return solveNQueensUtil(mat, 0);
+    }
+
+    /* NQueens
+    The n-queens puzzle is the problem of placing n queens on an n×n chessboard such that no two queens attack each other.
+
+
+
+Given an integer A, return all distinct solutions to the n-queens puzzle.
+
+Each solution contains a distinct board configuration of the n-queens' placement, where 'Q' and '.' both indicate a queen and an empty space respectively.
+The final list should be generated in such a way that the indices of the queens in each list should be in reverse lexicographical order.
+
+
+Problem Constraints
+1 <= A <= 10
+
+
+
+Input Format
+First argument is an integer n denoting the size of chessboard
+
+
+
+Output Format
+Return an array consisting of all distinct solutions in which each element is a 2d char array representing a unique solution.
+
+
+
+Example Input
+Input 1:
+
+A = 4
+Input 2:
+
+A = 1
+
+
+Example Output
+Output 1:
+
+[
+ [".Q..",  // Solution 1
+  "...Q",
+  "Q...",
+  "..Q."],
+
+ ["..Q.",  // Solution 2
+  "Q...",
+  "...Q",
+  ".Q.."]
+]
+Output 1:
+
+[
+ [Q]
+]
+
+
+Example Explanation
+Explanation 1:
+
+There exist only two distinct solutions to the 4-queens puzzle:
+Explanation 1:
+
+There exist only one distinct solutions to the 1-queens puzzle:
+
+    */
+    boolean isSafe(char[][] mat, int i, int j, HashSet<Integer> rowHash, HashSet<Integer> colHash,
+            HashSet<Integer> leftDiagonal, HashSet<Integer> rightDiagonal) {
+        if (i < 0 || i >= mat.length || j < 0 || j >= mat.length
+                || rowHash.contains(i) || colHash.contains(j)) {
+            return false;
+        }
+
+        if (leftDiagonal.contains(j - i)) {
+            return false;
+        }
+
+        if (rightDiagonal.contains(i + j)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    void solveNQueensUtil(char[][] mat, int row, ArrayList<ArrayList<String>> ans, HashSet<Integer> rowHash,
+            HashSet<Integer> colHash, HashSet<Integer> leftDiagonal, HashSet<Integer> rightDiagonal) {
+        if (row == mat.length) {
+            ArrayList<String> al = new ArrayList<String>();
+
+            for (int i = 0; i < mat.length; i++) {
+                StringBuilder sb = new StringBuilder();
+
+                for (int j = 0; j < mat[i].length; j++) {
+                    sb.append(mat[i][j]);
+                }
+
+                al.add(sb.toString());
+            }
+
+            ans.add(al);
+
+            return;
+        }
+
+        for (int col = 0; col < mat.length; col++) {
+            if (isSafe(mat, row, col, rowHash, colHash, leftDiagonal, rightDiagonal)) {
+                mat[row][col] = 'Q';
+
+                rowHash.add(row);
+                colHash.add(col);
+                leftDiagonal.add(col - row);
+                rightDiagonal.add(col + row);
+
+                solveNQueensUtil(mat, row + 1, ans, rowHash, colHash, leftDiagonal, rightDiagonal);
+
+                mat[row][col] = '.';
+                rowHash.remove(row);
+                colHash.remove(col);
+                leftDiagonal.remove(col - row);
+                rightDiagonal.remove(col + row);
+            }
+        }
+    }
+
+    public ArrayList<ArrayList<String>> solveNQueens(int A) {
+        ArrayList<ArrayList<String>> ans = new ArrayList<ArrayList<String>>();
+
+        char[][] mat = new char[A][A];
+
+        for (int i = 0; i < mat.length; i++) {
+            for (int j = 0; j < mat[i].length; j++) {
+                mat[i][j] = '.';
+            }
+        }
+
+        HashSet<Integer> colHash = new HashSet<Integer>();
+        HashSet<Integer> rowHash = new HashSet<Integer>();
+        HashSet<Integer> leftDiagonal = new HashSet<Integer>();
+        HashSet<Integer> rightDiagonal = new HashSet<Integer>();
+
+        solveNQueensUtil(mat, 0, ans, rowHash, colHash, leftDiagonal, rightDiagonal);
+
+        return ans;
+    }
+
+    /* Sudoku
+    Problem Description
+Write a program to solve a Sudoku puzzle by filling the empty cells. Empty cells are indicated by the character '.' You may assume that there will be only one unique solution.
+
+
+
+A sudoku puzzle,
+
+
+
+and its solution numbers marked in red.
+
+
+
+Problem Constraints
+N = 9
+
+
+Input Format
+First argument is an array of array of characters representing the Sudoku puzzle.
+
+
+Output Format
+Modify the given input to the required answer.
+
+
+Example Input
+Input 1:
+
+A = [[53..7....], [6..195...], [.98....6.], [8...6...3], [4..8.3..1], [7...2...6], [.6....28.], [...419..5], [....8..79]]
+
+
+Example Output
+Output 1:
+
+[[534678912], [672195348], [198342567], [859761423], [426853791], [713924856], [961537284], [287419635], [345286179]]
+
+
+Example Explanation
+Explanation 1:
+
+Look at the diagrams given in the question.
+    */
+    boolean isSafe(ArrayList<ArrayList<Character>> mat, int row, int col, char n) {
+        if (row < 0 || row >= 9 || col < 0 || col >= 9) {
+            return false;
+        }
+        // row check
+        for (int j = 0; j < mat.get(row).size(); j++) {
+            if (mat.get(row).get(j) == n) {
+                return false;
+            }
+        }
+
+        // column check
+        for (int i = 0; i < mat.size(); i++) {
+            if (mat.get(i).get(col) == n) {
+                return false;
+            }
+        }
+
+        int start = (row / 3) * 3, end = (col / 3) * 3;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (mat.get(start + i).get(end + j) == n) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    boolean solveSudokuUtil(ArrayList<ArrayList<Character>> mat, int row, int col) {
+        if (col == mat.size()) {
+            row++;
+            col = 0;
+        }
+
+        if (row == mat.size()) {
+            return true;
+        }
+
+        if (mat.get(row).get(col) != '.') {
+            return solveSudokuUtil(mat, row, col + 1);
+        }
+
+        for (int i = '1'; i <= '9'; i++) {
+            if (isSafe(mat, row, col, (char) i)) {
+                mat.get(row).set(col, (char) i);
+
+                if (solveSudokuUtil(mat, row, col + 1)) {
+                    return true;
+                }
+
+                mat.get(row).set(col, '.');
+            }
+        }
+
+        return false;
+    }
+
+    public void solveSudoku(ArrayList<ArrayList<Character>> a) {
+
+        solveSudokuUtil(a, 0, 0);
     }
 }
