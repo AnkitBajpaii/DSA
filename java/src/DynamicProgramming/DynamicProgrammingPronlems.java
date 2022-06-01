@@ -1,7 +1,11 @@
 package DynamicProgramming;
 
+import java.util.*;
+
 public class DynamicProgrammingPronlems {
-    /* Q1. Stairs
+    int mod = 1000*1000*1000 + 7;
+
+    /* Q1. N Stairs
     Problem Description
 You are climbing a stair case and it takes A steps to reach to the top.
 
@@ -426,8 +430,6 @@ Explanation 2:
 
     public long numDecodingsUtilMemoization(String A, int N, long[] dp) {
 
-        int mod = 1000 * 1000 * 1000 + 7;
-
         if (dp[N] == -1) {
             if (N == 0 || N == 1) {
                 dp[N] = 1;
@@ -458,8 +460,6 @@ Explanation 2:
         if (N == 1)
             return 1;
 
-        int mod = 1000 * 1000 * 1000 + 7;
-
         long[] dp = new long[N + 1];
         dp[0] = 1;
         dp[1] = 1;
@@ -484,8 +484,7 @@ Explanation 2:
         int N = A.length();
 
         return numDecodingsUtilTabulation(A, N);
-
-        // int mod = 1000 * 1000 * 1000 + 7;
+        
         // if (N == 0 || A.charAt(0) == '0')
         //     return 0;
 
@@ -498,6 +497,716 @@ Explanation 2:
         // long ans = numDecodingsUtilMemoization(A, N, dp);
 
         // return (int) (ans % mod);
+    }
+
+    /* Let's Party
+    Problem Description
+
+In Danceland, one person can party either alone or can pair up with another person.
+
+Can you find in how many ways they can party if there are A people in Danceland?
+
+Note: Return your answer modulo 10003, as the answer can be large.
+
+
+
+Problem Constraints
+
+1 <= A <= 105
+
+
+
+Input Format
+
+Given only argument A of type Integer, number of people in Danceland.
+
+
+
+Output Format
+
+Return an integer denoting the number of ways people of Danceland can party.
+
+
+
+Example Input
+
+Input 1:
+
+ A = 3
+Input 2:
+
+ A = 5
+
+
+Example Output
+
+Output 1:
+
+ 4
+Output 2:
+
+ 26
+
+
+Example Explanation
+
+Explanation 1:
+
+ Let suppose three people are A, B, and C. There are only 4 ways to party
+ (A, B, C) All party alone
+ (AB, C) A and B party together and C party alone
+ (AC, B) A and C party together and B party alone
+ (BC, A) B and C party together and A
+ here 4 % 10003 = 4, so answer is 4.
+ 
+Explanation 2:
+
+ Number of ways they can party are: 26.
+    */
+    long waysToPartyMemoization(int A, long[] dp) {
+        if (dp[A] == -1) {
+            if (A == 1 || A == 2) {
+                dp[A] = A;
+            } else {
+                dp[A] = (waysToPartyMemoization(A - 1, dp) + ((A - 1) * waysToPartyMemoization(A - 2, dp)) % 10003)
+                        % 10003;
+            }
+        }
+
+        return dp[A];
+    }
+
+    long waysToPartyTabulation(int A) {
+        if (A == 1 || A == 2)
+            return A;
+
+        long[] dp = new long[A + 1];
+        dp[1] = 1;
+        dp[2] = 2;
+
+        for (int i = 3; i <= A; i++) {
+            dp[i] = (dp[i - 1] + ((i - 1) * dp[i - 2]) % 10003) % 10003;
+        }
+
+        return dp[A];
+    }
+
+    public int NoOfwaysToParty(int A) {
+
+        // long[] dp = new long[A+1];
+        // for(int i=0; i<=A; i++)
+        // {
+        // dp[i] = -1;
+        // }
+
+        // waysToPartyMemoization(A, dp);
+        // long ans = dp[A];
+
+        long ans = waysToPartyTabulation(A);
+
+        return (int) (ans % 10003);
+    }
+
+    /* Dice throw
+    Problem Description
+
+Given sum A, number of ways you can get that sum with dice roll[1-6].
+
+As the number of ways can be large return its modulo by 1e9 + 7.
+
+
+
+Problem Constraints
+
+1 <= A <= 10 2
+
+
+Input Format
+
+The first argument is the integer A.
+
+
+Output Format
+
+Return an integer .
+
+
+Example Input
+
+Input 1:
+A = 3
+Input 2:
+
+A = 4
+
+
+Example Output
+
+Output 1:
+4
+Output 2:
+
+8
+
+
+Example Explanation
+
+Explanation 1:
+
+The four possible ways to obtain 3 are: [1, 1, 1], [1, 2], [2, 1] and [3].
+
+
+
+
+Explanation 2:
+
+The eight possible ways to obrain 8 are: [1, 1, 1, 1], [1, 1, 2], [1, 2, 1], [2, 1, 1], [1, 3], [3, 1], [2, 2], [4].
+    */
+    long waysToObtainSumByThrowingDice(int N) {
+        if (N == 0)
+            return 1;
+
+        if (N <= 2)
+            return N;
+
+        long ans = 0;
+
+        for (int i = 1; i <= Math.min(6, N); i++) {
+            ans = (ans + waysToObtainSumByThrowingDice(N - i)) % mod;
+        }
+
+        return ans;
+    }
+
+    long waysToObtainSumByThrowingDiceTabulation(int N) {
+        if (N == 0)
+            return 1;
+
+        if (N <= 2)
+            return N;
+
+        long[] dp = new long[N + 1];
+        dp[0] = 1;
+        dp[1] = 1;
+        dp[2] = 2;
+
+        for (int i = 3; i <= N; i++) {
+            dp[i] = 0;
+
+            for (int j = 1; j <= Math.min(i, 6); j++) {
+                dp[i] = (dp[i] + dp[i - j]) % mod;
+            }
+        }
+
+        return dp[N];
+    }
+
+    public int diceThrow(int A) {
+
+        long ans = waysToObtainSumByThrowingDiceTabulation(A);
+
+        return (int) ans;
+    }
+
+    /* Ways to send the signal
+    Problem Description
+
+You are trying to send signals to aliens using a linear array of A laser lights. You don't know much about how the aliens are going to percieve the signals, but what you know is that if two consecutive lights are on then the aliens might take it as a sign of danger and destroy the earth.
+
+Find and return the total number of ways in which you can send a signal without compromising the safty of the earth. Return the ans % 109 + 7.
+
+
+
+Problem Constraints
+
+1 <= A <= 105
+
+
+
+Input Format
+
+The only argument given is integer A.
+
+
+
+Output Format
+
+Return the ans%(109+7).
+
+
+
+Example Input
+
+Input 1:
+
+ A = 2
+Input 2:
+
+ A = 3
+
+
+Example Output
+
+Output 1:
+
+ 3
+Output 2:
+
+ 5
+
+
+Example Explanation
+
+Explanation 1:
+
+ OFF OFF
+ OFF ON 
+ ON OFF
+All lights off is also a valid signal which probably means 'bye'
+
+Explanation 2:
+
+ OFF OFF OFF
+ OFF OFF ON
+ OFF ON OFF 
+ ON OFF OFF
+ ON OFF ON 
+    */
+    public int waysToSendSignal(int A) {
+        int mod = 1000 * 1000 * 1000 + 7;
+
+        long[][] dp = new long[A + 1][2];
+
+        for (int i = 0; i <= A; i++) {
+            if (i == 0) {
+                dp[i][0] = 0;
+                dp[i][1] = 0;
+            } else if (i == 1) {
+                dp[i][0] = 1;
+                dp[i][1] = 1;
+            } else {
+                dp[i][0] = (dp[i - 1][0] + dp[i - 1][1]) % mod;
+                dp[i][1] = dp[i - 1][0];
+            }
+        }
+
+        return (int) ((dp[A][0] + dp[A][1]) % mod);
+    }
+
+    /* Unique Paths in a Grid
+    Problem Description
+Given a grid of size n * m, lets assume you are starting at (1,1) and your goal is to reach (n, m). At any instance, if you are on (x, y), you can either go to (x, y + 1) or (x + 1, y).
+
+Now consider if some obstacles are added to the grids. How many unique paths would there be? An obstacle and empty space is marked as 1 and 0 respectively in the grid.
+
+
+
+Problem Constraints
+1 <= n, m <= 100
+A[i][j] = 0 or 1
+
+
+
+Input Format
+Firts and only argument A is a 2D array of size n * m.
+
+
+
+Output Format
+Return an integer denoting the number of unique paths from (1, 1) to (n, m).
+
+
+
+Example Input
+Input 1:
+
+ A = [
+        [0, 0, 0]
+        [0, 1, 0]
+        [0, 0, 0]
+     ]
+Input 2:
+
+ A = [
+        [0, 0, 0]
+        [1, 1, 1]
+        [0, 0, 0]
+     ]
+
+
+Example Output
+Output 1:
+
+ 2
+Output 2:
+
+ 0
+
+
+Example Explanation
+Explanation 1:
+
+ Possible paths to reach (n, m): {(1, 1), (1, 2), (1, 3), (2, 3), (3, 3)} and {(1 ,1), (2, 1), (3, 1), (3, 2), (3, 3)}  
+ So, the total number of unique paths is 2. 
+Explanation 2:
+
+ It is not possible to reach (n, m) from (1, 1). So, ans is 0.
+    */
+    int uniquePathsWithObstaclesRecursive(int[][] A, int i, int j) {
+        // no of ways to reach (i,j) from (0,0)
+        if (i < 0 || j < 0) {
+            return 0;
+        }
+
+        if (A[i][j] == 1) {
+            return 0;
+        }
+
+        if (i == 0 && j == 0) {
+            return 1;
+        }
+
+        return uniquePathsWithObstaclesRecursive(A, i - 1, j) + uniquePathsWithObstaclesRecursive(A, i, j - 1);
+    }
+
+    int uniquePathsWithObstaclesTabulation(int[][] A) {
+        int N = A.length, M = A[0].length;
+        if (A[0][0] == 1)
+            return 0;
+
+        int[][] dp = new int[N][M];
+
+        dp[0][0] = 1;
+
+        int j = 1;
+        for (; j < M; j++) {
+            if (A[0][j] == 0) {
+                dp[0][j] = 1;
+            } else {
+                break;
+            }
+        }
+
+        for (; j < M; j++) {
+            dp[0][j] = 0;
+        }
+
+        int i = 1;
+        for (; i < N; i++) {
+            if (A[i][0] == 0) {
+                dp[i][0] = 1;
+            } else {
+                break;
+            }
+        }
+
+        for (; i < N; i++) {
+            dp[i][0] = 0;
+        }
+
+        for (i = 1; i < N; i++) {
+            for (j = 1; j < M; j++) {
+                if (A[i][j] == 1) {
+                    dp[i][j] = 0;
+                } else {
+                    dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+                }
+            }
+        }
+
+        return dp[N - 1][M - 1];
+    }
+
+    public int uniquePathsWithObstacles(int[][] A) {
+        // int N = A.length, M = A[0].length;
+
+        // return uniquePathsWithObstaclesRecursive(A, N-1, M-1);
+        return uniquePathsWithObstaclesTabulation(A);
+    }
+
+    /*  Min Sum Path in Matrix
+    Problem Description
+Given a M x N grid A of integers, find a path from top left to bottom right which minimizes the sum of all numbers along its path.
+
+Return the minimum sum of the path.
+
+NOTE: You can only move either down or right at any point in time.
+
+
+
+Problem Constraints
+1 <= M, N <= 2000
+
+-1000 <= A[i][j] <= 1000
+
+
+
+Input Format
+First and only argument is a 2-D grid A.
+
+
+
+Output Format
+Return an integer denoting the minimum sum of the path.
+
+
+
+Example Input
+Input 1:
+
+ A = [
+       [1, 3, 2]
+       [4, 3, 1]
+       [5, 6, 1]
+     ]
+Input 2:
+
+ A = [
+       [1, -3, 2]
+       [2, 5, 10]
+       [5, -5, 1]
+     ]
+
+
+Example Output
+Output 1:
+
+ 8
+Output 2:
+
+ -1
+
+
+Example Explanation
+Explanation 1:
+
+ The path will be: 1 -> 3 -> 2 -> 1 -> 1.
+Input 2:
+
+ The path will be: 1 -> -3 -> 5 -> -5 -> 1.
+    */
+    int minPathSumTabulation(int[][] A) {
+        int N = A.length, M = A[0].length;
+
+        int[][] dp = new int[N][M];
+        dp[0][0] = A[0][0];
+
+        for (int j = 1; j < M; j++) {
+            dp[0][j] = dp[0][j - 1] + A[0][j];
+        }
+
+        for (int i = 1; i < N; i++) {
+            dp[i][0] = dp[i - 1][0] + A[i][0];
+        }
+
+        for (int i = 1; i < N; i++) {
+            for (int j = 1; j < M; j++) {
+                dp[i][j] = Math.min(dp[i - 1][j], dp[i][j - 1]) + A[i][j];
+            }
+        }
+
+        return dp[N - 1][M - 1];
+    }
+
+    public int minPathSum(int[][] A) {
+        return minPathSumTabulation(A);
+    }
+
+    /* Dungeon Princess
+    Problem Description
+The demons had captured the princess and imprisoned her in the bottom-right corner of a dungeon. The dungeon consists of M x N rooms laid out in a 2D grid. Our valiant knight was initially positioned in the top-left room and must fight his way through the dungeon to rescue the princess.
+
+The knight has an initial health point represented by a positive integer. If at any point his health point drops to 0 or below, he dies immediately.
+
+Some of the rooms are guarded by demons, so the knight loses health (negative integers) upon entering these rooms; other rooms are either empty (0's) or contain magic orbs that increase the knight's health (positive integers).
+
+In order to reach the princess as quickly as possible, the knight decides to move only rightward or downward in each step.
+
+Given a 2D array of integers A of size M x N. Find and return the knight's minimum initial health so that he is able to rescue the princess.
+
+
+
+Problem Constraints
+1 <= M, N <= 500
+
+-100 <= A[i] <= 100
+
+
+
+Input Format
+First and only argument is a 2D integer array A denoting the grid of size M x N.
+
+
+
+Output Format
+Return an integer denoting the knight's minimum initial health so that he is able to rescue the princess.
+
+
+
+Example Input
+Input 1:
+
+ A = [ 
+       [-2, -3, 3],
+       [-5, -10, 1],
+       [10, 30, -5]
+     ]
+Input 2:
+
+ A = [ 
+       [1, -1, 0],
+       [-1, 1, -1],
+       [1, 0, -1]
+     ]
+
+
+Example Output
+Output 1:
+
+ 7
+Output 2:
+
+ 1
+
+
+Example Explanation
+Explanation 1:
+
+ Initially knight is at A[0][0].
+ If he takes the path RIGHT -> RIGHT -> DOWN -> DOWN, the minimum health required will be 7.
+ At (0,0) he looses 2 health, so health becomes 5.
+ At (0,1) he looses 3 health, so health becomes 2.
+ At (0,2) he gains 3 health, so health becomes 5.
+ At (1,2) he gains 1 health, so health becomes 6.
+ At (2,2) he looses 5 health, so health becomes 1.
+ At any point, the health point doesn't drop to 0 or below. So he can rescue the princess with minimum health 7.
+ 
+Explanation 2:
+
+ Take the path DOWN -> DOWN ->RIGHT -> RIGHT, the minimum health required will be 1.
+*/
+    int calculateMinimumHPTabulation(int[][] A) {
+        int N = A.length, M = A[0].length;
+
+        int[][] dp = new int[N][M];
+
+        dp[N - 1][M - 1] = Math.max(1, 1 - A[N - 1][M - 1]);
+
+        for (int i = N - 2; i >= 0; i--) {
+            dp[i][M - 1] = Math.max(1, dp[i + 1][M - 1] - A[i][M - 1]);
+        }
+
+        for (int j = M - 2; j >= 0; j--) {
+            dp[N - 1][j] = Math.max(1, dp[N - 1][j + 1] - A[N - 1][j]);
+        }
+
+        for (int i = N - 2; i >= 0; i--) {
+            for (int j = M - 2; j >= 0; j--) {
+                dp[i][j] = Math.max(1, Math.min(dp[i][j + 1], dp[i + 1][j]) - A[i][j]);
+            }
+        }
+
+        return dp[0][0];
+    }
+
+    public int calculateMinimumHP(int[][] A) {
+        return calculateMinimumHPTabulation(A);
+    }
+
+    /* Min Sum Path in Triangle
+    Problem Description
+Given a triangle, find the minimum path sum from top to bottom. Each step you may move to adjacent numbers on the row below.
+
+Adjacent numbers for jth number of row i is jth and (j+1)th numbers of row i+1 is
+
+
+
+Problem Constraints
+|A| <= 1000
+
+A[i] <= 1000
+
+
+
+Input Format
+First and only argument is the vector of vector A defining the given triangle
+
+
+
+Output Format
+Return the minimum sum
+
+
+
+Example Input
+Input 1:
+
+ 
+A = [ 
+         [2],
+        [3, 4],
+       [6, 5, 7],
+      [4, 1, 8, 3]
+    ]
+Input 2:
+
+ A = [ [1] ]
+
+
+Example Output
+Output 1:
+
+ 11
+Output 2:
+
+ 1
+
+
+Example Explanation
+Explanation 1:
+
+ The minimum path sum from top to bottom is 11 (i.e., 2 + 3 + 5 + 1 = 11).
+Explanation 2:
+
+ Only 2 can be collected.
+ */
+    int minimumTotalInTriangleTabulation(ArrayList<ArrayList<Integer>> a) {
+        int N = a.size();
+
+        ArrayList<ArrayList<Integer>> dp = new ArrayList<ArrayList<Integer>>();
+        for (int i = 0; i < N; i++) {
+            dp.add(new ArrayList<Integer>());
+        }
+
+        dp.get(0).add(a.get(0).get(0));
+
+        for (int i = 1; i < N; i++) {
+            for (int j = 0; j < a.get(i).size(); j++) {
+                int x = Integer.MAX_VALUE;
+                if (j - 1 >= 0) {
+                    x = dp.get(i - 1).get(j - 1);
+                }
+
+                int y = Integer.MAX_VALUE;
+                if (j < dp.get(i - 1).size()) {
+                    y = dp.get(i - 1).get(j);
+                }
+
+                dp.get(i).add(a.get(i).get(j) + Math.min(x, y));
+            }
+        }
+
+        int ans = dp.get(N - 1).get(0);
+        for (int j = 1; j < dp.get(N - 1).size(); j++) {
+            ans = Math.min(ans, dp.get(N - 1).get(j));
+        }
+
+        return ans;
+    }
+
+    public int minimumTotalInTriangle(ArrayList<ArrayList<Integer>> a) {
+
+        return minimumTotalInTriangleTabulation(a);
     }
 }
 
