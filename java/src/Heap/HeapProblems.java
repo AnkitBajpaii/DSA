@@ -388,7 +388,7 @@ Explanation 2:
         return res;
     }
 
-    /*
+    /* 
      * Sort K Sorted array
      * Given an array, which is nearly sorted (or what we call K-Sorted i.e every
      * eleemnt is atmost K positions away from it's sorted position).
@@ -1404,6 +1404,55 @@ Explanation 2:
 
             return res;
         }
-    }    
+    }
+    
+    /* Merge K Sorted Lists
+    */
+    public class MergeKSortedListSol {
+
+        class Pair {
+            public int index;
+            public int value;
+            public int row;
+
+            public Pair(int i, int v, int r) {
+                this.index = i;
+                this.value = v;
+                this.row = r;
+            }
+        }
+
+        class PairComparator implements Comparator<Pair> {
+            public int compare(Pair p1, Pair p2) {
+                return p1.value - p2.value;
+            }
+
+        }
+
+        public void MergeKSortedList(ArrayList<ArrayList<Integer>> A) {
+            int k = A.size();
+
+            PriorityQueue<Pair> minHeap = new PriorityQueue<Pair>(new PairComparator());
+
+            for (int i = 0; i < k; i++) // O(klogk)
+            {
+                Pair p = new Pair(0, A.get(i).get(0), i);
+                minHeap.offer(p);
+            }
+
+            while (!minHeap.isEmpty()) {
+                Pair p = minHeap.poll(); // O(Logk)
+
+                System.out.print(p.value + " ");
+
+                int index = p.index, row = p.row;
+
+                if (index + 1 < A.get(row).size()) {
+                    minHeap.offer(new Pair(index + 1, A.get(row).get(index + 1), row)); // O(Logk)
+                }
+            }
+        }
+
+    }
     
 }

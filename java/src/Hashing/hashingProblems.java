@@ -363,10 +363,12 @@ public class hashingProblems {
                 res = i + 1;
             }
 
+            if (!map.containsKey(prefixSum)) {
+                map.put(prefixSum, i);
+            }
+
             if (map.containsKey(prefixSum)) {
                 res = Math.max(res, i - map.get(prefixSum));
-            } else {
-                map.put(prefixSum, i);
             }
         }
 
